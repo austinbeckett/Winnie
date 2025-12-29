@@ -1,30 +1,34 @@
 import SwiftUI
 
 /// Winnie Design System - Color Palette
-/// Based on Winnie_Design_System.md
+/// Light Mode First Design System
+/// Based on DesignSystem.md
 enum WinnieColors {
 
     // MARK: - Core Colors
 
-    /// Light mode background, primary button backgrounds
+    /// Primary background color (light mode)
     /// Hex: #F2EFE9
     static let parchment = Color(red: 242/255, green: 239/255, blue: 233/255)
 
-    /// Accent color, highlights, warm CTAs, success states
+    /// Warm accent color, secondary buttons, highlights
     /// Hex: #F9B58B
     static let peachGlow = Color(red: 249/255, green: 181/255, blue: 139/255)
 
-    /// Primary purple accent, interactive elements, progress indicators
+    /// Purple accent, interactive elements, progress indicators, sliders
     /// Hex: #A393BF
     static let amethystSmoke = Color(red: 163/255, green: 147/255, blue: 191/255)
 
-    /// Dark mode background, headers, primary text in light mode
+    /// Primary button background (light mode), dark mode background
     /// Hex: #5B325D
     static let blackberryCream = Color(red: 91/255, green: 50/255, blue: 93/255)
 
-    /// Pure black text, deep backgrounds, high contrast text
+    /// Primary text color (light mode), deep backgrounds
     /// Hex: #252627
     static let carbonBlack = Color(red: 37/255, green: 38/255, blue: 39/255)
+
+    /// Pure white for cards in light mode
+    static let white = Color.white
 
     // MARK: - Financial Data Colors
 
@@ -55,37 +59,115 @@ enum WinnieColors {
     static let goalEmergency = Color(red: 244/255, green: 165/255, blue: 165/255)
 }
 
-// MARK: - Theme-Aware Colors
+// MARK: - Theme-Aware Colors (Light Mode Primary)
 
 extension WinnieColors {
 
-    /// Returns the appropriate background color for the current color scheme
+    // MARK: - Backgrounds
+
+    /// Main app background
+    /// Light: Parchment (#F2EFE9) | Dark: Blackberry Cream (#5B325D)
     static func background(for colorScheme: ColorScheme) -> Color {
         colorScheme == .dark ? blackberryCream : parchment
     }
 
-    /// Returns the appropriate primary text color for the current color scheme
+    /// Card and elevated surface background
+    /// Light: White | Dark: Carbon Black (#252627)
+    static func cardBackground(for colorScheme: ColorScheme) -> Color {
+        colorScheme == .dark ? carbonBlack : white
+    }
+
+    // MARK: - Text Colors
+
+    /// Primary text (headlines, important text)
+    /// Light: Carbon Black (#252627) | Dark: Parchment (#F2EFE9)
     static func primaryText(for colorScheme: ColorScheme) -> Color {
         colorScheme == .dark ? parchment : carbonBlack
     }
 
-    /// Returns the appropriate secondary text color for the current color scheme
+    /// Secondary text (body text, descriptions)
+    /// Light: Blackberry Cream (#5B325D) | Dark: Parchment at 80%
     static func secondaryText(for colorScheme: ColorScheme) -> Color {
         colorScheme == .dark ? parchment.opacity(0.8) : blackberryCream
     }
 
-    /// Returns the appropriate card background for the current color scheme
-    static func cardBackground(for colorScheme: ColorScheme) -> Color {
-        colorScheme == .dark ? carbonBlack : .white
+    /// Tertiary text (helper text, captions)
+    /// Light: Blackberry Cream at 60% | Dark: Parchment at 50%
+    static func tertiaryText(for colorScheme: ColorScheme) -> Color {
+        colorScheme == .dark ? parchment.opacity(0.5) : blackberryCream.opacity(0.6)
     }
 
-    /// Returns the appropriate primary button background for the current color scheme
+    // MARK: - Button Colors
+
+    /// Primary button background
+    /// Light: Blackberry Cream (#5B325D) | Dark: Peach Glow (#F9B58B)
     static func primaryButtonBackground(for colorScheme: ColorScheme) -> Color {
         colorScheme == .dark ? peachGlow : blackberryCream
     }
 
-    /// Returns the appropriate primary button text for the current color scheme
+    /// Primary button text
+    /// Light: Parchment (#F2EFE9) | Dark: Carbon Black (#252627)
     static func primaryButtonText(for colorScheme: ColorScheme) -> Color {
         colorScheme == .dark ? carbonBlack : parchment
+    }
+
+    /// Secondary button background
+    /// Light: Peach Glow (#F9B58B) | Dark: Amethyst Smoke (#A393BF)
+    static func secondaryButtonBackground(for colorScheme: ColorScheme) -> Color {
+        colorScheme == .dark ? amethystSmoke : peachGlow
+    }
+
+    /// Secondary button border (for outlined style)
+    /// Light: Amethyst Smoke (#A393BF) | Dark: Peach Glow (#F9B58B)
+    static func secondaryButtonBorder(for colorScheme: ColorScheme) -> Color {
+        colorScheme == .dark ? peachGlow : amethystSmoke
+    }
+
+    // MARK: - UI Element Colors
+
+    /// Border and divider color
+    /// Light: Blackberry Cream at 20% | Dark: Parchment at 15%
+    static func border(for colorScheme: ColorScheme) -> Color {
+        colorScheme == .dark ? parchment.opacity(0.15) : blackberryCream.opacity(0.2)
+    }
+
+    /// Input field border
+    /// Light: Blackberry Cream at 30% | Dark: Parchment at 30%
+    static func inputBorder(for colorScheme: ColorScheme) -> Color {
+        colorScheme == .dark ? parchment.opacity(0.3) : blackberryCream.opacity(0.3)
+    }
+
+    /// Slider/progress track background
+    /// Light: Blackberry Cream at 20% | Dark: Parchment at 20%
+    static func trackBackground(for colorScheme: ColorScheme) -> Color {
+        colorScheme == .dark ? parchment.opacity(0.2) : blackberryCream.opacity(0.2)
+    }
+
+    /// Progress bar background
+    /// Light: Blackberry Cream at 15% | Dark: Parchment at 15%
+    static func progressBackground(for colorScheme: ColorScheme) -> Color {
+        colorScheme == .dark ? parchment.opacity(0.15) : blackberryCream.opacity(0.15)
+    }
+
+    // MARK: - Accent Colors (same in both modes)
+
+    /// Primary accent color (interactive elements, progress indicators)
+    static var accent: Color { amethystSmoke }
+
+    /// Warm accent color (highlights, CTAs)
+    static var warmAccent: Color { peachGlow }
+
+    // MARK: - Shadow Colors
+
+    /// Card shadow color
+    /// Light: Blackberry Cream at 8% | Dark: transparent
+    static func cardShadow(for colorScheme: ColorScheme) -> Color {
+        colorScheme == .dark ? .clear : blackberryCream.opacity(0.08)
+    }
+
+    /// Button shadow color
+    /// Light: Blackberry Cream at 15% | Dark: Peach Glow at 25%
+    static func buttonShadow(for colorScheme: ColorScheme) -> Color {
+        colorScheme == .dark ? peachGlow.opacity(0.25) : blackberryCream.opacity(0.15)
     }
 }
