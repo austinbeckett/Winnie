@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		529D2EB72F031B7700867373 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 529D2EB62F031B7700867373 /* FirebaseAuth */; };
+		529D2EB92F031B7700867373 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 529D2EB82F031B7700867373 /* FirebaseFirestore */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		529D2E712F02FF2000867373 /* Winnie.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Winnie.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +28,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				529D2EB72F031B7700867373 /* FirebaseAuth in Frameworks */,
+				529D2EB92F031B7700867373 /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +72,8 @@
 			);
 			name = Winnie;
 			packageProductDependencies = (
+				529D2EB62F031B7700867373 /* FirebaseAuth */,
+				529D2EB82F031B7700867373 /* FirebaseFirestore */,
 			);
 			productName = Winnie;
 			productReference = 529D2E712F02FF2000867373 /* Winnie.app */;
@@ -94,6 +103,9 @@
 			);
 			mainGroup = 529D2E682F02FF2000867373;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				529D2EB52F031B7700867373 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 529D2E722F02FF2000867373 /* Products */;
 			projectDirPath = "";
@@ -251,6 +263,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Winnie/Winnie.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = RATX74HS69;
@@ -283,6 +296,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Winnie/Winnie.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = RATX74HS69;
@@ -332,6 +346,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		529D2EB52F031B7700867373 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.7.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		529D2EB62F031B7700867373 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 529D2EB52F031B7700867373 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		529D2EB82F031B7700867373 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 529D2EB52F031B7700867373 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 529D2E692F02FF2000867373 /* Project object */;
 }
