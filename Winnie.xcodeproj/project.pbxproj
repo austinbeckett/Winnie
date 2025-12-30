@@ -11,14 +11,30 @@
 		529D2EB92F031B7700867373 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 529D2EB82F031B7700867373 /* FirebaseFirestore */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		529D2ED72F037F5E00867373 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 529D2E692F02FF2000867373 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 529D2E702F02FF2000867373;
+			remoteInfo = Winnie;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		529D2E712F02FF2000867373 /* Winnie.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Winnie.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		529D2ED32F037F5E00867373 /* WinnieTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WinnieTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		529D2E732F02FF2000867373 /* Winnie */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Winnie;
+			sourceTree = "<group>";
+		};
+		529D2ED42F037F5E00867373 /* WinnieTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = WinnieTests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -33,6 +49,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		529D2ED02F037F5E00867373 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -40,6 +63,7 @@
 			isa = PBXGroup;
 			children = (
 				529D2E732F02FF2000867373 /* Winnie */,
+				529D2ED42F037F5E00867373 /* WinnieTests */,
 				529D2E722F02FF2000867373 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -48,6 +72,7 @@
 			isa = PBXGroup;
 			children = (
 				529D2E712F02FF2000867373 /* Winnie.app */,
+				529D2ED32F037F5E00867373 /* WinnieTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -79,6 +104,29 @@
 			productReference = 529D2E712F02FF2000867373 /* Winnie.app */;
 			productType = "com.apple.product-type.application";
 		};
+		529D2ED22F037F5E00867373 /* WinnieTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 529D2ED92F037F5E00867373 /* Build configuration list for PBXNativeTarget "WinnieTests" */;
+			buildPhases = (
+				529D2ECF2F037F5E00867373 /* Sources */,
+				529D2ED02F037F5E00867373 /* Frameworks */,
+				529D2ED12F037F5E00867373 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				529D2ED82F037F5E00867373 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				529D2ED42F037F5E00867373 /* WinnieTests */,
+			);
+			name = WinnieTests;
+			packageProductDependencies = (
+			);
+			productName = WinnieTests;
+			productReference = 529D2ED32F037F5E00867373 /* WinnieTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -91,6 +139,10 @@
 				TargetAttributes = {
 					529D2E702F02FF2000867373 = {
 						CreatedOnToolsVersion = 26.2;
+					};
+					529D2ED22F037F5E00867373 = {
+						CreatedOnToolsVersion = 26.2;
+						TestTargetID = 529D2E702F02FF2000867373;
 					};
 				};
 			};
@@ -112,12 +164,20 @@
 			projectRoot = "";
 			targets = (
 				529D2E702F02FF2000867373 /* Winnie */,
+				529D2ED22F037F5E00867373 /* WinnieTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		529D2E6F2F02FF2000867373 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		529D2ED12F037F5E00867373 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -134,7 +194,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		529D2ECF2F037F5E00867373 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		529D2ED82F037F5E00867373 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 529D2E702F02FF2000867373 /* Winnie */;
+			targetProxy = 529D2ED72F037F5E00867373 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		529D2E7A2F02FF2100867373 /* Debug */ = {
@@ -324,6 +399,48 @@
 			};
 			name = Release;
 		};
+		529D2EDA2F037F5E00867373 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = RATX74HS69;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.AustinBeckett.WinnieTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Winnie.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Winnie";
+			};
+			name = Debug;
+		};
+		529D2EDB2F037F5E00867373 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = RATX74HS69;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.AustinBeckett.WinnieTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Winnie.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Winnie";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -341,6 +458,15 @@
 			buildConfigurations = (
 				529D2E7D2F02FF2100867373 /* Debug */,
 				529D2E7E2F02FF2100867373 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		529D2ED92F037F5E00867373 /* Build configuration list for PBXNativeTarget "WinnieTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				529D2EDA2F037F5E00867373 /* Debug */,
+				529D2EDB2F037F5E00867373 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
