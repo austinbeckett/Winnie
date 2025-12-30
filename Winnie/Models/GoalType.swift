@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// Goal category types with associated colors, icons, and default return rates
-enum GoalType: String, Codable, CaseIterable, Identifiable {
+enum GoalType: String, Codable, CaseIterable, Identifiable, Sendable {
     case house
     case retirement
     case vacation

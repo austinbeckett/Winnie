@@ -1,7 +1,7 @@
 import Foundation
 
 /// A single financial goal with target amount and progress tracking
-struct Goal: Codable, Identifiable, Equatable {
+struct Goal: Codable, Identifiable, Equatable, Sendable {
 
     /// Unique identifier (UUID locally, Firestore doc ID when synced)
     let id: String

@@ -6,9 +6,9 @@
 
 ## Current Focus
 
-**Active:** Phase 2C Complete - AuthenticationService now testable with protocol DI
+**Complete:** Goals Vertical Slice - First complete UI feature built and working
 
-**Next Up:** UI Development - Design System components or Onboarding flow
+**Next Up:** Partner System, Onboarding UI, or Financial Engine
 
 ---
 
@@ -90,8 +90,9 @@
 | Feature | Status | Notes |
 |---------|--------|-------|
 | Dashboard | Not Started | |
-| Goals list | Not Started | |
-| Goal detail | Not Started | |
+| Goals list | Done | GoalsListView with empty state |
+| Goal detail | Done | GoalDetailView with edit/delete |
+| Goal form | Done | GoalFormView (create/edit) |
 | Scenario editor (sliders) | Not Started | |
 | Scenario comparison | Not Started | |
 | Settings | Not Started | |
@@ -99,13 +100,15 @@
 ### Design System
 | Feature | Status | Notes |
 |---------|--------|-------|
-| WinnieColors | Not Started | |
-| WinnieTypography | Not Started | |
-| WinnieSpacing | Not Started | |
-| WinnieButton | Not Started | |
-| WinnieCard | Not Started | |
-| WinnieSlider | Not Started | |
-| WinnieInput | Not Started | |
+| WinnieColors | Done | Theme-aware color functions |
+| WinnieTypography | Done | Playfair Display + Lato fonts |
+| WinnieSpacing | Done | 8pt grid spacing scale |
+| WinnieButton | Done | Primary/secondary/text variants |
+| WinnieCard | Done | Accent border support |
+| WinnieTextField | Done | Text input with label/validation |
+| WinnieProgressBar | Done | Goal progress indicator |
+| GoalCard | Done | Specialized goal summary card |
+| WinnieSlider | Not Started | For allocation controls (future) |
 
 ### Unit Tests - Phase 1 (Error Types + DTOs) ✅
 | Feature | Status | Notes |
@@ -215,12 +218,41 @@
 | `WinnieTests/TestHelpers/Mocks/MockAuthProvider.swift` | In-memory mock for auth tests |
 | `WinnieTests/TestHelpers/Mocks/MockAuthTypes.swift` | Mock user, result, credential types |
 | `WinnieTests/Authentication/AuthenticationServiceTests.swift` | 30 tests for AuthenticationService |
+| **Goals Vertical Slice** | |
+| `Core/Components/WinnieButton.swift` | Primary/secondary/text button variants |
+| `Core/Components/WinnieCard.swift` | Styled card with optional accent border |
+| `Core/Components/WinnieTextField.swift` | Text input with label and validation |
+| `Core/Components/WinnieProgressBar.swift` | Animated progress bar |
+| `Core/Components/GoalCard.swift` | Goal summary card with progress |
+| `Features/Goals/GoalsViewModel.swift` | @Observable state management for goals |
+| `Features/Goals/GoalsListView.swift` | Main goals list screen |
+| `Features/Goals/GoalDetailView.swift` | Single goal detail view |
+| `Features/Goals/GoalFormView.swift` | Create/edit goal form |
 | **Code Audit Fixes** | |
 | `WinnieTests/README.md` | Test suite documentation: structure, naming, @MainActor rationale |
 
 ---
 
 ## Recent Sessions
+
+### December 30, 2024 (Session 12) - Goals Vertical Slice Complete
+- **Goals Vertical Slice Complete**: First full UI feature with CRUD operations working end-to-end
+- Created 5 reusable components in `Core/Components/`:
+  - `WinnieButton` - Primary/secondary/text button variants with press animation
+  - `WinnieCard` - Styled card with optional accent border
+  - `WinnieTextField` - Text input with label/validation + `WinnieCurrencyField`
+  - `WinnieProgressBar` - Animated progress bar with customizable color
+  - `GoalCard` - Goal summary card with type icon, amounts, and progress
+- Created `GoalsViewModel` with @Observable pattern and @MainActor thread safety
+- Created 3 goal views in `Features/Goals/`:
+  - `GoalsListView` - Main screen with empty state, loading, and goal cards
+  - `GoalDetailView` - Full goal info with progress, edit/delete actions
+  - `GoalFormView` - Combined create/edit form with type picker and validation
+- Wired up navigation in ContentView (shows GoalsListView after sign-in)
+- Added `Sendable` conformance to Goal and GoalType for async safety
+- **Critical Bug Fixed**: Async closures across sheet boundaries caused memory corruption (EXC_BAD_ACCESS with 8GB allocation failure). Solution: GoalFormView uses sync callback, parent wraps in Task.
+- **Pattern Established**: Sheet forms use sync `onSave` callbacks; parent views handle async operations via Task wrapper
+- **Total new files**: 9 files created for vertical slice
 
 ### December 30, 2024 (Session 11) - Phase 2C Complete: Auth DI & Tests
 - **Phase 2C Complete**: AuthenticationService now fully testable with protocol-based DI
