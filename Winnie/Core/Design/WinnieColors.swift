@@ -40,23 +40,39 @@ enum WinnieColors {
     /// Hex: #F5C894
     static let warningPeach = Color(red: 245/255, green: 200/255, blue: 148/255)
 
+    /// Soft sage green - stability and growth
+    /// Hex: #A8C5B5
+    static let softSage = Color(red: 168/255, green: 197/255, blue: 181/255)
+
+    /// Warm coral - safety and protection
+    /// Hex: #E8A898
+    static let warmCoral = Color(red: 232/255, green: 168/255, blue: 152/255)
+
+    /// Warm slate - neutral blue-gray for custom goals
+    /// Hex: #7492A6
+    static let warmSlate = Color(red: 116/255, green: 146/255, blue: 166/255)
+
+    /// Sandy dune - warm sand for vacation/travel
+    /// Hex: #D4C4A8
+    static let sandyDune = Color(red: 212/255, green: 196/255, blue: 168/255)
+
     // MARK: - Goal Type Colors
 
     /// House/home purchase goal identification
-    /// Hex: #A8D8EA
-    static let goalHouse = Color(red: 168/255, green: 216/255, blue: 234/255)
+    /// Hex: #A8C5B5 (Soft Sage)
+    static let goalHouse = softSage
 
     /// Retirement goal identification
-    /// Hex: #C9AED4
-    static let goalRetirement = Color(red: 201/255, green: 174/255, blue: 212/255)
+    /// Hex: #F9B58B (Peach Glow - warm orange)
+    static let goalRetirement = peachGlow
 
     /// Vacation/travel goal identification
-    /// Hex: #FFD4A3
-    static let goalVacation = Color(red: 255/255, green: 212/255, blue: 163/255)
+    /// Hex: #D4C4A8 (Sandy Dune)
+    static let goalVacation = sandyDune
 
     /// Emergency fund goal identification
-    /// Hex: #F4A5A5
-    static let goalEmergency = Color(red: 244/255, green: 165/255, blue: 165/255)
+    /// Hex: #E8A898 (Warm Coral)
+    static let goalEmergency = warmCoral
 }
 
 // MARK: - Theme-Aware Colors (Light Mode Primary)

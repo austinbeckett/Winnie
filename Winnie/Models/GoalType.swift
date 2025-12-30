@@ -32,8 +32,8 @@ enum GoalType: String, Codable, CaseIterable, Identifiable, Sendable {
         case .retirement: return WinnieColors.goalRetirement
         case .vacation: return WinnieColors.goalVacation
         case .emergencyFund: return WinnieColors.goalEmergency
-        case .babyFamily: return WinnieColors.goalRetirement
-        case .custom: return WinnieColors.amethystSmoke
+        case .babyFamily: return WinnieColors.amethystSmoke
+        case .custom: return WinnieColors.warmSlate
         }
     }
 

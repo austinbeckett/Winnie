@@ -73,14 +73,29 @@ Your new color palette provides a warm, approachable feel that reduces financial
 
 Additional colors specific to Winnie for representing financial states and goal types:
 
+#### State Colors
 | Purpose | Hex Code | Usage |
 |---------|----------|-------|
-| **Success / On Track** | `#98D8AA` (Mint Green) | Progress bars, on-track indicators, positive states |
-| **Warning / Attention** | `#F5C894` (Warm Peach) | Alerts, allocation warnings, attention needed |
-| **House Goal** | `#A8D8EA` (Sky Blue) | House/home purchase goal identification |
-| **Retirement Goal** | `#C9AED4` (Lavender) | Retirement goal identification |
-| **Vacation Goal** | `#FFD4A3` (Warm Sand) | Vacation/travel goal identification |
-| **Emergency Fund** | `#F4A5A5` (Soft Coral) | Emergency fund goal identification |
+| **Success / On Track** | `#98D8AA` (Success Mint) | Progress bars, on-track indicators, positive states |
+| **Warning / Attention** | `#F5C894` (Warning Peach) | Alerts, allocation warnings, attention needed |
+
+#### Accent Colors
+| Name | Hex Code | Usage |
+|------|----------|-------|
+| **Soft Sage** | `#A8C5B5` | Stability and growth |
+| **Warm Coral** | `#E8A898` | Safety and protection |
+| **Warm Slate** | `#7492A6` | Neutral blue-gray |
+| **Sandy Dune** | `#D4C4A8` | Vacation and travel |
+
+#### Goal Type Colors
+| Goal Type | Hex Code | Color Name |
+|-----------|----------|------------|
+| **House** | `#A8C5B5` | Soft Sage |
+| **Retirement** | `#F9B58B` | Peach Glow |
+| **Vacation** | `#D4C4A8` | Sandy Dune |
+| **Emergency Fund** | `#E8A898` | Warm Coral |
+| **Baby & Family** | `#A393BF` | Amethyst Smoke |
+| **Custom Goal** | `#7492A6` | Warm Slate |
 
 ---
 
