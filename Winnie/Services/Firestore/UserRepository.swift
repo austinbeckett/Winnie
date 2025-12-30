@@ -1,31 +1,8 @@
 import Foundation
 import FirebaseFirestore
 
-/// Firestore errors for repository operations
-enum FirestoreError: LocalizedError {
-    case documentNotFound
-    case encodingFailed
-    case decodingFailed
-    case transactionFailed
-    case unknown(Error)
-
-    var errorDescription: String? {
-        switch self {
-        case .documentNotFound:
-            return "Document not found."
-        case .encodingFailed:
-            return "Failed to encode data."
-        case .decodingFailed:
-            return "Failed to decode data."
-        case .transactionFailed:
-            return "Transaction failed. Please try again."
-        case .unknown(let error):
-            return error.localizedDescription
-        }
-    }
-}
-
 /// Repository for User document operations in Firestore
+/// Uses shared FirestoreError from FirestoreError.swift
 final class UserRepository {
 
     private let db = Firestore.firestore()
