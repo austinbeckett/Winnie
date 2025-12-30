@@ -92,63 +92,36 @@ struct GoalDetailView: View {
                     Spacer()
                 }
 
-                // Progress section
+                // Hero amount section
+                VStack(spacing: WinnieSpacing.xs) {
+                    // Saved amount (hero)
+                    Text(formatCurrency(goal.currentAmount))
+                        .font(WinnieTypography.financialXL())
+                        .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                    // "of $X goal" context
+                    Text("of \(formatCurrency(goal.targetAmount)) goal")
+                        .font(WinnieTypography.bodyM())
+                        .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+
+                // Progress bar and percentage
                 VStack(spacing: WinnieSpacing.s) {
-                    // Progress bar
                     WinnieProgressBar(progress: goal.progressPercentage, color: goal.type.color)
 
-                    // Progress label
-                    HStack {
-                        Text("\(goal.progressPercentageInt)% complete")
+                    if goal.isCompleted {
+                        Label("Goal Reached!", systemImage: "checkmark.circle.fill")
+                            .font(WinnieTypography.bodyS())
+                            .foregroundColor(WinnieColors.successMint)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                    } else {
+                        Text("\(goal.progressPercentageInt)% complete · \(formatCurrency(goal.remainingAmount)) to go")
                             .font(WinnieTypography.bodyS())
                             .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
-
-                        Spacer()
-
-                        if goal.isCompleted {
-                            Label("Goal Reached!", systemImage: "checkmark.circle.fill")
-                                .font(WinnieTypography.bodyS())
-                                .foregroundColor(WinnieColors.successMint)
-                        }
+                            .frame(maxWidth: .infinity, alignment: .center)
                     }
-                }
-
-                // Amounts
-                HStack {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Saved")
-                            .font(WinnieTypography.caption())
-                            .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
-                        Text(formatCurrency(goal.currentAmount))
-                            .font(WinnieTypography.financialL())
-                            .foregroundColor(WinnieColors.primaryText(for: colorScheme))
-                    }
-
-                    Spacer()
-
-                    VStack(alignment: .trailing, spacing: 4) {
-                        Text("Goal")
-                            .font(WinnieTypography.caption())
-                            .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
-                        Text(formatCurrency(goal.targetAmount))
-                            .font(WinnieTypography.financialL())
-                            .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
-                    }
-                }
-
-                // Remaining amount
-                if !goal.isCompleted {
-                    HStack {
-                        Text("Remaining")
-                            .font(WinnieTypography.bodyS())
-                            .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
-                        Spacer()
-                        Text(formatCurrency(goal.remainingAmount))
-                            .font(WinnieTypography.bodyM())
-                            .fontWeight(.semibold)
-                            .foregroundColor(WinnieColors.primaryText(for: colorScheme))
-                    }
-                    .padding(.top, WinnieSpacing.xs)
                 }
             }
         }

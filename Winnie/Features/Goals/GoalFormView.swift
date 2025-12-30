@@ -113,7 +113,12 @@ struct GoalFormView: View {
                 }
                 .padding(.horizontal, WinnieSpacing.screenMarginMobile)
                 .padding(.top, WinnieSpacing.m)
+                .contentShape(Rectangle())  // Makes entire VStack tappable
+                .onTapGesture {
+                    dismissKeyboard()
+                }
             }
+            .scrollDismissesKeyboard(.interactively)
             .background(WinnieColors.background(for: colorScheme).ignoresSafeArea())
             .navigationTitle(isEditMode ? "Edit Goal" : "New Goal")
             .navigationBarTitleDisplayMode(.inline)
@@ -269,6 +274,17 @@ struct GoalFormView: View {
         } else {
             targetAmountError = nil
         }
+    }
+
+    // MARK: - Keyboard
+
+    private func dismissKeyboard() {
+        UIApplication.shared.sendAction(
+            #selector(UIResponder.resignFirstResponder),
+            to: nil,
+            from: nil,
+            for: nil
+        )
     }
 
     // MARK: - Save
