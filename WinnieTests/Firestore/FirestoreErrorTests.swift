@@ -7,7 +7,7 @@ final class FirestoreErrorTests: XCTestCase {
 
     // MARK: - Error Description Tests
 
-    func testDocumentNotFoundDescription() {
+    func test_documentNotFound_hasCorrectDescription() {
         let error = FirestoreError.documentNotFound
         XCTAssertEqual(
             error.errorDescription,
@@ -16,7 +16,7 @@ final class FirestoreErrorTests: XCTestCase {
         )
     }
 
-    func testEncodingFailedDescription() {
+    func test_encodingFailed_hasCorrectDescription() {
         let error = FirestoreError.encodingFailed
         XCTAssertEqual(
             error.errorDescription,
@@ -25,7 +25,7 @@ final class FirestoreErrorTests: XCTestCase {
         )
     }
 
-    func testDecodingFailedDescription() {
+    func test_decodingFailed_hasCorrectDescription() {
         let error = FirestoreError.decodingFailed
         XCTAssertEqual(
             error.errorDescription,
@@ -34,7 +34,7 @@ final class FirestoreErrorTests: XCTestCase {
         )
     }
 
-    func testTransactionFailedDescription() {
+    func test_transactionFailed_hasCorrectDescription() {
         let error = FirestoreError.transactionFailed
         XCTAssertEqual(
             error.errorDescription,
@@ -43,7 +43,7 @@ final class FirestoreErrorTests: XCTestCase {
         )
     }
 
-    func testInvalidDataDescription() {
+    func test_invalidData_hasCorrectDescription() {
         let message = "Email format is invalid"
         let error = FirestoreError.invalidData(message)
         XCTAssertEqual(
@@ -53,7 +53,7 @@ final class FirestoreErrorTests: XCTestCase {
         )
     }
 
-    func testInviteCodeExpiredDescription() {
+    func test_inviteCodeExpired_hasCorrectDescription() {
         let error = FirestoreError.inviteCodeExpired
         XCTAssertEqual(
             error.errorDescription,
@@ -62,7 +62,7 @@ final class FirestoreErrorTests: XCTestCase {
         )
     }
 
-    func testInviteCodeAlreadyUsedDescription() {
+    func test_inviteCodeAlreadyUsed_hasCorrectDescription() {
         let error = FirestoreError.inviteCodeAlreadyUsed
         XCTAssertEqual(
             error.errorDescription,
@@ -71,7 +71,7 @@ final class FirestoreErrorTests: XCTestCase {
         )
     }
 
-    func testCoupleAlreadyCompleteDescription() {
+    func test_coupleAlreadyComplete_hasCorrectDescription() {
         let error = FirestoreError.coupleAlreadyComplete
         XCTAssertEqual(
             error.errorDescription,
@@ -80,7 +80,7 @@ final class FirestoreErrorTests: XCTestCase {
         )
     }
 
-    func testUnauthorizedDescription() {
+    func test_unauthorized_hasCorrectDescription() {
         let error = FirestoreError.unauthorized
         XCTAssertEqual(
             error.errorDescription,
@@ -89,7 +89,7 @@ final class FirestoreErrorTests: XCTestCase {
         )
     }
 
-    func testUnknownErrorDescription() {
+    func test_unknownError_hasCorrectDescription() {
         let underlyingError = NSError(
             domain: "TestDomain",
             code: 500,
@@ -105,14 +105,14 @@ final class FirestoreErrorTests: XCTestCase {
 
     // MARK: - LocalizedError Protocol Tests
 
-    func testLocalizedErrorConformance() {
+    func test_localizedError_conformance() {
         // Verify that errorDescription is accessible through LocalizedError protocol
         let error: LocalizedError = FirestoreError.documentNotFound
         XCTAssertNotNil(error.errorDescription)
         XCTAssertFalse(error.errorDescription?.isEmpty ?? true)
     }
 
-    func testAllErrorsHaveDescriptions() {
+    func test_allErrors_haveDescriptions() {
         // Ensure no error returns nil for errorDescription
         let underlyingError = NSError(domain: "Test", code: 0, userInfo: nil)
         let allErrors: [FirestoreError] = [
@@ -142,7 +142,7 @@ final class FirestoreErrorTests: XCTestCase {
 
     // MARK: - Security-Related Tests
 
-    func testInvalidDataDoesNotExposeInternalDetails() {
+    func test_invalidData_doesNotExposeInternalDetails() {
         // Ensure invalidData message is user-facing appropriate
         let error = FirestoreError.invalidData("field_value_too_long")
         let description = error.errorDescription ?? ""
@@ -151,7 +151,7 @@ final class FirestoreErrorTests: XCTestCase {
         XCTAssertTrue(description.hasPrefix("Invalid data:"))
     }
 
-    func testUnauthorizedDoesNotExposeSecurityDetails() {
+    func test_unauthorized_doesNotExposeSecurityDetails() {
         // The unauthorized error should not expose internal security details
         let error = FirestoreError.unauthorized
         let description = error.errorDescription ?? ""

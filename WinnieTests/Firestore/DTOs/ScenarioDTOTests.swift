@@ -20,7 +20,7 @@ final class ScenarioDTOTests: XCTestCase {
 
     // MARK: - Initialization from Domain Model Tests
 
-    func testInitFromScenarioCopiesAllFields() {
+    func test_initFromScenario_copiesAllFields() {
         let allocation = makeTestAllocation()
         let scenario = Scenario(
             id: "scenario123",
@@ -43,7 +43,7 @@ final class ScenarioDTOTests: XCTestCase {
         XCTAssertEqual(dto.createdBy, scenario.createdBy)
     }
 
-    func testInitFromScenarioConvertsAllocationsToDouble() {
+    func test_initFromScenario_convertsAllocationsToDouble() {
         var allocation = Allocation()
         allocation["goal1"] = Decimal(string: "1500.50")!
         allocation["goal2"] = Decimal(string: "999.99")!
@@ -60,7 +60,7 @@ final class ScenarioDTOTests: XCTestCase {
         XCTAssertEqual(dto.allocations["goal2"] ?? 0, 999.99, accuracy: 0.01)
     }
 
-    func testInitFromScenarioConvertsDecisionStatusToRawValue() {
+    func test_initFromScenario_convertsDecisionStatusToRawValue() {
         for status in Scenario.DecisionStatus.allCases {
             let scenario = Scenario(
                 name: "Test",
@@ -73,7 +73,7 @@ final class ScenarioDTOTests: XCTestCase {
         }
     }
 
-    func testInitFromScenarioSetsLastSyncedAt() {
+    func test_initFromScenario_setsLastSyncedAt() {
         let scenario = Scenario(name: "Test", createdBy: "user123")
         let beforeInit = Date()
 
@@ -85,7 +85,7 @@ final class ScenarioDTOTests: XCTestCase {
 
     // MARK: - Allocation Conversion Tests
 
-    func testAllocationMapConversion() {
+    func test_allocationMap_convertsCorrectly() {
         var allocation = Allocation()
         allocation["house"] = Decimal(2000)
         allocation["retirement"] = Decimal(1500)
@@ -100,7 +100,7 @@ final class ScenarioDTOTests: XCTestCase {
         XCTAssertEqual(dto.allocations["vacation"] ?? 0, 300, accuracy: 0.01)
     }
 
-    func testEmptyAllocationMap() {
+    func test_emptyAllocationMap_handled() {
         let scenario = Scenario(
             name: "Empty",
             allocations: Allocation(),
@@ -111,7 +111,7 @@ final class ScenarioDTOTests: XCTestCase {
         XCTAssertTrue(dto.allocations.isEmpty)
     }
 
-    func testAllocationPrecisionRoundTrip() {
+    func test_allocationPrecision_roundTrip() {
         var allocation = Allocation()
         allocation["goal1"] = Decimal(string: "1234.56")!
 
@@ -128,7 +128,7 @@ final class ScenarioDTOTests: XCTestCase {
 
     // MARK: - Conversion to Domain Model Tests
 
-    func testToScenarioConvertsAllFields() {
+    func test_toScenario_convertsAllFields() {
         let allocation = makeTestAllocation()
         let scenario = Scenario(
             id: "scenario123",
@@ -149,7 +149,7 @@ final class ScenarioDTOTests: XCTestCase {
         XCTAssertEqual(converted.createdBy, scenario.createdBy)
     }
 
-    func testToScenarioReturnsNilForInvalidStatus() {
+    func test_toScenario_handlesAllValidStatuses() {
         // We need to test with bad JSON data
         // For now, test that all valid statuses work
         for status in Scenario.DecisionStatus.allCases {
@@ -166,7 +166,7 @@ final class ScenarioDTOTests: XCTestCase {
         }
     }
 
-    func testToScenarioConvertsAllocationWrapper() {
+    func test_toScenario_convertsAllocationWrapper() {
         var allocation = Allocation()
         allocation["goal1"] = Decimal(1000)
 
@@ -180,7 +180,7 @@ final class ScenarioDTOTests: XCTestCase {
 
     // MARK: - Dictionary Serialization Tests
 
-    func testDictionaryContainsRequiredFields() {
+    func test_dictionary_containsRequiredFields() {
         let scenario = Scenario(name: "Test", createdBy: "user123")
         let dto = ScenarioDTO(from: scenario)
         let dict = dto.dictionary
@@ -195,7 +195,7 @@ final class ScenarioDTOTests: XCTestCase {
         XCTAssertNotNil(dict["createdBy"])
     }
 
-    func testDictionaryExcludesNilOptionals() {
+    func test_dictionary_excludesNilOptionals() {
         let scenario = Scenario(name: "Test", notes: nil, createdBy: "user123")
         let dto = ScenarioDTO(from: scenario)
         let dict = dto.dictionary
@@ -203,7 +203,7 @@ final class ScenarioDTOTests: XCTestCase {
         XCTAssertNil(dict["notes"], "nil notes should not appear in dictionary")
     }
 
-    func testDictionaryIncludesNotesWhenPresent() {
+    func test_dictionary_includesNotesWhenPresent() {
         let scenario = Scenario(
             name: "Test",
             notes: "Important scenario notes",
@@ -215,7 +215,7 @@ final class ScenarioDTOTests: XCTestCase {
         XCTAssertEqual(dict["notes"] as? String, "Important scenario notes")
     }
 
-    func testDictionaryUsesFirestoreTimestamps() {
+    func test_dictionary_usesFirestoreTimestamps() {
         let scenario = Scenario(name: "Test", createdBy: "user123")
         let dto = ScenarioDTO(from: scenario)
         let dict = dto.dictionary
@@ -224,7 +224,7 @@ final class ScenarioDTOTests: XCTestCase {
         XCTAssertTrue(dict["lastModified"] is Timestamp, "lastModified should be Firestore Timestamp")
     }
 
-    func testDictionaryStoresDecisionStatusAsString() {
+    func test_dictionary_storesDecisionStatusAsString() {
         let scenario = Scenario(
             name: "Test",
             decisionStatus: .archived,
@@ -236,7 +236,7 @@ final class ScenarioDTOTests: XCTestCase {
         XCTAssertEqual(dict["decisionStatus"] as? String, "archived")
     }
 
-    func testDictionaryAllocationsIsMap() {
+    func test_dictionary_allocationsIsMap() {
         var allocation = Allocation()
         allocation["goal1"] = Decimal(1000)
 
@@ -252,7 +252,7 @@ final class ScenarioDTOTests: XCTestCase {
     // MARK: - Codable Conformance Tests
 
     @MainActor
-    func testCodableRoundTrip() throws {
+    func test_codable_roundTrip() throws {
         let allocation = makeTestAllocation()
         let scenario = Scenario(
             name: "Test Plan",
@@ -274,7 +274,7 @@ final class ScenarioDTOTests: XCTestCase {
 
     // MARK: - Decision Status Tests
 
-    func testAllDecisionStatusRawValues() {
+    func test_decisionStatus_hasCorrectRawValues() {
         XCTAssertEqual(Scenario.DecisionStatus.draft.rawValue, "draft")
         XCTAssertEqual(Scenario.DecisionStatus.underReview.rawValue, "underReview")
         XCTAssertEqual(Scenario.DecisionStatus.decided.rawValue, "decided")

@@ -152,7 +152,9 @@ final class MockFirestoreService: FirestoreProviding {
             let snapshot = MockDocumentSnapshot(
                 documentID: path.components(separatedBy: "/").last ?? path,
                 data: data,
-                exists: data != nil
+                exists: data != nil,
+                path: path,
+                service: self
             )
             listener(snapshot, nil)
         }
@@ -194,11 +196,13 @@ final class MockCollection: CollectionProviding {
             key.hasPrefix(prefix) && !key.dropFirst(prefix.count).contains("/")
         }
 
-        let snapshots = matchingDocs.map { key, data in
+        let snapshots = matchingDocs.map { [service] key, data in
             MockDocumentSnapshot(
                 documentID: key.components(separatedBy: "/").last ?? key,
                 data: data,
-                exists: true
+                exists: true,
+                path: key,
+                service: service
             )
         }
 
@@ -206,7 +210,11 @@ final class MockCollection: CollectionProviding {
     }
 
     func whereField(_ field: String, isEqualTo value: Any) -> QueryProviding {
-        MockQuery(service: service, basePath: path, filters: [(field, value)], ordering: [])
+        MockQuery(service: service, basePath: path, filters: [(field, "==", value)], ordering: [])
+    }
+
+    func whereField(_ field: String, isLessThan value: Any) -> QueryProviding {
+        MockQuery(service: service, basePath: path, filters: [(field, "<", value)], ordering: [])
     }
 
     func order(by field: String, descending: Bool) -> QueryProviding {
@@ -262,7 +270,9 @@ final class MockDocument: DocumentProviding {
         return MockDocumentSnapshot(
             documentID: documentID,
             data: data,
-            exists: data != nil
+            exists: data != nil,
+            path: path,
+            service: service
         )
     }
 
@@ -324,7 +334,9 @@ final class MockDocument: DocumentProviding {
         let snapshot = MockDocumentSnapshot(
             documentID: documentID,
             data: data,
-            exists: data != nil
+            exists: data != nil,
+            path: path,
+            service: service
         )
         listener(snapshot, nil)
 
@@ -341,14 +353,14 @@ final class MockQuery: QueryProviding {
 
     private let service: MockFirestoreService
     private let basePath: String
-    private let filters: [(field: String, value: Any)]
+    private let filters: [(field: String, op: String, value: Any)]
     private let ordering: [(field: String, descending: Bool)]
     private var limitCount: Int?
 
     init(
         service: MockFirestoreService,
         basePath: String,
-        filters: [(field: String, value: Any)],
+        filters: [(field: String, op: String, value: Any)],
         ordering: [(field: String, descending: Bool)]
     ) {
         self.service = service
@@ -361,7 +373,16 @@ final class MockQuery: QueryProviding {
         MockQuery(
             service: service,
             basePath: basePath,
-            filters: filters + [(field, value)],
+            filters: filters + [(field, "==", value)],
+            ordering: ordering
+        )
+    }
+
+    func whereField(_ field: String, isLessThan value: Any) -> QueryProviding {
+        MockQuery(
+            service: service,
+            basePath: basePath,
+            filters: filters + [(field, "<", value)],
             ordering: ordering
         )
     }
@@ -398,36 +419,46 @@ final class MockQuery: QueryProviding {
         }
 
         // Apply filters
-        for (field, expectedValue) in filters {
+        for (field, op, expectedValue) in filters {
             matchingDocs = matchingDocs.filter { _, data in
                 guard let actualValue = data[field] else { return false }
-                return "\(actualValue)" == "\(expectedValue)"
+
+                switch op {
+                case "==":
+                    return MockQuery.isEqual(actualValue, expectedValue)
+                case "<":
+                    return MockQuery.isLessThan(actualValue, expectedValue)
+                default:
+                    return false
+                }
             }
         }
 
         // Convert to snapshots
-        var snapshots = matchingDocs.map { key, data in
+        var snapshots = matchingDocs.map { [service] key, data in
             MockDocumentSnapshot(
                 documentID: key.components(separatedBy: "/").last ?? key,
                 data: data,
-                exists: true
+                exists: true,
+                path: key,
+                service: service
             )
         }
 
-        // Apply ordering (simplified: only handles first ordering)
-        if let (field, descending) = ordering.first {
+        // Apply ordering (supports multiple order-by clauses)
+        if !ordering.isEmpty {
             snapshots.sort { a, b in
-                let aVal = a.data()?[field]
-                let bVal = b.data()?[field]
+                for (field, descending) in ordering {
+                    let aVal = a.data()?[field]
+                    let bVal = b.data()?[field]
 
-                // Handle common types
-                if let aInt = aVal as? Int, let bInt = bVal as? Int {
-                    return descending ? aInt > bInt : aInt < bInt
+                    let comparison = MockQuery.compare(aVal, bVal)
+                    if comparison != 0 {
+                        return descending ? comparison > 0 : comparison < 0
+                    }
+                    // If equal, continue to next ordering field
                 }
-                if let aStr = aVal as? String, let bStr = bVal as? String {
-                    return descending ? aStr > bStr : aStr < bStr
-                }
-                return false
+                return false // All fields equal
             }
         }
 
@@ -459,15 +490,98 @@ final class MockQuery: QueryProviding {
             service?.collectionListeners.removeValue(forKey: queryKey)
         }
     }
+
+    // MARK: - Type-Safe Comparison Helpers
+
+    /// Compare two values for equality with proper type handling
+    /// Avoids fragile string interpolation comparison
+    static func isEqual(_ a: Any, _ b: Any) -> Bool {
+        switch (a, b) {
+        case (let a as String, let b as String):
+            return a == b
+        case (let a as Int, let b as Int):
+            return a == b
+        case (let a as Double, let b as Double):
+            return abs(a - b) < 0.0001  // Handle floating-point precision
+        case (let a as Bool, let b as Bool):
+            return a == b
+        case (let a as Date, let b as Date):
+            return a == b
+        case (let a as [String], let b as [String]):
+            return a == b
+        case (let a as [String: Any], let b as [String: Any]):
+            // Dictionary comparison - check keys and values
+            guard a.keys.sorted() == b.keys.sorted() else { return false }
+            for key in a.keys {
+                guard let aVal = a[key], let bVal = b[key],
+                      isEqual(aVal, bVal) else { return false }
+            }
+            return true
+        default:
+            // Fallback to string comparison for unknown types
+            return "\(a)" == "\(b)"
+        }
+    }
+
+    /// Compare two values for less-than with proper type handling
+    static func isLessThan(_ a: Any, _ b: Any) -> Bool {
+        switch (a, b) {
+        case (let a as Date, let b as Date):
+            return a < b
+        case (let a as String, let b as String):
+            return a < b
+        case (let a as Int, let b as Int):
+            return a < b
+        case (let a as Double, let b as Double):
+            return a < b
+        default:
+            return false
+        }
+    }
+
+    /// Compare two values, returning -1 (less), 0 (equal), or 1 (greater)
+    /// Used for multi-field sorting
+    static func compare(_ a: Any?, _ b: Any?) -> Int {
+        guard let a = a else { return b == nil ? 0 : -1 }
+        guard let b = b else { return 1 }
+
+        switch (a, b) {
+        case (let a as Int, let b as Int):
+            return a < b ? -1 : (a > b ? 1 : 0)
+        case (let a as Double, let b as Double):
+            return a < b ? -1 : (a > b ? 1 : 0)
+        case (let a as String, let b as String):
+            return a < b ? -1 : (a > b ? 1 : 0)
+        case (let a as Date, let b as Date):
+            return a < b ? -1 : (a > b ? 1 : 0)
+        case (let a as Bool, let b as Bool):
+            // false < true
+            return (!a && b) ? -1 : ((a && !b) ? 1 : 0)
+        default:
+            return 0
+        }
+    }
 }
 
 
 // MARK: - Mock Write Batch
 
+/// Atomic batch write implementation.
+/// Unlike the previous implementation that executed operations sequentially,
+/// this implementation collects all changes and applies them atomically.
+/// If any operation would fail (e.g., updateData on missing doc), the entire
+/// batch fails and no changes are applied.
 final class MockWriteBatch: WriteBatchProviding {
 
+    /// Represents a queued batch operation
+    private enum BatchOperation {
+        case setData(path: String, data: [String: Any], merge: Bool)
+        case updateData(path: String, fields: [String: Any])
+        case delete(path: String)
+    }
+
     private let service: MockFirestoreService
-    private var operations: [() async throws -> Void] = []
+    private var operations: [BatchOperation] = []
 
     init(service: MockFirestoreService) {
         self.service = service
@@ -475,23 +589,23 @@ final class MockWriteBatch: WriteBatchProviding {
 
     func setData(_ data: [String: Any], forDocument document: DocumentProviding, merge: Bool) {
         guard let mockDoc = document as? MockDocument else { return }
-        operations.append {
-            try await mockDoc.setData(data, merge: merge)
-        }
+        operations.append(.setData(path: mockDoc.path, data: data, merge: merge))
+        // Record the call for test verification
+        service.setDataCalls.append((path: mockDoc.path, data: data, merge: merge))
     }
 
     func updateData(_ fields: [String: Any], forDocument document: DocumentProviding) {
         guard let mockDoc = document as? MockDocument else { return }
-        operations.append {
-            try await mockDoc.updateData(fields)
-        }
+        operations.append(.updateData(path: mockDoc.path, fields: fields))
+        // Record the call for test verification
+        service.updateDataCalls.append((path: mockDoc.path, fields: fields))
     }
 
     func deleteDocument(_ document: DocumentProviding) {
         guard let mockDoc = document as? MockDocument else { return }
-        operations.append {
-            try await mockDoc.delete()
-        }
+        operations.append(.delete(path: mockDoc.path))
+        // Record the call for test verification
+        service.deleteCalls.append(mockDoc.path)
     }
 
     func commit() async throws {
@@ -499,11 +613,46 @@ final class MockWriteBatch: WriteBatchProviding {
             throw error
         }
 
-        service.batchCommitCount += 1
-
+        // Phase 1: Validate all operations (atomic check)
+        // If any updateData targets a missing document, fail before applying anything
         for operation in operations {
-            try await operation()
+            if case .updateData(let path, _) = operation {
+                if service.documents[path] == nil {
+                    throw FirestoreError.documentNotFound
+                }
+            }
         }
+
+        // Phase 2: Apply all changes atomically
+        // Since we validated, all operations should succeed
+        for operation in operations {
+            switch operation {
+            case .setData(let path, let data, let merge):
+                if merge, let existing = service.documents[path] {
+                    var merged = existing
+                    for (key, value) in data {
+                        merged[key] = value
+                    }
+                    service.documents[path] = merged
+                } else {
+                    service.documents[path] = data
+                }
+
+            case .updateData(let path, let fields):
+                // Already validated existence above
+                if var existing = service.documents[path] {
+                    for (key, value) in fields {
+                        existing[key] = value
+                    }
+                    service.documents[path] = existing
+                }
+
+            case .delete(let path):
+                service.documents.removeValue(forKey: path)
+            }
+        }
+
+        service.batchCommitCount += 1
     }
 }
 
@@ -530,7 +679,9 @@ final class MockTransaction: TransactionProviding {
         return MockDocumentSnapshot(
             documentID: mockDoc.documentID,
             data: data,
-            exists: data != nil
+            exists: data != nil,
+            path: mockDoc.path,
+            service: service
         )
     }
 
@@ -580,11 +731,19 @@ final class MockDocumentSnapshot: DocumentSnapshotProviding {
     let documentID: String
     private let _data: [String: Any]?
     let exists: Bool
+    private let documentPath: String
+    private let service: MockFirestoreService
 
-    init(documentID: String, data: [String: Any]?, exists: Bool) {
+    init(documentID: String, data: [String: Any]?, exists: Bool, path: String, service: MockFirestoreService) {
         self.documentID = documentID
         self._data = data
         self.exists = exists
+        self.documentPath = path
+        self.service = service
+    }
+
+    var reference: DocumentProviding {
+        MockDocument(service: service, path: documentPath)
     }
 
     func data() -> [String: Any]? {

@@ -2,15 +2,45 @@ import Foundation
 import FirebaseFirestore
 
 /// Repository for Couple document operations in Firestore
+///
 /// Collection: /couples/{coupleId}
 /// Subcollection: /couples/{coupleId}/financialProfile/profile
+///
+/// This repository uses the `FirestoreProviding` protocol for database access,
+/// enabling dependency injection for testing.
+///
+/// ## Production Usage
+/// ```swift
+/// let repository = CoupleRepository()  // Uses real Firestore
+/// ```
+///
+/// ## Test Usage
+/// ```swift
+/// let mock = MockFirestoreService()
+/// let repository = CoupleRepository(db: mock)
+/// ```
 final class CoupleRepository {
 
-    private let db = Firestore.firestore()
+    // MARK: - Dependencies
+
+    private let db: FirestoreProviding
     private let collectionPath = "couples"
 
     /// Document ID for the single financial profile document
     private let profileDocID = "profile"
+
+    // MARK: - Initialization
+
+    /// Create a repository with the default Firestore service (production)
+    init() {
+        self.db = FirestoreService.shared
+    }
+
+    /// Create a repository with an injected database (for testing)
+    /// - Parameter db: Any implementation of FirestoreProviding
+    init(db: FirestoreProviding) {
+        self.db = db
+    }
 
     // MARK: - Create
 
@@ -142,32 +172,24 @@ final class CoupleRepository {
     func addPartner(userID: String, to coupleID: String) async throws {
         let coupleRef = db.collection(collectionPath).document(coupleID)
 
-        _ = try await db.runTransaction { transaction, errorPointer in
+        _ = try await db.runTransaction { transaction in
             // Read current couple data
-            let coupleDoc: DocumentSnapshot
-            do {
-                coupleDoc = try transaction.getDocument(coupleRef)
-            } catch let error {
-                errorPointer?.pointee = error as NSError
-                return nil
-            }
+            let coupleDoc = try transaction.getDocument(coupleRef)
 
             guard let data = coupleDoc.data(),
                   var memberIDs = data["memberIDs"] as? [String] else {
-                errorPointer?.pointee = FirestoreError.decodingFailed as NSError
-                return nil
+                throw FirestoreError.decodingFailed
             }
 
             // Check if couple already has 2 members
             guard memberIDs.count < 2 else {
-                errorPointer?.pointee = FirestoreError.coupleAlreadyComplete as NSError
-                return nil
+                throw FirestoreError.coupleAlreadyComplete
             }
 
             // Check if user is already a member
             guard !memberIDs.contains(userID) else {
                 // Already a member, no-op
-                return nil
+                return nil as Void?
             }
 
             // Add the partner
@@ -181,7 +203,7 @@ final class CoupleRepository {
                 "lastSyncedAt": Timestamp(date: Date())
             ], forDocument: coupleRef)
 
-            return nil
+            return nil as Void?
         }
     }
 
@@ -189,19 +211,12 @@ final class CoupleRepository {
     func removePartner(userID: String, from coupleID: String) async throws {
         let coupleRef = db.collection(collectionPath).document(coupleID)
 
-        _ = try await db.runTransaction { transaction, errorPointer in
-            let coupleDoc: DocumentSnapshot
-            do {
-                coupleDoc = try transaction.getDocument(coupleRef)
-            } catch let error {
-                errorPointer?.pointee = error as NSError
-                return nil
-            }
+        _ = try await db.runTransaction { transaction in
+            let coupleDoc = try transaction.getDocument(coupleRef)
 
             guard let data = coupleDoc.data(),
                   var memberIDs = data["memberIDs"] as? [String] else {
-                errorPointer?.pointee = FirestoreError.decodingFailed as NSError
-                return nil
+                throw FirestoreError.decodingFailed
             }
 
             memberIDs.removeAll { $0 == userID }
@@ -211,7 +226,7 @@ final class CoupleRepository {
                 "lastSyncedAt": Timestamp(date: Date())
             ], forDocument: coupleRef)
 
-            return nil
+            return nil as Void?
         }
     }
 
@@ -244,7 +259,7 @@ final class CoupleRepository {
     func listenToCouple(
         id: String,
         onChange: @escaping (Couple?) -> Void
-    ) -> ListenerRegistration {
+    ) -> ListenerRegistrationProviding {
         return db.collection(collectionPath)
             .document(id)
             .addSnapshotListener { [weak self] snapshot, error in
@@ -270,7 +285,7 @@ final class CoupleRepository {
     func listenToFinancialProfile(
         coupleID: String,
         onChange: @escaping (FinancialProfile) -> Void
-    ) -> ListenerRegistration {
+    ) -> ListenerRegistrationProviding {
         return db.collection(collectionPath)
             .document(coupleID)
             .collection("financialProfile")

@@ -7,7 +7,7 @@ final class AuthenticationErrorTests: XCTestCase {
 
     // MARK: - Error Description Tests
 
-    func testInvalidCredentialDescription() {
+    func test_invalidCredential_hasCorrectDescription() {
         let error = AuthenticationError.invalidCredential
         XCTAssertEqual(
             error.errorDescription,
@@ -16,7 +16,7 @@ final class AuthenticationErrorTests: XCTestCase {
         )
     }
 
-    func testMissingNonceDescription() {
+    func test_missingNonce_hasCorrectDescription() {
         let error = AuthenticationError.missingNonce
         XCTAssertEqual(
             error.errorDescription,
@@ -25,7 +25,7 @@ final class AuthenticationErrorTests: XCTestCase {
         )
     }
 
-    func testUserNotFoundDescription() {
+    func test_userNotFound_hasCorrectDescription() {
         let error = AuthenticationError.userNotFound
         XCTAssertEqual(
             error.errorDescription,
@@ -34,7 +34,7 @@ final class AuthenticationErrorTests: XCTestCase {
         )
     }
 
-    func testEmailAlreadyInUseDescription() {
+    func test_emailAlreadyInUse_hasCorrectDescription() {
         let error = AuthenticationError.emailAlreadyInUse
         XCTAssertEqual(
             error.errorDescription,
@@ -43,7 +43,7 @@ final class AuthenticationErrorTests: XCTestCase {
         )
     }
 
-    func testWeakPasswordDescription() {
+    func test_weakPassword_hasCorrectDescription() {
         let error = AuthenticationError.weakPassword
         XCTAssertEqual(
             error.errorDescription,
@@ -52,7 +52,7 @@ final class AuthenticationErrorTests: XCTestCase {
         )
     }
 
-    func testNetworkErrorDescription() {
+    func test_networkError_hasCorrectDescription() {
         let error = AuthenticationError.networkError
         XCTAssertEqual(
             error.errorDescription,
@@ -61,7 +61,7 @@ final class AuthenticationErrorTests: XCTestCase {
         )
     }
 
-    func testUserDisabledDescription() {
+    func test_userDisabled_hasCorrectDescription() {
         let error = AuthenticationError.userDisabled
         XCTAssertEqual(
             error.errorDescription,
@@ -70,7 +70,7 @@ final class AuthenticationErrorTests: XCTestCase {
         )
     }
 
-    func testInvalidEmailDescription() {
+    func test_invalidEmail_hasCorrectDescription() {
         let error = AuthenticationError.invalidEmail
         XCTAssertEqual(
             error.errorDescription,
@@ -79,7 +79,7 @@ final class AuthenticationErrorTests: XCTestCase {
         )
     }
 
-    func testSignOutFailedDescription() {
+    func test_signOutFailed_hasCorrectDescription() {
         let error = AuthenticationError.signOutFailed
         XCTAssertEqual(
             error.errorDescription,
@@ -88,7 +88,7 @@ final class AuthenticationErrorTests: XCTestCase {
         )
     }
 
-    func testUnknownErrorDescription() {
+    func test_unknownError_hasCorrectDescription() {
         let customMessage = "Custom error message from Firebase"
         let error = AuthenticationError.unknown(customMessage)
         XCTAssertEqual(
@@ -100,56 +100,56 @@ final class AuthenticationErrorTests: XCTestCase {
 
     // MARK: - Firebase Error Code Mapping Tests
 
-    func testFirebaseErrorCode17004MapsToInvalidCredential() {
+    func test_firebaseErrorCode17004_mapsToInvalidCredential() {
         // Firebase ERROR_INVALID_CREDENTIAL
         let nsError = NSError(domain: "FIRAuthErrorDomain", code: 17004, userInfo: nil)
         let mapped = AuthenticationError.from(nsError)
         XCTAssertEqual(mapped, .invalidCredential)
     }
 
-    func testFirebaseErrorCode17011MapsToUserNotFound() {
+    func test_firebaseErrorCode17011_mapsToUserNotFound() {
         // Firebase ERROR_USER_NOT_FOUND
         let nsError = NSError(domain: "FIRAuthErrorDomain", code: 17011, userInfo: nil)
         let mapped = AuthenticationError.from(nsError)
         XCTAssertEqual(mapped, .userNotFound)
     }
 
-    func testFirebaseErrorCode17007MapsToEmailAlreadyInUse() {
+    func test_firebaseErrorCode17007_mapsToEmailAlreadyInUse() {
         // Firebase ERROR_EMAIL_ALREADY_IN_USE
         let nsError = NSError(domain: "FIRAuthErrorDomain", code: 17007, userInfo: nil)
         let mapped = AuthenticationError.from(nsError)
         XCTAssertEqual(mapped, .emailAlreadyInUse)
     }
 
-    func testFirebaseErrorCode17026MapsToWeakPassword() {
+    func test_firebaseErrorCode17026_mapsToWeakPassword() {
         // Firebase ERROR_WEAK_PASSWORD
         let nsError = NSError(domain: "FIRAuthErrorDomain", code: 17026, userInfo: nil)
         let mapped = AuthenticationError.from(nsError)
         XCTAssertEqual(mapped, .weakPassword)
     }
 
-    func testFirebaseErrorCode17020MapsToNetworkError() {
+    func test_firebaseErrorCode17020_mapsToNetworkError() {
         // Firebase ERROR_NETWORK_REQUEST_FAILED
         let nsError = NSError(domain: "FIRAuthErrorDomain", code: 17020, userInfo: nil)
         let mapped = AuthenticationError.from(nsError)
         XCTAssertEqual(mapped, .networkError)
     }
 
-    func testFirebaseErrorCode17005MapsToUserDisabled() {
+    func test_firebaseErrorCode17005_mapsToUserDisabled() {
         // Firebase ERROR_USER_DISABLED
         let nsError = NSError(domain: "FIRAuthErrorDomain", code: 17005, userInfo: nil)
         let mapped = AuthenticationError.from(nsError)
         XCTAssertEqual(mapped, .userDisabled)
     }
 
-    func testFirebaseErrorCode17008MapsToInvalidEmail() {
+    func test_firebaseErrorCode17008_mapsToInvalidEmail() {
         // Firebase ERROR_INVALID_EMAIL
         let nsError = NSError(domain: "FIRAuthErrorDomain", code: 17008, userInfo: nil)
         let mapped = AuthenticationError.from(nsError)
         XCTAssertEqual(mapped, .invalidEmail)
     }
 
-    func testUnknownErrorCodeMapsToUnknown() {
+    func test_unknownErrorCode_mapsToUnknown() {
         let nsError = NSError(
             domain: "FIRAuthErrorDomain",
             code: 99999,
@@ -166,7 +166,7 @@ final class AuthenticationErrorTests: XCTestCase {
 
     // MARK: - Equatable Conformance Tests
 
-    func testSameErrorsAreEqual() {
+    func test_sameErrors_areEqual() {
         XCTAssertEqual(AuthenticationError.invalidCredential, AuthenticationError.invalidCredential)
         XCTAssertEqual(AuthenticationError.missingNonce, AuthenticationError.missingNonce)
         XCTAssertEqual(AuthenticationError.userNotFound, AuthenticationError.userNotFound)
@@ -178,25 +178,25 @@ final class AuthenticationErrorTests: XCTestCase {
         XCTAssertEqual(AuthenticationError.signOutFailed, AuthenticationError.signOutFailed)
     }
 
-    func testDifferentErrorsAreNotEqual() {
+    func test_differentErrors_areNotEqual() {
         XCTAssertNotEqual(AuthenticationError.invalidCredential, AuthenticationError.userNotFound)
         XCTAssertNotEqual(AuthenticationError.weakPassword, AuthenticationError.networkError)
         XCTAssertNotEqual(AuthenticationError.invalidEmail, AuthenticationError.emailAlreadyInUse)
     }
 
-    func testUnknownErrorsWithSameMessageAreEqual() {
+    func test_unknownErrorsWithSameMessage_areEqual() {
         let error1 = AuthenticationError.unknown("Test message")
         let error2 = AuthenticationError.unknown("Test message")
         XCTAssertEqual(error1, error2)
     }
 
-    func testUnknownErrorsWithDifferentMessagesAreNotEqual() {
+    func test_unknownErrorsWithDifferentMessages_areNotEqual() {
         let error1 = AuthenticationError.unknown("Message 1")
         let error2 = AuthenticationError.unknown("Message 2")
         XCTAssertNotEqual(error1, error2)
     }
 
-    func testUnknownErrorNotEqualToOtherErrors() {
+    func test_unknownError_notEqualToOtherErrors() {
         let unknownError = AuthenticationError.unknown("Some message")
         XCTAssertNotEqual(unknownError, AuthenticationError.invalidCredential)
         XCTAssertNotEqual(unknownError, AuthenticationError.networkError)
@@ -204,14 +204,14 @@ final class AuthenticationErrorTests: XCTestCase {
 
     // MARK: - LocalizedError Protocol Tests
 
-    func testLocalizedErrorConformance() {
+    func test_localizedError_conformance() {
         // Verify that errorDescription is accessible through LocalizedError protocol
         let error: LocalizedError = AuthenticationError.invalidCredential
         XCTAssertNotNil(error.errorDescription)
         XCTAssertFalse(error.errorDescription?.isEmpty ?? true)
     }
 
-    func testAllErrorsHaveDescriptions() {
+    func test_allErrors_haveDescriptions() {
         // Ensure no error returns nil for errorDescription
         let allErrors: [AuthenticationError] = [
             .invalidCredential,

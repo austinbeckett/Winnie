@@ -14,7 +14,7 @@ final class InviteCodeDTOTests: XCTestCase {
 
     // MARK: - Initialization Tests
 
-    func testInitializerSetsAllFields() {
+    func test_initializer_setsAllFields() {
         let dto = InviteCodeDTO(
             code: "ABC123",
             coupleID: "couple123",
@@ -31,7 +31,7 @@ final class InviteCodeDTOTests: XCTestCase {
         XCTAssertNil(dto.usedAt)
     }
 
-    func testInitializerUppercasesCode() {
+    func test_initializer_uppercasesCode() {
         let dto = InviteCodeDTO(
             code: "abc123",
             coupleID: "couple123",
@@ -42,7 +42,7 @@ final class InviteCodeDTOTests: XCTestCase {
         XCTAssertEqual(dto.code, "ABC123", "Code should be stored uppercase")
     }
 
-    func testInitializerWithMixedCaseCode() {
+    func test_initializer_normalizesMixedCaseCode() {
         let dto = InviteCodeDTO(
             code: "AbC123",
             coupleID: "couple123",
@@ -55,7 +55,7 @@ final class InviteCodeDTOTests: XCTestCase {
 
     // MARK: - Computed Property Tests: isValid
 
-    func testIsValidReturnsTrueForUnusedNotExpired() {
+    func test_isValid_returnsTrueForUnusedNotExpired() {
         let dto = InviteCodeDTO(
             code: "ABC123",
             coupleID: "couple123",
@@ -66,7 +66,7 @@ final class InviteCodeDTOTests: XCTestCase {
         XCTAssertTrue(dto.isValid, "Unused, not expired code should be valid")
     }
 
-    func testIsValidReturnsFalseForUsedCode() {
+    func test_isValid_returnsFalseForUsedCode() {
         var dto = InviteCodeDTO(
             code: "ABC123",
             coupleID: "couple123",
@@ -80,7 +80,7 @@ final class InviteCodeDTOTests: XCTestCase {
         XCTAssertFalse(dto.isValid, "Used code should not be valid")
     }
 
-    func testIsValidReturnsFalseForExpiredCode() {
+    func test_isValid_returnsFalseForExpiredCode() {
         let dto = InviteCodeDTO(
             code: "ABC123",
             coupleID: "couple123",
@@ -91,7 +91,7 @@ final class InviteCodeDTOTests: XCTestCase {
         XCTAssertFalse(dto.isValid, "Expired code should not be valid")
     }
 
-    func testIsValidReturnsFalseForUsedAndExpired() {
+    func test_isValid_returnsFalseForUsedAndExpired() {
         var dto = InviteCodeDTO(
             code: "ABC123",
             coupleID: "couple123",
@@ -105,7 +105,7 @@ final class InviteCodeDTOTests: XCTestCase {
 
     // MARK: - Computed Property Tests: isExpired
 
-    func testIsExpiredReturnsTrueForPastDate() {
+    func test_isExpired_returnsTrueForPastDate() {
         let dto = InviteCodeDTO(
             code: "ABC123",
             coupleID: "couple123",
@@ -116,7 +116,7 @@ final class InviteCodeDTOTests: XCTestCase {
         XCTAssertTrue(dto.isExpired, "Code with past expiration should be expired")
     }
 
-    func testIsExpiredReturnsFalseForFutureDate() {
+    func test_isExpired_returnsFalseForFutureDate() {
         let dto = InviteCodeDTO(
             code: "ABC123",
             coupleID: "couple123",
@@ -127,7 +127,7 @@ final class InviteCodeDTOTests: XCTestCase {
         XCTAssertFalse(dto.isExpired, "Code with future expiration should not be expired")
     }
 
-    func testIsExpiredEdgeCaseExactlyNow() {
+    func test_isExpired_edgeCaseExactlyNow() {
         // Test expiration at exact current time (should be expired - using <=)
         let dto = InviteCodeDTO(
             code: "ABC123",
@@ -142,7 +142,7 @@ final class InviteCodeDTOTests: XCTestCase {
 
     // MARK: - Dictionary Serialization Tests
 
-    func testDictionaryContainsRequiredFields() {
+    func test_dictionary_containsRequiredFields() {
         let dto = InviteCodeDTO(
             code: "ABC123",
             coupleID: "couple123",
@@ -158,7 +158,7 @@ final class InviteCodeDTOTests: XCTestCase {
         XCTAssertNotNil(dict["isUsed"])
     }
 
-    func testDictionaryExcludesNilOptionals() {
+    func test_dictionary_excludesNilOptionals() {
         let dto = InviteCodeDTO(
             code: "ABC123",
             coupleID: "couple123",
@@ -171,7 +171,7 @@ final class InviteCodeDTOTests: XCTestCase {
         XCTAssertNil(dict["usedAt"], "nil usedAt should not appear")
     }
 
-    func testDictionaryIncludesUsageFieldsWhenUsed() {
+    func test_dictionary_includesUsageFieldsWhenUsed() {
         var dto = InviteCodeDTO(
             code: "ABC123",
             coupleID: "couple123",
@@ -189,7 +189,7 @@ final class InviteCodeDTOTests: XCTestCase {
         XCTAssertTrue(dict["usedAt"] is Timestamp)
     }
 
-    func testDictionaryUsesFirestoreTimestamps() {
+    func test_dictionary_usesFirestoreTimestamps() {
         let dto = InviteCodeDTO(
             code: "ABC123",
             coupleID: "couple123",
@@ -201,7 +201,7 @@ final class InviteCodeDTOTests: XCTestCase {
         XCTAssertTrue(dict["expiresAt"] is Timestamp, "expiresAt should be Firestore Timestamp")
     }
 
-    func testDictionaryBooleanIsUsed() {
+    func test_dictionary_booleanIsUsed() {
         let dto = InviteCodeDTO(
             code: "ABC123",
             coupleID: "couple123",
@@ -216,7 +216,7 @@ final class InviteCodeDTOTests: XCTestCase {
     // MARK: - Codable Conformance Tests
 
     @MainActor
-    func testCodableRoundTrip() throws {
+    func test_codable_roundTrip() throws {
         let originalDTO = InviteCodeDTO(
             code: "XYZ789",
             coupleID: "couple123",
@@ -238,7 +238,7 @@ final class InviteCodeDTOTests: XCTestCase {
 
     // MARK: - Security Tests
 
-    func testCodeDoesNotContainAmbiguousCharacters() {
+    func test_code_doesNotContainAmbiguousCharacters() {
         // Codes should not contain I, O, 0, 1 (ambiguous characters)
         // This is validated in the repository, but we ensure DTO stores as-is
         let dto = InviteCodeDTO(
@@ -255,7 +255,7 @@ final class InviteCodeDTOTests: XCTestCase {
         XCTAssertFalse(code.contains("1"), "Code should not contain 1")
     }
 
-    func testCoupleIDIsImmutable() {
+    func test_coupleID_isImmutable() {
         // coupleID is declared as let, this is a compile-time check
         let dto = InviteCodeDTO(
             code: "ABC123",
@@ -267,7 +267,7 @@ final class InviteCodeDTOTests: XCTestCase {
         XCTAssertEqual(dto.coupleID, "couple123")
     }
 
-    func testCreatedByIsImmutable() {
+    func test_createdBy_isImmutable() {
         // createdBy is declared as let, this is a compile-time check
         let dto = InviteCodeDTO(
             code: "ABC123",
@@ -281,7 +281,7 @@ final class InviteCodeDTOTests: XCTestCase {
 
     // MARK: - Usage State Tests
 
-    func testMarkingCodeAsUsed() {
+    func test_markingCodeAsUsed_invalidatesCode() {
         var dto = InviteCodeDTO(
             code: "ABC123",
             coupleID: "couple123",
@@ -300,7 +300,7 @@ final class InviteCodeDTOTests: XCTestCase {
         XCTAssertNotNil(dto.usedAt)
     }
 
-    func testUsedCodeRemainsBoundToCoupleID() {
+    func test_usedCode_remainsBoundToCoupleID() {
         var dto = InviteCodeDTO(
             code: "ABC123",
             coupleID: "couple123",

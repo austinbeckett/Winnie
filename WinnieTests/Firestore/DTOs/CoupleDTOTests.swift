@@ -13,7 +13,7 @@ final class CoupleDTOTests: XCTestCase {
 
     // MARK: - Initialization from Domain Model Tests
 
-    func testInitFromCoupleCopiesAllFields() {
+    func test_initFromCouple_copiesAllFields() {
         let profile = FinancialProfile(
             monthlyIncome: 10000,
             monthlyExpenses: 6000,
@@ -37,7 +37,7 @@ final class CoupleDTOTests: XCTestCase {
         XCTAssertEqual(dto.createdAt, couple.createdAt)
     }
 
-    func testInitFromCoupleSetsLastSyncedAt() {
+    func test_initFromCouple_setsLastSyncedAt() {
         let couple = Couple(memberIDs: ["user1"])
         let beforeInit = Date()
 
@@ -47,7 +47,7 @@ final class CoupleDTOTests: XCTestCase {
         XCTAssertGreaterThanOrEqual(dto.lastSyncedAt ?? Date.distantPast, beforeInit)
     }
 
-    func testInitFromCoupleWithNoInviteCode() {
+    func test_initFromCouple_handlesNoInviteCode() {
         let couple = Couple(
             id: "couple123",
             memberIDs: ["user1", "user2"],
@@ -63,7 +63,7 @@ final class CoupleDTOTests: XCTestCase {
 
     // MARK: - Creator Initialization Tests
 
-    func testInitForCreatorWithSingleMember() {
+    func test_initForCreator_hasSingleMember() {
         let dto = CoupleDTO(id: "couple123", creatorUserID: "user1")
 
         XCTAssertEqual(dto.id, "couple123")
@@ -71,14 +71,14 @@ final class CoupleDTOTests: XCTestCase {
         XCTAssertEqual(dto.memberIDs.count, 1, "New couple should start with 1 member")
     }
 
-    func testInitForCreatorHasNoInviteCode() {
+    func test_initForCreator_hasNoInviteCode() {
         let dto = CoupleDTO(id: "couple123", creatorUserID: "user1")
 
         XCTAssertNil(dto.inviteCode, "New couple should not have invite code initially")
         XCTAssertNil(dto.inviteCodeExpiresAt)
     }
 
-    func testInitForCreatorSetsTimestamps() {
+    func test_initForCreator_setsTimestamps() {
         let beforeInit = Date()
 
         let dto = CoupleDTO(id: "couple123", creatorUserID: "user1")
@@ -89,7 +89,7 @@ final class CoupleDTOTests: XCTestCase {
 
     // MARK: - Conversion to Domain Model Tests
 
-    func testToCoupleRequiresFinancialProfile() {
+    func test_toCouple_requiresFinancialProfile() {
         let dto = CoupleDTO(id: "couple123", creatorUserID: "user1")
         let profile = FinancialProfile(monthlyIncome: 5000)
 
@@ -98,7 +98,7 @@ final class CoupleDTOTests: XCTestCase {
         XCTAssertEqual(couple.financialProfile.monthlyIncome, 5000)
     }
 
-    func testToCoupleConvertsAllFields() {
+    func test_toCouple_convertsAllFields() {
         let dto = CoupleDTO(id: "couple123", creatorUserID: "user1")
         let profile = FinancialProfile()
 
@@ -109,7 +109,7 @@ final class CoupleDTOTests: XCTestCase {
         XCTAssertEqual(couple.createdAt, dto.createdAt)
     }
 
-    func testToCoupleRoundTrip() {
+    func test_toCouple_roundTrip() {
         let profile = FinancialProfile(
             monthlyIncome: 10000,
             monthlyExpenses: 6000
@@ -134,7 +134,7 @@ final class CoupleDTOTests: XCTestCase {
 
     // MARK: - Dictionary Serialization Tests
 
-    func testDictionaryContainsRequiredFields() {
+    func test_dictionary_containsRequiredFields() {
         let dto = CoupleDTO(id: "couple123", creatorUserID: "user1")
         let dict = dto.dictionary
 
@@ -143,7 +143,7 @@ final class CoupleDTOTests: XCTestCase {
         XCTAssertNotNil(dict["createdAt"])
     }
 
-    func testDictionaryMemberIDsIsArray() {
+    func test_dictionary_memberIDsIsArray() {
         let dto = CoupleDTO(id: "couple123", creatorUserID: "user1")
         let dict = dto.dictionary
 
@@ -152,7 +152,7 @@ final class CoupleDTOTests: XCTestCase {
         XCTAssertEqual(memberIDs, ["user1"])
     }
 
-    func testDictionaryExcludesNilOptionals() {
+    func test_dictionary_excludesNilOptionals() {
         let dto = CoupleDTO(id: "couple123", creatorUserID: "user1")
         let dict = dto.dictionary
 
@@ -160,7 +160,7 @@ final class CoupleDTOTests: XCTestCase {
         XCTAssertNil(dict["inviteCodeExpiresAt"], "nil inviteCodeExpiresAt should not appear")
     }
 
-    func testDictionaryIncludesInviteCodeWhenPresent() {
+    func test_dictionary_includesInviteCodeWhenPresent() {
         let couple = Couple(
             id: "couple123",
             memberIDs: ["user1"],
@@ -175,7 +175,7 @@ final class CoupleDTOTests: XCTestCase {
         XCTAssertTrue(dict["inviteCodeExpiresAt"] is Timestamp)
     }
 
-    func testDictionaryUsesFirestoreTimestamps() {
+    func test_dictionary_usesFirestoreTimestamps() {
         let dto = CoupleDTO(id: "couple123", creatorUserID: "user1")
         let dict = dto.dictionary
 
@@ -184,13 +184,13 @@ final class CoupleDTOTests: XCTestCase {
 
     // MARK: - Member Count Tests
 
-    func testSingleMemberCouple() {
+    func test_singleMemberCouple_hasOneID() {
         let dto = CoupleDTO(id: "couple123", creatorUserID: "user1")
 
         XCTAssertEqual(dto.memberIDs.count, 1)
     }
 
-    func testTwoMemberCouple() {
+    func test_twoMemberCouple_hasTwoIDs() {
         let couple = Couple(
             id: "couple123",
             memberIDs: ["user1", "user2"]
@@ -203,7 +203,7 @@ final class CoupleDTOTests: XCTestCase {
     // MARK: - Codable Conformance Tests
 
     @MainActor
-    func testCodableRoundTrip() throws {
+    func test_codable_roundTrip() throws {
         let originalDTO = CoupleDTO(id: "couple123", creatorUserID: "user1")
 
         let encoder = JSONEncoder()
@@ -218,7 +218,7 @@ final class CoupleDTOTests: XCTestCase {
 
     // MARK: - Security Tests
 
-    func testMemberIDsAreSafelyStored() {
+    func test_memberIDs_safelyStored() {
         // Ensure member IDs are stored as plain strings (for Firestore rules lookup)
         let dto = CoupleDTO(id: "couple123", creatorUserID: "user1")
         let dict = dto.dictionary
@@ -228,7 +228,7 @@ final class CoupleDTOTests: XCTestCase {
         XCTAssertTrue(memberIDs?.contains("user1") ?? false)
     }
 
-    func testInviteCodeStoredAsUppercase() {
+    func test_inviteCode_storedAsUppercase() {
         // Invite codes should be case-insensitive, stored uppercase
         let couple = Couple(
             id: "couple123",

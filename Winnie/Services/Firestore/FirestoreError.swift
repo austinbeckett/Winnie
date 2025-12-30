@@ -1,7 +1,14 @@
 import Foundation
 
 /// Shared error types for all Firestore repository operations
-enum FirestoreError: LocalizedError {
+///
+/// Conforms to `Equatable` to enable precise error assertions in tests:
+/// ```swift
+/// XCTAssertThrowsError(try await repo.fetch(id: "x")) { error in
+///     XCTAssertEqual(error as? FirestoreError, .documentNotFound)
+/// }
+/// ```
+enum FirestoreError: LocalizedError, Equatable {
 
     /// The requested document does not exist in Firestore
     case documentNotFound
@@ -57,6 +64,31 @@ enum FirestoreError: LocalizedError {
             return "You don't have permission to perform this action."
         case .unknown(let error):
             return error.localizedDescription
+        }
+    }
+
+    // MARK: - Equatable
+
+    /// Custom Equatable implementation required because `Error` is not Equatable.
+    /// For the `unknown` case, we compare by localizedDescription.
+    static func == (lhs: FirestoreError, rhs: FirestoreError) -> Bool {
+        switch (lhs, rhs) {
+        case (.documentNotFound, .documentNotFound),
+             (.encodingFailed, .encodingFailed),
+             (.decodingFailed, .decodingFailed),
+             (.transactionFailed, .transactionFailed),
+             (.inviteCodeExpired, .inviteCodeExpired),
+             (.inviteCodeAlreadyUsed, .inviteCodeAlreadyUsed),
+             (.coupleAlreadyComplete, .coupleAlreadyComplete),
+             (.unauthorized, .unauthorized):
+            return true
+        case (.invalidData(let lhsMsg), .invalidData(let rhsMsg)):
+            return lhsMsg == rhsMsg
+        case (.unknown(let lhsError), .unknown(let rhsError)):
+            // Compare by localized description since Error is not Equatable
+            return lhsError.localizedDescription == rhsError.localizedDescription
+        default:
+            return false
         }
     }
 }

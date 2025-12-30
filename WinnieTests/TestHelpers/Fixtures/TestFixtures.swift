@@ -19,6 +19,30 @@ import Foundation
 /// 2. **Readability**: Only specify what's relevant to your test
 /// 3. **Maintainability**: Change model structure in one place
 ///
+/// ## Two Types of Factory Methods
+///
+/// ### Domain Models (e.g., `makeUser()`, `makeGoal()`)
+/// - Return strongly-typed Swift objects (User, Goal, Couple, etc.)
+/// - Use **Decimal** for monetary values (precise, no floating-point errors)
+/// - Use **Date** objects directly
+/// - Use these when testing business logic or creating repository inputs
+///
+/// ### Data Dictionaries (e.g., `makeUserData()`, `makeGoalData()`)
+/// - Return `[String: Any]` dictionaries for stubbing MockFirestoreService
+/// - Use **Double** for monetary values (Firestore limitation)
+/// - Use **ISO8601 date strings** for dates (JSON-compatible)
+/// - Use these when stubbing `mockFirestore.stubDocument(path:data:)`
+///
+/// ## Date Encoding Note
+///
+/// **Production code** uses Firestore `Timestamp(date:)` for dates.
+/// **Test fixtures** use ISO8601 strings because:
+/// 1. MockFirestoreService uses JSONDecoder with `.iso8601` strategy
+/// 2. JSON serialization doesn't support Timestamp objects
+///
+/// This is a known limitation. If date handling is critical to your test,
+/// verify the behavior matches production by testing with actual Firestore.
+///
 /// ## Swift Concept: Factory Pattern
 /// A factory method creates objects without exposing the creation logic.
 /// Here, we provide sensible defaults so tests only override what matters.
@@ -155,6 +179,43 @@ enum TestFixtures {
         )
     }
 
+    // MARK: - Couple Data (Dictionary Format)
+
+    /// Create a dictionary representation of a Couple for stubbing Firestore
+    static func makeCoupleData(
+        id: String = "test-couple-id",
+        memberIDs: [String] = ["user-1", "user-2"],
+        inviteCode: String? = nil,
+        inviteCodeExpiresAt: Date? = nil,
+        createdAt: Date = testDate
+    ) -> [String: Any] {
+        var data: [String: Any] = [
+            "id": id,
+            "memberIDs": memberIDs,
+            "createdAt": ISO8601DateFormatter().string(from: createdAt)
+        ]
+
+        if let inviteCode { data["inviteCode"] = inviteCode }
+        if let inviteCodeExpiresAt {
+            data["inviteCodeExpiresAt"] = ISO8601DateFormatter().string(from: inviteCodeExpiresAt)
+        }
+
+        return data
+    }
+
+    /// Create a single-member couple data
+    static func makeSingleMemberCoupleData(
+        id: String = "test-couple-id",
+        creatorID: String = "user-1",
+        inviteCode: String? = nil
+    ) -> [String: Any] {
+        makeCoupleData(
+            id: id,
+            memberIDs: [creatorID],
+            inviteCode: inviteCode
+        )
+    }
+
     // MARK: - Financial Profile
 
     /// Create a FinancialProfile for testing
@@ -170,6 +231,26 @@ enum TestFixtures {
             currentSavings: currentSavings,
             retirementBalance: retirementBalance
         )
+    }
+
+    /// Create a dictionary representation of a FinancialProfile for stubbing Firestore
+    static func makeFinancialProfileData(
+        monthlyIncome: Double = 10000,
+        monthlyExpenses: Double = 6000,
+        currentSavings: Double = 25000,
+        retirementBalance: Double? = 50000,
+        lastUpdated: Date = testDate
+    ) -> [String: Any] {
+        var data: [String: Any] = [
+            "monthlyIncome": monthlyIncome,
+            "monthlyExpenses": monthlyExpenses,
+            "currentSavings": currentSavings,
+            "lastUpdated": ISO8601DateFormatter().string(from: lastUpdated)
+        ]
+
+        if let retirementBalance { data["retirementBalance"] = retirementBalance }
+
+        return data
     }
 
     // MARK: - Goal
@@ -243,6 +324,31 @@ enum TestFixtures {
         )
     }
 
+    // MARK: - Goal Data (Dictionary Format)
+
+    /// Create a dictionary representation of a Goal for stubbing Firestore
+    static func makeGoalData(
+        id: String = "test-goal-id",
+        type: String = "house",
+        name: String = "House Down Payment",
+        targetAmount: Double = 60000,
+        currentAmount: Double = 15000,
+        priority: Int = 0,
+        isActive: Bool = true,
+        createdAt: Date = testDate
+    ) -> [String: Any] {
+        [
+            "id": id,
+            "type": type,
+            "name": name,
+            "targetAmount": targetAmount,
+            "currentAmount": currentAmount,
+            "priority": priority,
+            "isActive": isActive,
+            "createdAt": ISO8601DateFormatter().string(from: createdAt)
+        ]
+    }
+
     // MARK: - Scenario
 
     /// Create a Scenario for testing
@@ -279,6 +385,31 @@ enum TestFixtures {
             isActive: true,
             decisionStatus: .decided
         )
+    }
+
+    // MARK: - Scenario Data (Dictionary Format)
+
+    /// Create a dictionary representation of a Scenario for stubbing Firestore
+    static func makeScenarioData(
+        id: String = "test-scenario-id",
+        name: String = "Balanced Plan",
+        allocations: [String: Double] = ["house-goal": 1000, "retirement-goal": 500],
+        isActive: Bool = false,
+        decisionStatus: String = "draft",
+        createdBy: String = "test-user-id",
+        createdAt: Date = testDate,
+        lastModified: Date = testDate
+    ) -> [String: Any] {
+        [
+            "id": id,
+            "name": name,
+            "allocations": allocations,
+            "isActive": isActive,
+            "decisionStatus": decisionStatus,
+            "createdBy": createdBy,
+            "createdAt": ISO8601DateFormatter().string(from: createdAt),
+            "lastModified": ISO8601DateFormatter().string(from: lastModified)
+        ]
     }
 
     // MARK: - Invite Code

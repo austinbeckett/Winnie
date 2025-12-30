@@ -2,11 +2,41 @@ import Foundation
 import FirebaseFirestore
 
 /// Repository for invite code operations in Firestore
+///
 /// Collection: /inviteCodes/{code}
+///
+/// This repository uses the `FirestoreProviding` protocol for database access,
+/// enabling dependency injection for testing.
+///
+/// ## Production Usage
+/// ```swift
+/// let repository = InviteCodeRepository()  // Uses real Firestore
+/// ```
+///
+/// ## Test Usage
+/// ```swift
+/// let mock = MockFirestoreService()
+/// let repository = InviteCodeRepository(db: mock)
+/// ```
 final class InviteCodeRepository {
 
-    private let db = Firestore.firestore()
+    // MARK: - Dependencies
+
+    private let db: FirestoreProviding
     private let collectionPath = "inviteCodes"
+
+    // MARK: - Initialization
+
+    /// Create a repository with the default Firestore service (production)
+    init() {
+        self.db = FirestoreService.shared
+    }
+
+    /// Create a repository with an injected database (for testing)
+    /// - Parameter db: Any implementation of FirestoreProviding
+    init(db: FirestoreProviding) {
+        self.db = db
+    }
 
     // MARK: - Create
 

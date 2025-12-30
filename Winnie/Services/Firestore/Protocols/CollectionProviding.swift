@@ -38,6 +38,13 @@ protocol CollectionProviding {
     /// - Returns: A query that can be further refined or executed
     func whereField(_ field: String, isEqualTo value: Any) -> QueryProviding
 
+    /// Filter documents where a field is less than a value
+    /// - Parameters:
+    ///   - field: The field name to filter on
+    ///   - value: The value to compare against
+    /// - Returns: A query that can be further refined or executed
+    func whereField(_ field: String, isLessThan value: Any) -> QueryProviding
+
     /// Order results by a field
     /// - Parameters:
     ///   - field: The field to sort by

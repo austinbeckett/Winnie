@@ -34,6 +34,13 @@ protocol QueryProviding {
     /// - Returns: A new query with the filter applied
     func whereField(_ field: String, isEqualTo value: Any) -> QueryProviding
 
+    /// Filter documents where a field is less than a value
+    /// - Parameters:
+    ///   - field: The field name to filter on
+    ///   - value: The value to compare against
+    /// - Returns: A new query with the filter applied
+    func whereField(_ field: String, isLessThan value: Any) -> QueryProviding
+
     // MARK: - Ordering
 
     /// Order results by a field

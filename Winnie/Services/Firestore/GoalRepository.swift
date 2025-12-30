@@ -2,13 +2,45 @@ import Foundation
 import FirebaseFirestore
 
 /// Repository for Goal subcollection operations in Firestore
+///
 /// Collection: /couples/{coupleId}/goals/{goalId}
+///
+/// This repository uses the `FirestoreProviding` protocol for database access,
+/// enabling dependency injection for testing.
+///
+/// ## Production Usage
+/// ```swift
+/// let repository = GoalRepository()  // Uses real Firestore
+/// ```
+///
+/// ## Test Usage
+/// ```swift
+/// let mock = MockFirestoreService()
+/// let repository = GoalRepository(db: mock)
+/// ```
 final class GoalRepository {
 
-    private let db = Firestore.firestore()
+    // MARK: - Dependencies
+
+    private let db: FirestoreProviding
+
+    // MARK: - Initialization
+
+    /// Create a repository with the default Firestore service (production)
+    init() {
+        self.db = FirestoreService.shared
+    }
+
+    /// Create a repository with an injected database (for testing)
+    /// - Parameter db: Any implementation of FirestoreProviding
+    init(db: FirestoreProviding) {
+        self.db = db
+    }
+
+    // MARK: - Helpers
 
     /// Get reference to goals subcollection for a couple
-    private func goalsCollection(coupleID: String) -> CollectionReference {
+    private func goalsCollection(coupleID: String) -> CollectionProviding {
         db.collection("couples").document(coupleID).collection("goals")
     }
 
@@ -187,9 +219,9 @@ final class GoalRepository {
     func listenToGoals(
         coupleID: String,
         onChange: @escaping ([Goal]) -> Void
-    ) -> ListenerRegistration {
+    ) -> ListenerRegistrationProviding {
         return goalsCollection(coupleID: coupleID)
-            .order(by: "priority")
+            .order(by: "priority", descending: false)
             .addSnapshotListener { snapshot, error in
                 guard let snapshot else {
                     onChange([])
@@ -209,10 +241,10 @@ final class GoalRepository {
     func listenToActiveGoals(
         coupleID: String,
         onChange: @escaping ([Goal]) -> Void
-    ) -> ListenerRegistration {
+    ) -> ListenerRegistrationProviding {
         return goalsCollection(coupleID: coupleID)
             .whereField("isActive", isEqualTo: true)
-            .order(by: "priority")
+            .order(by: "priority", descending: false)
             .addSnapshotListener { snapshot, error in
                 guard let snapshot else {
                     onChange([])
@@ -233,7 +265,7 @@ final class GoalRepository {
         id: String,
         coupleID: String,
         onChange: @escaping (Goal?) -> Void
-    ) -> ListenerRegistration {
+    ) -> ListenerRegistrationProviding {
         return goalsCollection(coupleID: coupleID)
             .document(id)
             .addSnapshotListener { snapshot, error in

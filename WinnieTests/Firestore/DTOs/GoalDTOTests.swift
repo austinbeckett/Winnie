@@ -12,7 +12,7 @@ final class GoalDTOTests: XCTestCase {
 
     // MARK: - Initialization from Domain Model Tests
 
-    func testInitFromGoalCopiesAllFields() {
+    func test_initFromGoal_copiesAllFields() {
         let goal = Goal(
             id: "goal123",
             type: .house,
@@ -38,7 +38,7 @@ final class GoalDTOTests: XCTestCase {
         XCTAssertEqual(dto.desiredDate, goal.desiredDate)
     }
 
-    func testInitFromGoalConvertsDecimalToDouble() {
+    func test_initFromGoal_convertsDecimalToDouble() {
         let goal = Goal(
             type: .house,
             name: "Test",
@@ -52,7 +52,7 @@ final class GoalDTOTests: XCTestCase {
         XCTAssertEqual(dto.currentAmount, 50000.50, accuracy: 0.01)
     }
 
-    func testInitFromGoalConvertsEnumToRawValue() {
+    func test_initFromGoal_convertsEnumToRawValue() {
         for goalType in GoalType.allCases {
             let goal = Goal(type: goalType, name: "Test", targetAmount: 1000)
             let dto = GoalDTO(from: goal)
@@ -61,7 +61,7 @@ final class GoalDTOTests: XCTestCase {
         }
     }
 
-    func testInitFromGoalSetsLastSyncedAt() {
+    func test_initFromGoal_setsLastSyncedAt() {
         let goal = Goal(type: .house, name: "Test", targetAmount: 1000)
         let beforeInit = Date()
 
@@ -71,7 +71,7 @@ final class GoalDTOTests: XCTestCase {
         XCTAssertGreaterThanOrEqual(dto.lastSyncedAt ?? Date.distantPast, beforeInit)
     }
 
-    func testInitFromGoalWithNilOptionals() {
+    func test_initFromGoal_handlesNilOptionals() {
         let goal = Goal(
             type: .house,
             name: "Basic Goal",
@@ -90,7 +90,7 @@ final class GoalDTOTests: XCTestCase {
 
     // MARK: - Decimal Precision Tests
 
-    func testDecimalPrecisionRoundTrip() {
+    func test_decimalPrecision_roundTrip() {
         let preciseAmounts: [Decimal] = [
             Decimal(string: "1234.56")!,
             Decimal(string: "99999.99")!,
@@ -116,7 +116,7 @@ final class GoalDTOTests: XCTestCase {
         }
     }
 
-    func testLargeAmountPrecision() {
+    func test_largeAmount_maintainsPrecision() {
         // Test with amounts typical for retirement goals
         let largeAmount = Decimal(string: "1500000.00")!
         let goal = Goal(type: .retirement, name: "Retirement", targetAmount: largeAmount)
@@ -125,7 +125,7 @@ final class GoalDTOTests: XCTestCase {
         XCTAssertEqual(dto.targetAmount, 1500000.00, accuracy: 1.0)
     }
 
-    func testSmallAmountPrecision() {
+    func test_smallAmount_maintainsPrecision() {
         // Test with cents precision
         let smallAmount = Decimal(string: "0.01")!
         let goal = Goal(type: .vacation, name: "Test", targetAmount: smallAmount)
@@ -134,7 +134,7 @@ final class GoalDTOTests: XCTestCase {
         XCTAssertEqual(dto.targetAmount, 0.01, accuracy: 0.001)
     }
 
-    func testCustomReturnRatePrecision() {
+    func test_customReturnRate_maintainsPrecision() {
         let rate = Decimal(string: "0.0725")! // 7.25%
         let goal = Goal(
             type: .custom,
@@ -154,7 +154,7 @@ final class GoalDTOTests: XCTestCase {
 
     // MARK: - Conversion to Domain Model Tests
 
-    func testToGoalConvertsAllFields() {
+    func test_toGoal_convertsAllFields() {
         let goal = Goal(
             id: "goal123",
             type: .house,
@@ -174,7 +174,7 @@ final class GoalDTOTests: XCTestCase {
         XCTAssertEqual(converted.isActive, goal.isActive)
     }
 
-    func testToGoalReturnsNilForInvalidType() {
+    func test_toGoal_returnsNilForInvalidType() {
         // Create a DTO with an invalid type string
         let goal = Goal(type: .house, name: "Test", targetAmount: 1000)
         var dto = GoalDTO(from: goal)
@@ -188,7 +188,7 @@ final class GoalDTOTests: XCTestCase {
         XCTAssertNotNil(converted, "Valid type should convert successfully")
     }
 
-    func testToGoalConvertsAllGoalTypes() {
+    func test_toGoal_convertsAllGoalTypes() {
         for goalType in GoalType.allCases {
             let goal = Goal(type: goalType, name: "Test", targetAmount: 1000)
             let dto = GoalDTO(from: goal)
@@ -201,7 +201,7 @@ final class GoalDTOTests: XCTestCase {
 
     // MARK: - Dictionary Serialization Tests
 
-    func testDictionaryContainsRequiredFields() {
+    func test_dictionary_containsRequiredFields() {
         let goal = Goal(type: .house, name: "Test", targetAmount: 1000)
         let dto = GoalDTO(from: goal)
         let dict = dto.dictionary
@@ -216,7 +216,7 @@ final class GoalDTOTests: XCTestCase {
         XCTAssertNotNil(dict["isActive"])
     }
 
-    func testDictionaryExcludesNilOptionals() {
+    func test_dictionary_excludesNilOptionals() {
         let goal = Goal(
             type: .house,
             name: "Test",
@@ -233,7 +233,7 @@ final class GoalDTOTests: XCTestCase {
         XCTAssertNil(dict["notes"], "nil notes should not appear")
     }
 
-    func testDictionaryIncludesOptionalFieldsWhenPresent() {
+    func test_dictionary_includesOptionalFieldsWhenPresent() {
         let goal = Goal(
             type: .house,
             name: "Test",
@@ -250,7 +250,7 @@ final class GoalDTOTests: XCTestCase {
         XCTAssertEqual(dict["notes"] as? String, "Important note")
     }
 
-    func testDictionaryUsesFirestoreTimestamps() {
+    func test_dictionary_usesFirestoreTimestamps() {
         let goal = Goal(type: .house, name: "Test", targetAmount: 1000)
         let dto = GoalDTO(from: goal)
         let dict = dto.dictionary
@@ -258,7 +258,7 @@ final class GoalDTOTests: XCTestCase {
         XCTAssertTrue(dict["createdAt"] is Timestamp, "createdAt should be Firestore Timestamp")
     }
 
-    func testDictionaryStoresTypeAsString() {
+    func test_dictionary_storesTypeAsString() {
         let goal = Goal(type: .retirement, name: "Test", targetAmount: 1000)
         let dto = GoalDTO(from: goal)
         let dict = dto.dictionary
@@ -269,7 +269,7 @@ final class GoalDTOTests: XCTestCase {
     // MARK: - Codable Conformance Tests
 
     @MainActor
-    func testCodableRoundTrip() throws {
+    func test_codable_roundTrip() throws {
         let goal = Goal(
             type: .vacation,
             name: "Hawaii Trip",
@@ -292,7 +292,7 @@ final class GoalDTOTests: XCTestCase {
 
     // MARK: - Edge Cases
 
-    func testZeroAmounts() {
+    func test_zeroAmounts_handled() {
         let goal = Goal(
             type: .emergencyFund,
             name: "New Fund",
@@ -305,7 +305,7 @@ final class GoalDTOTests: XCTestCase {
         XCTAssertEqual(dto.toGoal()?.currentAmount, 0)
     }
 
-    func testNegativePriority() {
+    func test_negativePriority_allowed() {
         // Priority can theoretically be negative (for special ordering)
         let goal = Goal(
             type: .house,

@@ -12,7 +12,7 @@ final class UserDTOTests: XCTestCase {
 
     // MARK: - Initialization from Domain Model Tests
 
-    func testInitFromUserCopiesAllFields() {
+    func test_initFromUser_copiesAllFields() {
         let user = User(
             id: "user123",
             displayName: "John Doe",
@@ -36,7 +36,7 @@ final class UserDTOTests: XCTestCase {
         XCTAssertEqual(dto.hasCompletedOnboarding, user.hasCompletedOnboarding)
     }
 
-    func testInitFromUserSetsLastSyncedAt() {
+    func test_initFromUser_setsLastSyncedAt() {
         let user = User(id: "user123")
         let beforeInit = Date()
 
@@ -46,7 +46,7 @@ final class UserDTOTests: XCTestCase {
         XCTAssertGreaterThanOrEqual(dto.lastSyncedAt ?? Date.distantPast, beforeInit)
     }
 
-    func testInitFromUserWithNilOptionals() {
+    func test_initFromUser_handlesNilOptionals() {
         let user = User(
             id: "user123",
             displayName: nil,
@@ -68,7 +68,7 @@ final class UserDTOTests: XCTestCase {
 
     // MARK: - Sign-up Initialization Tests
 
-    func testInitForSignUpWithAllFields() {
+    func test_initForSignUp_setsAllFields() {
         let dto = UserDTO(
             id: "user123",
             displayName: "Jane Doe",
@@ -83,7 +83,7 @@ final class UserDTOTests: XCTestCase {
         XCTAssertFalse(dto.hasCompletedOnboarding, "New users have not completed onboarding")
     }
 
-    func testInitForSignUpSetsTimestamps() {
+    func test_initForSignUp_setsTimestamps() {
         let beforeInit = Date()
 
         let dto = UserDTO(id: "user123", displayName: nil, email: nil)
@@ -93,7 +93,7 @@ final class UserDTOTests: XCTestCase {
         XCTAssertNotNil(dto.lastSyncedAt)
     }
 
-    func testInitForSignUpWithMinimalData() {
+    func test_initForSignUp_worksWithMinimalData() {
         let dto = UserDTO(id: "user123")
 
         XCTAssertEqual(dto.id, "user123")
@@ -103,7 +103,7 @@ final class UserDTOTests: XCTestCase {
 
     // MARK: - Conversion to Domain Model Tests
 
-    func testToUserConvertsAllFields() {
+    func test_toUser_convertsAllFields() {
         let dto = UserDTO(
             id: "user123",
             displayName: "John Doe",
@@ -119,7 +119,7 @@ final class UserDTOTests: XCTestCase {
         XCTAssertEqual(user.hasCompletedOnboarding, dto.hasCompletedOnboarding)
     }
 
-    func testToUserRoundTrip() {
+    func test_toUser_roundTrip() {
         let originalUser = User(
             id: "user123",
             displayName: "John Doe",
@@ -144,7 +144,7 @@ final class UserDTOTests: XCTestCase {
 
     // MARK: - Dictionary Serialization Tests
 
-    func testDictionaryContainsRequiredFields() {
+    func test_dictionary_containsRequiredFields() {
         let dto = UserDTO(id: "user123")
         let dict = dto.dictionary
 
@@ -153,7 +153,7 @@ final class UserDTOTests: XCTestCase {
         XCTAssertNotNil(dict["hasCompletedOnboarding"])
     }
 
-    func testDictionaryExcludesNilOptionals() {
+    func test_dictionary_excludesNilOptionals() {
         let dto = UserDTO(id: "user123", displayName: nil, email: nil)
         let dict = dto.dictionary
 
@@ -163,7 +163,7 @@ final class UserDTOTests: XCTestCase {
         XCTAssertNil(dict["coupleID"], "nil coupleID should not appear in dictionary")
     }
 
-    func testDictionaryIncludesNonNilOptionals() {
+    func test_dictionary_includesNonNilOptionals() {
         let user = User(
             id: "user123",
             displayName: "John Doe",
@@ -182,14 +182,14 @@ final class UserDTOTests: XCTestCase {
         XCTAssertNotNil(dict["lastLoginAt"])
     }
 
-    func testDictionaryUsesFirestoreTimestamps() {
+    func test_dictionary_usesFirestoreTimestamps() {
         let dto = UserDTO(id: "user123")
         let dict = dto.dictionary
 
         XCTAssertTrue(dict["createdAt"] is Timestamp, "createdAt should be Firestore Timestamp")
     }
 
-    func testDictionaryBooleanValueCorrect() {
+    func test_dictionary_hasBooleanValueCorrect() {
         let dto = UserDTO(id: "user123")
         let dict = dto.dictionary
 
@@ -199,7 +199,7 @@ final class UserDTOTests: XCTestCase {
     // MARK: - Codable Conformance Tests
 
     @MainActor
-    func testCodableRoundTrip() throws {
+    func test_codable_roundTrip() throws {
         let originalDTO = UserDTO(
             id: "user123",
             displayName: "John Doe",
@@ -220,7 +220,7 @@ final class UserDTOTests: XCTestCase {
 
     // MARK: - Security Tests
 
-    func testSensitiveDataHandled() {
+    func test_sensitiveData_handledCorrectly() {
         // Ensure email is properly stored (not hashed, but also not exposed inappropriately)
         let dto = UserDTO(id: "user123", email: "test@example.com")
         let dict = dto.dictionary
@@ -229,7 +229,7 @@ final class UserDTOTests: XCTestCase {
         XCTAssertEqual(dict["email"] as? String, "test@example.com")
     }
 
-    func testIdIsImmutable() {
+    func test_id_isImmutable() {
         let dto = UserDTO(id: "user123")
 
         // The 'id' property is declared as 'let', so this is a compile-time check

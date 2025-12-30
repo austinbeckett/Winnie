@@ -2,13 +2,45 @@ import Foundation
 import FirebaseFirestore
 
 /// Repository for Scenario subcollection operations in Firestore
+///
 /// Collection: /couples/{coupleId}/scenarios/{scenarioId}
+///
+/// This repository uses the `FirestoreProviding` protocol for database access,
+/// enabling dependency injection for testing.
+///
+/// ## Production Usage
+/// ```swift
+/// let repository = ScenarioRepository()  // Uses real Firestore
+/// ```
+///
+/// ## Test Usage
+/// ```swift
+/// let mock = MockFirestoreService()
+/// let repository = ScenarioRepository(db: mock)
+/// ```
 final class ScenarioRepository {
 
-    private let db = Firestore.firestore()
+    // MARK: - Dependencies
+
+    private let db: FirestoreProviding
+
+    // MARK: - Initialization
+
+    /// Create a repository with the default Firestore service (production)
+    init() {
+        self.db = FirestoreService.shared
+    }
+
+    /// Create a repository with an injected database (for testing)
+    /// - Parameter db: Any implementation of FirestoreProviding
+    init(db: FirestoreProviding) {
+        self.db = db
+    }
+
+    // MARK: - Helpers
 
     /// Get reference to scenarios subcollection for a couple
-    private func scenariosCollection(coupleID: String) -> CollectionReference {
+    private func scenariosCollection(coupleID: String) -> CollectionProviding {
         db.collection("couples").document(coupleID).collection("scenarios")
     }
 
@@ -221,7 +253,7 @@ final class ScenarioRepository {
     func listenToScenarios(
         coupleID: String,
         onChange: @escaping ([Scenario]) -> Void
-    ) -> ListenerRegistration {
+    ) -> ListenerRegistrationProviding {
         return scenariosCollection(coupleID: coupleID)
             .order(by: "lastModified", descending: true)
             .addSnapshotListener { snapshot, error in
@@ -243,7 +275,7 @@ final class ScenarioRepository {
     func listenToActiveScenario(
         coupleID: String,
         onChange: @escaping (Scenario?) -> Void
-    ) -> ListenerRegistration {
+    ) -> ListenerRegistrationProviding {
         return scenariosCollection(coupleID: coupleID)
             .whereField("isActive", isEqualTo: true)
             .limit(to: 1)
@@ -267,7 +299,7 @@ final class ScenarioRepository {
         id: String,
         coupleID: String,
         onChange: @escaping (Scenario?) -> Void
-    ) -> ListenerRegistration {
+    ) -> ListenerRegistrationProviding {
         return scenariosCollection(coupleID: coupleID)
             .document(id)
             .addSnapshotListener { snapshot, error in

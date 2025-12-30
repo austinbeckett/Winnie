@@ -21,6 +21,10 @@ protocol DocumentSnapshotProviding {
     /// The document's unique identifier
     var documentID: String { get }
 
+    /// Reference to the document this snapshot came from
+    /// Used for batch operations where you need to update/delete documents from a query result
+    var reference: DocumentProviding { get }
+
     /// Get the raw data as a dictionary (returns nil if document doesn't exist)
     func data() -> [String: Any]?
 

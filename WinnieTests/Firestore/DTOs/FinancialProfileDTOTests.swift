@@ -12,7 +12,7 @@ final class FinancialProfileDTOTests: XCTestCase {
 
     // MARK: - Initialization from Domain Model Tests
 
-    func testInitFromProfileCopiesAllFields() {
+    func test_initFromProfile_copiesAllFields() {
         let profile = FinancialProfile(
             monthlyIncome: Decimal(10000),
             monthlyExpenses: Decimal(6000),
@@ -30,7 +30,7 @@ final class FinancialProfileDTOTests: XCTestCase {
         XCTAssertEqual(dto.lastUpdated, testDate)
     }
 
-    func testInitFromProfileConvertsDecimalToDouble() {
+    func test_initFromProfile_convertsDecimalToDouble() {
         let profile = FinancialProfile(
             monthlyIncome: Decimal(string: "8765.43")!,
             monthlyExpenses: Decimal(string: "5432.10")!,
@@ -44,7 +44,7 @@ final class FinancialProfileDTOTests: XCTestCase {
         XCTAssertEqual(dto.currentSavings, 12345.67, accuracy: 0.01)
     }
 
-    func testInitFromProfileWithNilRetirementBalance() {
+    func test_initFromProfile_handlesNilRetirementBalance() {
         let profile = FinancialProfile(
             monthlyIncome: 5000,
             retirementBalance: nil
@@ -57,7 +57,7 @@ final class FinancialProfileDTOTests: XCTestCase {
 
     // MARK: - Empty Profile Initialization Tests
 
-    func testEmptyInitializerCreatesZeroValues() {
+    func test_emptyInitializer_createsZeroValues() {
         let dto = FinancialProfileDTO()
 
         XCTAssertEqual(dto.monthlyIncome, 0)
@@ -66,7 +66,7 @@ final class FinancialProfileDTOTests: XCTestCase {
         XCTAssertNil(dto.retirementBalance)
     }
 
-    func testEmptyInitializerSetsLastUpdated() {
+    func test_emptyInitializer_setsLastUpdated() {
         let beforeInit = Date()
 
         let dto = FinancialProfileDTO()
@@ -76,7 +76,7 @@ final class FinancialProfileDTOTests: XCTestCase {
 
     // MARK: - Decimal Precision Tests
 
-    func testDecimalPrecisionRoundTrip() {
+    func test_decimalPrecision_roundTrip() {
         let preciseAmounts: [(Decimal, String)] = [
             (Decimal(string: "10000.50")!, "income with cents"),
             (Decimal(string: "6543.21")!, "expenses with cents"),
@@ -101,7 +101,7 @@ final class FinancialProfileDTOTests: XCTestCase {
         }
     }
 
-    func testRetirementBalancePrecision() {
+    func test_retirementBalance_maintainsPrecision() {
         // Test with typical retirement account balances
         let largeBalance = Decimal(string: "1500000.00")!
         let profile = FinancialProfile(retirementBalance: largeBalance)
@@ -112,7 +112,7 @@ final class FinancialProfileDTOTests: XCTestCase {
 
     // MARK: - Conversion to Domain Model Tests
 
-    func testToFinancialProfileConvertsAllFields() {
+    func test_toFinancialProfile_convertsAllFields() {
         let profile = FinancialProfile(
             monthlyIncome: 10000,
             monthlyExpenses: 6000,
@@ -142,7 +142,7 @@ final class FinancialProfileDTOTests: XCTestCase {
         )
     }
 
-    func testToFinancialProfileRoundTrip() {
+    func test_toFinancialProfile_roundTrip() {
         let original = FinancialProfile(
             monthlyIncome: Decimal(string: "12500.75")!,
             monthlyExpenses: Decimal(string: "7500.50")!,
@@ -163,7 +163,7 @@ final class FinancialProfileDTOTests: XCTestCase {
         XCTAssertEqual(converted.lastUpdated, original.lastUpdated)
     }
 
-    func testToFinancialProfileHandlesNilRetirement() {
+    func test_toFinancialProfile_handlesNilRetirement() {
         let dto = FinancialProfileDTO()
         let converted = dto.toFinancialProfile()
 
@@ -172,7 +172,7 @@ final class FinancialProfileDTOTests: XCTestCase {
 
     // MARK: - Dictionary Serialization Tests
 
-    func testDictionaryContainsRequiredFields() {
+    func test_dictionary_containsRequiredFields() {
         let dto = FinancialProfileDTO()
         let dict = dto.dictionary
 
@@ -182,7 +182,7 @@ final class FinancialProfileDTOTests: XCTestCase {
         XCTAssertNotNil(dict["lastUpdated"])
     }
 
-    func testDictionaryExcludesNilRetirementBalance() {
+    func test_dictionary_excludesNilRetirementBalance() {
         let profile = FinancialProfile(retirementBalance: nil)
         let dto = FinancialProfileDTO(from: profile)
         let dict = dto.dictionary
@@ -190,7 +190,7 @@ final class FinancialProfileDTOTests: XCTestCase {
         XCTAssertNil(dict["retirementBalance"], "nil retirementBalance should not appear")
     }
 
-    func testDictionaryIncludesRetirementBalanceWhenPresent() {
+    func test_dictionary_includesRetirementBalanceWhenPresent() {
         let profile = FinancialProfile(retirementBalance: 100000)
         let dto = FinancialProfileDTO(from: profile)
         let dict = dto.dictionary
@@ -198,14 +198,14 @@ final class FinancialProfileDTOTests: XCTestCase {
         XCTAssertEqual(dict["retirementBalance"] as? Double ?? 0, 100000, accuracy: 0.01)
     }
 
-    func testDictionaryUsesFirestoreTimestamps() {
+    func test_dictionary_usesFirestoreTimestamps() {
         let dto = FinancialProfileDTO()
         let dict = dto.dictionary
 
         XCTAssertTrue(dict["lastUpdated"] is Timestamp, "lastUpdated should be Firestore Timestamp")
     }
 
-    func testDictionaryStoresDoubleValues() {
+    func test_dictionary_storesDoubleValues() {
         let profile = FinancialProfile(
             monthlyIncome: 10000,
             monthlyExpenses: 6000,
@@ -223,7 +223,7 @@ final class FinancialProfileDTOTests: XCTestCase {
     // MARK: - Codable Conformance Tests
 
     @MainActor
-    func testCodableRoundTrip() throws {
+    func test_codable_roundTrip() throws {
         let profile = FinancialProfile(
             monthlyIncome: 10000,
             monthlyExpenses: 6000,
@@ -244,7 +244,7 @@ final class FinancialProfileDTOTests: XCTestCase {
 
     // MARK: - Edge Cases
 
-    func testZeroValues() {
+    func test_zeroValues_handled() {
         let profile = FinancialProfile(
             monthlyIncome: 0,
             monthlyExpenses: 0,
@@ -257,7 +257,7 @@ final class FinancialProfileDTOTests: XCTestCase {
         XCTAssertEqual(dto.currentSavings, 0)
     }
 
-    func testVeryLargeValues() {
+    func test_veryLargeValues_handled() {
         // Test with values exceeding typical use cases
         let profile = FinancialProfile(
             monthlyIncome: Decimal(string: "9999999.99")!,
@@ -269,7 +269,7 @@ final class FinancialProfileDTOTests: XCTestCase {
         XCTAssertEqual(dto.retirementBalance ?? 0, 50000000.00, accuracy: 1.0)
     }
 
-    func testFinancialCalculationsAfterConversion() {
+    func test_financialCalculations_workAfterConversion() {
         // Ensure converted profile can still perform calculations correctly
         let original = FinancialProfile(
             monthlyIncome: 10000,

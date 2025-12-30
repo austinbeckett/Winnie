@@ -96,6 +96,10 @@ final class FirestoreCollectionWrapper: CollectionProviding {
         FirestoreQueryWrapper(query: reference.whereField(field, isEqualTo: value))
     }
 
+    func whereField(_ field: String, isLessThan value: Any) -> QueryProviding {
+        FirestoreQueryWrapper(query: reference.whereField(field, isLessThan: value))
+    }
+
     func order(by field: String, descending: Bool) -> QueryProviding {
         FirestoreQueryWrapper(query: reference.order(by: field, descending: descending))
     }
@@ -179,6 +183,10 @@ final class FirestoreQueryWrapper: QueryProviding {
 
     func whereField(_ field: String, isEqualTo value: Any) -> QueryProviding {
         FirestoreQueryWrapper(query: query.whereField(field, isEqualTo: value))
+    }
+
+    func whereField(_ field: String, isLessThan value: Any) -> QueryProviding {
+        FirestoreQueryWrapper(query: query.whereField(field, isLessThan: value))
     }
 
     func order(by field: String, descending: Bool) -> QueryProviding {
@@ -314,6 +322,10 @@ final class FirestoreDocumentSnapshotWrapper: DocumentSnapshotProviding {
 
     var documentID: String {
         snapshot.documentID
+    }
+
+    var reference: DocumentProviding {
+        FirestoreDocumentWrapper(reference: snapshot.reference)
     }
 
     func data() -> [String: Any]? {

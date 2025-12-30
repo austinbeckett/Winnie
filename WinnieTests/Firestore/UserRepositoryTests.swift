@@ -17,6 +17,7 @@ import XCTest
 /// - `XCTAssertEqual` for value comparisons
 /// - `XCTAssertTrue/False` for boolean checks
 /// - `do/catch` for testing error cases
+@MainActor
 final class UserRepositoryTests: XCTestCase {
 
     // MARK: - Properties
@@ -107,7 +108,7 @@ final class UserRepositoryTests: XCTestCase {
         // Arrange - stub the mock with user data
         mockFirestore.stubDocument(
             path: "users/user-123",
-            data: makeUserDictionary(id: "user-123", email: "test@example.com")
+            data: TestFixtures.makeUserData(id: "user-123", email: "test@example.com")
         )
 
         // Act
@@ -136,7 +137,7 @@ final class UserRepositoryTests: XCTestCase {
         // Arrange
         mockFirestore.stubDocument(
             path: "users/user-123",
-            data: makeUserDictionary(id: "user-123")
+            data: TestFixtures.makeUserData(id: "user-123")
         )
 
         // Act
@@ -152,7 +153,7 @@ final class UserRepositoryTests: XCTestCase {
         // Arrange
         mockFirestore.stubDocument(
             path: "users/user-123",
-            data: makeUserDictionary(id: "user-123")
+            data: TestFixtures.makeUserData(id: "user-123")
         )
 
         // Act
@@ -178,7 +179,7 @@ final class UserRepositoryTests: XCTestCase {
         // Arrange - create existing user
         mockFirestore.stubDocument(
             path: "users/user-123",
-            data: makeUserDictionary(id: "user-123")
+            data: TestFixtures.makeUserData(id: "user-123")
         )
 
         // Act
@@ -195,7 +196,7 @@ final class UserRepositoryTests: XCTestCase {
         // Arrange
         mockFirestore.stubDocument(
             path: "users/user-123",
-            data: makeUserDictionary(id: "user-123")
+            data: TestFixtures.makeUserData(id: "user-123")
         )
 
         // Act
@@ -210,7 +211,7 @@ final class UserRepositoryTests: XCTestCase {
         // Arrange
         mockFirestore.stubDocument(
             path: "users/user-123",
-            data: makeUserDictionary(id: "user-123", hasCompletedOnboarding: false)
+            data: TestFixtures.makeUserData(id: "user-123", hasCompletedOnboarding: false)
         )
 
         // Act
@@ -225,7 +226,7 @@ final class UserRepositoryTests: XCTestCase {
         // Arrange
         mockFirestore.stubDocument(
             path: "users/user-123",
-            data: makeUserDictionary(id: "user-123")
+            data: TestFixtures.makeUserData(id: "user-123")
         )
 
         // Act
@@ -245,7 +246,7 @@ final class UserRepositoryTests: XCTestCase {
         // Arrange
         mockFirestore.stubDocument(
             path: "users/user-123",
-            data: makeUserDictionary(id: "user-123")
+            data: TestFixtures.makeUserData(id: "user-123")
         )
 
         // Act
@@ -280,7 +281,7 @@ final class UserRepositoryTests: XCTestCase {
         // Arrange
         mockFirestore.stubDocument(
             path: "users/user-123",
-            data: makeUserDictionary(id: "user-123")
+            data: TestFixtures.makeUserData(id: "user-123")
         )
 
         // Act
@@ -294,7 +295,7 @@ final class UserRepositoryTests: XCTestCase {
         // Arrange
         mockFirestore.stubDocument(
             path: "users/user-123",
-            data: makeUserDictionary(id: "user-123")
+            data: TestFixtures.makeUserData(id: "user-123")
         )
 
         // Act
@@ -314,6 +315,81 @@ final class UserRepositoryTests: XCTestCase {
         XCTAssertNotNil(registration)
     }
 
+    func test_listenToUser_callbackFiresWithInitialData() {
+        // Arrange
+        mockFirestore.stubDocument(
+            path: "users/user-123",
+            data: TestFixtures.makeUserData(id: "user-123", displayName: "Test User")
+        )
+        let expectation = XCTestExpectation(description: "Callback should fire")
+        var receivedUser: User?
+
+        // Act
+        _ = repository.listenToUser(id: "user-123") { user in
+            receivedUser = user
+            expectation.fulfill()
+        }
+
+        // Assert
+        wait(for: [expectation], timeout: 1.0)
+        XCTAssertNotNil(receivedUser)
+        XCTAssertEqual(receivedUser?.id, "user-123")
+        XCTAssertEqual(receivedUser?.displayName, "Test User")
+    }
+
+    func test_listenToUser_callbackFiresWithNilForMissingDocument() {
+        // Arrange - don't stub any data
+        let expectation = XCTestExpectation(description: "Callback should fire")
+        var receivedUser: User? = TestFixtures.makeUser() // Start with non-nil
+
+        // Act
+        _ = repository.listenToUser(id: "nonexistent") { user in
+            receivedUser = user
+            expectation.fulfill()
+        }
+
+        // Assert
+        wait(for: [expectation], timeout: 1.0)
+        XCTAssertNil(receivedUser)
+    }
+
+    func test_listenToUser_simulateDocumentChangeTriggers_callback() {
+        // Arrange
+        mockFirestore.stubDocument(
+            path: "users/user-123",
+            data: TestFixtures.makeUserData(id: "user-123", displayName: "Original Name")
+        )
+        var callbackCount = 0
+        var latestUser: User?
+
+        let initialExpectation = XCTestExpectation(description: "Initial callback")
+
+        // Act - start listening
+        _ = repository.listenToUser(id: "user-123") { user in
+            callbackCount += 1
+            latestUser = user
+            if callbackCount == 1 {
+                initialExpectation.fulfill()
+            }
+        }
+
+        // Wait for initial callback
+        wait(for: [initialExpectation], timeout: 1.0)
+
+        // Assert initial state
+        XCTAssertEqual(latestUser?.displayName, "Original Name")
+
+        // Act - simulate document change
+        mockFirestore.simulateDocumentChange(
+            path: "users/user-123",
+            data: TestFixtures.makeUserData(id: "user-123", displayName: "Updated Name")
+        )
+
+        // Assert - callback was triggered with new data
+        XCTAssertEqual(callbackCount, 2)
+        XCTAssertEqual(latestUser?.displayName, "Updated Name")
+    }
+
     func test_listenToUser_registrationCanBeRemoved() {
         // Arrange
         let registration = repository.listenToUser(id: "user-123") { _ in }
@@ -325,6 +401,40 @@ final class UserRepositoryTests: XCTestCase {
         if let mockReg = registration as? MockListenerRegistration {
             XCTAssertTrue(mockReg.wasRemoved)
         }
+    }
+
+    func test_listenToUser_removedListenerDoesNotReceiveUpdates() {
+        // Arrange
+        mockFirestore.stubDocument(
+            path: "users/user-123",
+            data: TestFixtures.makeUserData(id: "user-123", displayName: "Original")
+        )
+        var callbackCount = 0
+        let initialExpectation = XCTestExpectation(description: "Initial callback")
+
+        // Act - start listening
+        let registration = repository.listenToUser(id: "user-123") { _ in
+            callbackCount += 1
+            if callbackCount == 1 {
+                initialExpectation.fulfill()
+            }
+        }
+
+        // Wait for initial callback
+        wait(for: [initialExpectation], timeout: 1.0)
+        XCTAssertEqual(callbackCount, 1)
+
+        // Act - remove listener
+        registration.remove()
+
+        // Act - simulate change (should NOT trigger callback)
+        mockFirestore.simulateDocumentChange(
+            path: "users/user-123",
+            data: TestFixtures.makeUserData(id: "user-123", displayName: "Updated")
+        )
+
+        // Assert - callback count should still be 1
+        XCTAssertEqual(callbackCount, 1, "Removed listener should not receive updates")
     }
 
     // MARK: - Error Handling Tests
@@ -343,22 +453,4 @@ final class UserRepositoryTests: XCTestCase {
         }
     }
 
-    // MARK: - Helpers
-
-    /// Create a dictionary that can be decoded as UserDTO
-    private func makeUserDictionary(
-        id: String = "test-user",
-        displayName: String? = "Test User",
-        email: String? = "test@example.com",
-        hasCompletedOnboarding: Bool = false
-    ) -> [String: Any] {
-        var dict: [String: Any] = [
-            "id": id,
-            "createdAt": ISO8601DateFormatter().string(from: Date()),
-            "hasCompletedOnboarding": hasCompletedOnboarding
-        ]
-        if let displayName { dict["displayName"] = displayName }
-        if let email { dict["email"] = email }
-        return dict
-    }
 }
