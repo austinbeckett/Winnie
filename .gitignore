@@ -53,3 +53,10 @@ GoogleService-Info.plist
 # Playgrounds
 timeline.xctimeline
 playground.xcworkspace
+
+# Mockups (binary files, not tracked)
+mockups/
+
+# Claude Code local settings (CLAUDE.md IS tracked)
+.claude/settings.local.json
+.claude/skills/
