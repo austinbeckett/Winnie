@@ -2,11 +2,39 @@ import Foundation
 import FirebaseFirestore
 
 /// Repository for User document operations in Firestore
-/// Uses shared FirestoreError from FirestoreError.swift
+///
+/// This repository uses the `FirestoreProviding` protocol for database access,
+/// enabling dependency injection for testing.
+///
+/// ## Production Usage
+/// ```swift
+/// let repository = UserRepository()  // Uses real Firestore
+/// ```
+///
+/// ## Test Usage
+/// ```swift
+/// let mock = MockFirestoreService()
+/// let repository = UserRepository(db: mock)
+/// ```
 final class UserRepository {
 
-    private let db = Firestore.firestore()
+    // MARK: - Dependencies
+
+    private let db: FirestoreProviding
     private let collectionPath = "users"
+
+    // MARK: - Initialization
+
+    /// Create a repository with the default Firestore service (production)
+    init() {
+        self.db = FirestoreService.shared
+    }
+
+    /// Create a repository with an injected database (for testing)
+    /// - Parameter db: Any implementation of FirestoreProviding
+    init(db: FirestoreProviding) {
+        self.db = db
+    }
 
     // MARK: - Create
 
@@ -121,7 +149,11 @@ final class UserRepository {
     // MARK: - Real-time Listeners
 
     /// Listen to changes on a user document
-    func listenToUser(id: String, onChange: @escaping (User?) -> Void) -> ListenerRegistration {
+    /// - Parameters:
+    ///   - id: The user ID to listen to
+    ///   - onChange: Called when the user document changes
+    /// - Returns: A registration that should be removed when done listening
+    func listenToUser(id: String, onChange: @escaping (User?) -> Void) -> ListenerRegistrationProviding {
         return db.collection(collectionPath)
             .document(id)
             .addSnapshotListener { snapshot, error in
