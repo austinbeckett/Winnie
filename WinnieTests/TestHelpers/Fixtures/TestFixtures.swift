@@ -463,3 +463,64 @@ extension TestFixtures {
         return (couple, goals, scenario)
     }
 }
+
+
+// MARK: - Authentication Test Fixtures
+
+extension TestFixtures {
+
+    /// Create a MockAuthUser for testing.
+    ///
+    /// Use this when you need to set up a signed-in state in tests:
+    /// ```swift
+    /// mockAuthProvider.mockCurrentUser = TestFixtures.makeAuthUser()
+    /// ```
+    static func makeAuthUser(
+        uid: String = "test-user-id",
+        email: String? = "test@example.com",
+        displayName: String? = "Test User"
+    ) -> MockAuthUser {
+        MockAuthUser(uid: uid, email: email, displayName: displayName)
+    }
+
+    /// Create AppleCredentialData for testing Apple Sign-In.
+    ///
+    /// - Parameters:
+    ///   - identityToken: Token string (will be converted to Data)
+    ///   - givenName: First name (for first-time sign-in)
+    ///   - familyName: Last name (for first-time sign-in)
+    ///   - email: Email address (for first-time sign-in)
+    static func makeAppleCredentialData(
+        identityToken: String? = "mock-apple-id-token",
+        givenName: String? = "Test",
+        familyName: String? = "User",
+        email: String? = "apple@test.com"
+    ) -> AppleCredentialData {
+        var fullName: PersonNameComponents?
+        if givenName != nil || familyName != nil {
+            fullName = PersonNameComponents()
+            fullName?.givenName = givenName
+            fullName?.familyName = familyName
+        }
+
+        return AppleCredentialData(
+            identityToken: identityToken?.data(using: .utf8),
+            fullName: fullName,
+            email: email
+        )
+    }
+
+    /// Create AppleCredentialData with no user info (returning user scenario).
+    ///
+    /// Apple only provides name/email on first sign-in.
+    /// Subsequent sign-ins only have the identity token.
+    static func makeReturningAppleCredentialData(
+        identityToken: String = "mock-apple-id-token"
+    ) -> AppleCredentialData {
+        AppleCredentialData(
+            identityToken: identityToken.data(using: .utf8),
+            fullName: nil,
+            email: nil
+        )
+    }
+}

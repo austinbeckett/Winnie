@@ -6,9 +6,9 @@
 
 ## Current Focus
 
-**Active:** Phase 2B Complete - All Firestore repositories testable with protocol DI
+**Active:** Phase 2C Complete - AuthenticationService now testable with protocol DI
 
-**Next Up:** Phase 2C - Auth Protocol Architecture (make AuthenticationService testable)
+**Next Up:** UI Development - Design System components or Onboarding flow
 
 ---
 
@@ -26,12 +26,13 @@
 ### Authentication
 | Feature | Status | Notes |
 |---------|--------|-------|
-| Email/Password sign in | Done | Enabled in Firebase Console |
-| Email/Password sign up | Done | Enabled in Firebase Console |
-| Apple Sign-In | Done | Enabled in Firebase Console |
-| Sign out | Code Done | |
-| Auth state routing | Code Done | Routes to login/content based on state |
-| Password reset | Not Started | |
+| Email/Password sign in | Done | Enabled in Firebase Console, **protocol DI** |
+| Email/Password sign up | Done | Enabled in Firebase Console, **protocol DI** |
+| Apple Sign-In | Done | Enabled in Firebase Console, **protocol DI** |
+| Sign out | Done | **protocol DI**, testable |
+| Auth state routing | Done | Routes to login/content based on state |
+| Account deletion | Done | **protocol DI**, testable |
+| Password reset | Done | **protocol DI**, testable |
 
 ### Data Layer - Firestore
 | Feature | Status | Notes |
@@ -140,14 +141,16 @@
 | ScenarioRepositoryTests | Done | ~25 tests: CRUD, active management, allocations |
 | InviteCodeRepositoryTests | Done | ~20 tests: code generation, validation, expiration |
 
-### Unit Tests - Phase 2C (Auth Protocol Architecture)
+### Unit Tests - Phase 2C (Auth Protocol Architecture) ✅
 | Feature | Status | Notes |
 |---------|--------|-------|
-| AuthProviding protocol | Not Started | Will define: AuthProviding, AuthUserProviding, AuthResultProviding, AuthListenerHandle |
-| FirebaseAuthService | Not Started | Production wrapper for Firebase Auth SDK |
-| MockAuthService | Not Started | In-memory mock with stubbing + call recording |
-| AuthenticationService refactored | Not Started | Will use AuthProviding protocol, testable init |
-| AuthenticationServiceTests | Not Started | Tests for state observation, sign in/up, Apple Sign-In, sign out, deletion |
+| Auth Protocols (5 files) | Done | AuthProviding, AuthUserProviding, AuthResultProviding, AuthCredentialProviding, AppleCredentialData |
+| FirebaseAuthProvider | Done | Production wrapper for Firebase Auth SDK |
+| FirebaseAuthWrappers | Done | User, Result, Credential wrappers for Firebase types |
+| MockAuthProvider | Done | In-memory mock with stubbing + call recording |
+| MockAuthTypes | Done | MockAuthUser, MockAuthResult, MockAuthCredential |
+| AuthenticationService refactored | Done | Uses AuthProviding protocol, testable init |
+| AuthenticationServiceTests | Done | 30 tests: state observation, sign in/up, Apple Sign-In, sign out, deletion |
 
 ### Unit Tests - Remaining Phases
 | Phase | Scope | Notes |
@@ -201,12 +204,45 @@
 | `WinnieTests/Firestore/GoalRepositoryTests.swift` | ~25 tests for GoalRepository |
 | `WinnieTests/Firestore/ScenarioRepositoryTests.swift` | ~25 tests for ScenarioRepository |
 | `WinnieTests/Firestore/InviteCodeRepositoryTests.swift` | ~20 tests for InviteCodeRepository |
+| **Phase 2C: Auth Protocol Architecture** | |
+| `Services/Authentication/Protocols/AuthProviding.swift` | Main auth protocol |
+| `Services/Authentication/Protocols/AuthUserProviding.swift` | User abstraction protocol |
+| `Services/Authentication/Protocols/AuthResultProviding.swift` | Sign-in result protocol |
+| `Services/Authentication/Protocols/AuthCredentialProviding.swift` | Credential marker protocol |
+| `Services/Authentication/Protocols/AppleCredentialData.swift` | Testable struct for Apple Sign-In data |
+| `Services/Authentication/Implementations/FirebaseAuthProvider.swift` | Production Firebase Auth wrapper |
+| `Services/Authentication/Implementations/FirebaseAuthWrappers.swift` | User, Result, Credential wrappers |
+| `WinnieTests/TestHelpers/Mocks/MockAuthProvider.swift` | In-memory mock for auth tests |
+| `WinnieTests/TestHelpers/Mocks/MockAuthTypes.swift` | Mock user, result, credential types |
+| `WinnieTests/Authentication/AuthenticationServiceTests.swift` | 30 tests for AuthenticationService |
 | **Code Audit Fixes** | |
 | `WinnieTests/README.md` | Test suite documentation: structure, naming, @MainActor rationale |
 
 ---
 
 ## Recent Sessions
+
+### December 30, 2024 (Session 11) - Phase 2C Complete: Auth DI & Tests
+- **Phase 2C Complete**: AuthenticationService now fully testable with protocol-based DI
+- Created 5 protocol files in `Services/Authentication/Protocols/`:
+  - `AuthProviding` - Main auth interface (sign in/out, listeners, etc.)
+  - `AuthUserProviding` - Abstracts FirebaseAuth.User
+  - `AuthResultProviding` - Abstracts sign-in results with `isNewUser` detection
+  - `AuthCredentialProviding` - Marker protocol for OAuth credentials
+  - `AppleCredentialData` - Testable struct for Apple Sign-In (bypasses non-instantiable `ASAuthorizationAppleIDCredential`)
+- Created 2 production wrapper files in `Services/Authentication/Implementations/`:
+  - `FirebaseAuthProvider` - Production wrapper with `shared` singleton
+  - `FirebaseAuthWrappers` - User, Result, Credential wrapper classes
+- Created 2 mock files in `WinnieTests/TestHelpers/Mocks/`:
+  - `MockAuthProvider` - In-memory mock with call recording + state simulation
+  - `MockAuthTypes` - MockAuthUser, MockAuthResult, MockAuthCredential
+- Refactored `AuthenticationService` to use constructor injection (`init(authProvider:)`)
+- Added auth fixtures to `TestFixtures.swift`
+- Created `AuthenticationServiceTests.swift` with 30 comprehensive tests:
+  - Initial state (2), Auth state listener (2), Email sign up (4), Email sign in (4)
+  - Password reset (2), Apple Sign-In (7), Sign out (2), Delete account (3), Computed properties (4)
+- Fixed Swift 6 concurrency issues: `nonisolated` for listener removal, `@unchecked Sendable` for test helper
+- **Total test count**: ~260+ tests (230 existing + 30 new)
 
 ### December 30, 2024 (Session 10) - Progress File Sync Fix
 - Reverted Phase 2C changes that were not properly saved
@@ -356,11 +392,13 @@
 ## Notes
 
 - **All 5 Firestore repositories** now use protocol-based dependency injection
-- Pattern: `init()` uses production service (`FirestoreService.shared`)
-- Pattern: `init(db:)` allows test injection
+- **AuthenticationService** now uses protocol-based dependency injection
+- Pattern: `init()` uses production service (`FirestoreService.shared` or `FirebaseAuthProvider.shared`)
+- Pattern: `init(db:)` or `init(authProvider:)` allows test injection
 - Transaction methods updated to use Swift-native throwing API (no more `errorPointer`)
 - Query protocols support: `isEqualTo`, `isLessThan`, `order`, `limit`
 - Domain models exist in `Models/` folder - DTOs are separate for Firestore
 - Money values use Decimal in domain models, Double in DTOs (Firestore limitation)
 - Enums (GoalType, DecisionStatus) serialize via rawValue strings
-- Next step: Phase 2C - Add protocol DI to AuthenticationService for testability
+- Apple Sign-In testing uses `AppleCredentialData` struct (ASAuthorizationAppleIDCredential cannot be instantiated)
+- **All backend services are now testable** - ready for UI development

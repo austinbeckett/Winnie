@@ -4,14 +4,33 @@ import FirebaseAuth
 import AuthenticationServices
 import CryptoKit
 
-/// Manages Firebase Authentication state and operations
+/// Manages Firebase Authentication state and operations.
+///
+/// ## Dependency Injection
+/// This service uses constructor injection for testability:
+/// - **Production**: `init()` uses `FirebaseAuthProvider.shared`
+/// - **Tests**: `init(authProvider:)` accepts `MockAuthProvider`
+///
+/// ## Thread Safety
+/// Marked `@MainActor` to ensure all published state updates happen on the main thread,
+/// which is required for SwiftUI to observe changes correctly.
+///
+/// ## Usage
+/// ```swift
+/// // Production (in App)
+/// @StateObject private var authService = AuthenticationService()
+///
+/// // Tests
+/// let mock = MockAuthProvider()
+/// let service = AuthenticationService(authProvider: mock)
+/// ```
 @MainActor
 final class AuthenticationService: ObservableObject {
 
     // MARK: - Published State
 
     @Published private(set) var authState: AuthState = .unknown
-    @Published private(set) var currentFirebaseUser: FirebaseAuth.User?
+    @Published private(set) var currentFirebaseUser: AuthUserProviding?
     @Published private(set) var isLoading = false
     @Published var error: AuthenticationError?
 
@@ -23,35 +42,47 @@ final class AuthenticationService: ObservableObject {
 
     // MARK: - Private Properties
 
-    private var authStateHandle: AuthStateDidChangeListenerHandle?
+    private let authProvider: AuthProviding
+    private var authStateHandle: AuthStateListenerHandle?
     private var currentNonce: String?
 
     // MARK: - Initialization
 
+    /// Production initializer - uses Firebase Auth via `FirebaseAuthProvider.shared`.
     init() {
+        self.authProvider = FirebaseAuthProvider.shared
+        startListening()
+    }
+
+    /// Test initializer - accepts any `AuthProviding` implementation.
+    /// - Parameter authProvider: The auth provider to use (e.g., `MockAuthProvider`)
+    init(authProvider: AuthProviding) {
+        self.authProvider = authProvider
         startListening()
     }
 
     deinit {
         if let handle = authStateHandle {
-            Auth.auth().removeStateDidChangeListener(handle)
+            authProvider.removeStateDidChangeListener(handle)
         }
     }
 
     // MARK: - Auth State Observation
 
     private func startListening() {
-        authStateHandle = Auth.auth().addStateDidChangeListener { [weak self] _, firebaseUser in
-            Task { @MainActor in
-                self?.handleAuthStateChange(firebaseUser)
-            }
+        // Firebase calls this listener immediately with current state,
+        // then again whenever auth state changes (sign in/out).
+        // The listener callback runs on the main thread (Firebase guarantee),
+        // and this class is @MainActor, so we can update state directly.
+        authStateHandle = authProvider.addStateDidChangeListener { [weak self] user in
+            self?.handleAuthStateChange(user)
         }
     }
 
-    private func handleAuthStateChange(_ firebaseUser: FirebaseAuth.User?) {
-        if let firebaseUser {
-            currentFirebaseUser = firebaseUser
-            authState = .signedIn(uid: firebaseUser.uid)
+    private func handleAuthStateChange(_ user: AuthUserProviding?) {
+        if let user {
+            currentFirebaseUser = user
+            authState = .signedIn(uid: user.uid)
         } else {
             currentFirebaseUser = nil
             authState = .signedOut
@@ -73,20 +104,27 @@ final class AuthenticationService: ObservableObject {
 
     // MARK: - Apple Sign In
 
-    /// Prepare for Apple Sign In - returns the hashed nonce for the request
+    /// Prepare for Apple Sign In - returns the hashed nonce for the request.
+    ///
+    /// Call this before presenting the Apple Sign-In UI. The returned hash
+    /// is passed to Apple, and we keep the raw nonce to verify the response.
     func prepareAppleSignIn() -> String {
         let nonce = randomNonceString()
         currentNonce = nonce
         return sha256(nonce)
     }
 
-    /// Complete Apple Sign In with the credential from ASAuthorizationController
-    func signInWithApple(credential: ASAuthorizationAppleIDCredential) async throws {
+    /// Complete Apple Sign In with extracted credential data.
+    ///
+    /// This is the testable version that accepts `AppleCredentialData`.
+    /// - Parameter data: Data extracted from `ASAuthorizationAppleIDCredential`
+    /// - Throws: `AuthenticationError` on failure
+    func signInWithApple(data: AppleCredentialData) async throws {
         guard let nonce = currentNonce else {
             throw AuthenticationError.missingNonce
         }
 
-        guard let appleIDToken = credential.identityToken,
+        guard let appleIDToken = data.identityToken,
               let idTokenString = String(data: appleIDToken, encoding: .utf8) else {
             throw AuthenticationError.invalidCredential
         }
@@ -95,25 +133,25 @@ final class AuthenticationService: ObservableObject {
         defer { isLoading = false }
 
         do {
-            let firebaseCredential = OAuthProvider.appleCredential(
-                withIDToken: idTokenString,
+            let credential = FirebaseAuthCredentialWrapper.appleCredential(
+                idToken: idTokenString,
                 rawNonce: nonce,
-                fullName: credential.fullName
+                fullName: data.fullName
             )
 
-            let result = try await Auth.auth().signIn(with: firebaseCredential)
+            let result = try await authProvider.signIn(with: credential)
 
-            // Clear nonce after successful sign-in
+            // Clear nonce after successful sign-in (one-time use)
             currentNonce = nil
 
-            // Return whether this is a new user for caller to handle
+            // Check if this is a new user (first sign-in)
             let isNewUser = result.additionalUserInfo?.isNewUser ?? false
             if isNewUser {
-                // Extract name from credential (only provided on first sign-in)
-                let displayName = formatDisplayName(from: credential.fullName)
-                let email = credential.email
+                // Apple only provides name/email on first sign-in
+                let displayName = formatDisplayName(from: data.fullName)
+                let email = data.email
 
-                // Caller should create user document with this info
+                // Notify listeners to create user document
                 NotificationCenter.default.post(
                     name: .newUserSignedUp,
                     object: nil,
@@ -130,36 +168,45 @@ final class AuthenticationService: ObservableObject {
         }
     }
 
+    /// Complete Apple Sign In with the credential from ASAuthorizationController.
+    ///
+    /// Convenience method that extracts data and calls `signInWithApple(data:)`.
+    /// - Parameter credential: The credential from Apple's authorization controller
+    /// - Throws: `AuthenticationError` on failure
+    func signInWithApple(credential: ASAuthorizationAppleIDCredential) async throws {
+        try await signInWithApple(data: AppleCredentialData(from: credential))
+    }
+
     // MARK: - Email/Password Authentication
 
-    /// Create a new account with email and password
+    /// Create a new account with email and password.
     func signUp(email: String, password: String) async throws {
         isLoading = true
         defer { isLoading = false }
 
         do {
-            _ = try await Auth.auth().createUser(withEmail: email, password: password)
+            _ = try await authProvider.createUser(withEmail: email, password: password)
         } catch {
             throw AuthenticationError.from(error)
         }
     }
 
-    /// Sign in with existing email and password
+    /// Sign in with existing email and password.
     func signIn(email: String, password: String) async throws {
         isLoading = true
         defer { isLoading = false }
 
         do {
-            _ = try await Auth.auth().signIn(withEmail: email, password: password)
+            _ = try await authProvider.signIn(withEmail: email, password: password)
         } catch {
             throw AuthenticationError.from(error)
         }
     }
 
-    /// Send password reset email
+    /// Send password reset email.
     func sendPasswordReset(to email: String) async throws {
         do {
-            try await Auth.auth().sendPasswordReset(withEmail: email)
+            try await authProvider.sendPasswordReset(withEmail: email)
         } catch {
             throw AuthenticationError.from(error)
         }
@@ -169,7 +216,7 @@ final class AuthenticationService: ObservableObject {
 
     func signOut() throws {
         do {
-            try Auth.auth().signOut()
+            try authProvider.signOut()
         } catch {
             throw AuthenticationError.signOutFailed
         }
@@ -178,7 +225,7 @@ final class AuthenticationService: ObservableObject {
     // MARK: - Account Deletion
 
     func deleteAccount() async throws {
-        guard let user = Auth.auth().currentUser else {
+        guard let user = authProvider.currentUser else {
             throw AuthenticationError.userNotFound
         }
 
@@ -191,6 +238,7 @@ final class AuthenticationService: ObservableObject {
 
     // MARK: - Private Helpers
 
+    /// Generate a cryptographically secure random nonce.
     private func randomNonceString(length: Int = 32) -> String {
         precondition(length > 0)
         var randomBytes = [UInt8](repeating: 0, count: length)
@@ -201,12 +249,14 @@ final class AuthenticationService: ObservableObject {
         return String(randomBytes.map { charset[Int($0) % charset.count] })
     }
 
+    /// SHA256 hash a string and return hex-encoded result.
     private func sha256(_ input: String) -> String {
         let inputData = Data(input.utf8)
         let hashedData = SHA256.hash(data: inputData)
         return hashedData.compactMap { String(format: "%02x", $0) }.joined()
     }
 
+    /// Format name components into a display name string.
     private func formatDisplayName(from nameComponents: PersonNameComponents?) -> String? {
         guard let nameComponents else { return nil }
         return PersonNameComponentsFormatter.localizedString(from: nameComponents, style: .default)
