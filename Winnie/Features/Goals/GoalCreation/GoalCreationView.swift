@@ -127,18 +127,9 @@ struct GoalCreationView: View {
             }
             .background(WinnieColors.background(for: colorScheme).ignoresSafeArea())
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Image(systemName: "xmark")
-                            .font(.system(size: 16, weight: .medium))
-                            .foregroundStyle(.secondary)
-                    }
-                }
-            }
+            .toolbar(.hidden, for: .navigationBar)
         }
+        .presentationDragIndicator(.visible)
         .onAppear {
             // Auto-focus the name field when the modal appears
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
