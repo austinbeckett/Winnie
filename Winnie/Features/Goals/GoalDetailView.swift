@@ -68,15 +68,15 @@ struct GoalDetailView: View {
     // MARK: - Header Card
 
     private var headerCard: some View {
-        WinnieCard(accentColor: goal.type.color) {
+        WinnieCard(accentColor: goal.displayColor) {
             VStack(spacing: WinnieSpacing.l) {
                 // Icon and type
                 HStack(spacing: WinnieSpacing.s) {
                     Image(systemName: goal.type.iconName)
                         .font(.system(size: 24))
-                        .foregroundColor(goal.type.color)
+                        .foregroundColor(goal.displayColor)
                         .frame(width: 44, height: 44)
-                        .background(goal.type.color.opacity(0.15))
+                        .background(goal.displayColor.opacity(0.15))
                         .clipShape(RoundedRectangle(cornerRadius: 12))
 
                     VStack(alignment: .leading, spacing: 2) {
@@ -109,12 +109,12 @@ struct GoalDetailView: View {
 
                 // Progress bar and percentage
                 VStack(spacing: WinnieSpacing.s) {
-                    WinnieProgressBar(progress: goal.progressPercentage, color: goal.type.color)
+                    WinnieProgressBar(progress: goal.progressPercentage, color: goal.displayColor)
 
                     if goal.isCompleted {
                         Label("Goal Reached!", systemImage: "checkmark.circle.fill")
                             .font(WinnieTypography.bodyS())
-                            .foregroundColor(WinnieColors.successMint)
+                            .foregroundColor(goal.displayColor)
                             .frame(maxWidth: .infinity, alignment: .center)
                     } else {
                         Text("\(goal.progressPercentageInt)% complete · \(formatCurrency(goal.remainingAmount)) to go")

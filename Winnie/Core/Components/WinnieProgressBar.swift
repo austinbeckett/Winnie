@@ -8,7 +8,7 @@ import SwiftUI
 /// WinnieProgressBar(progress: 0.65)
 ///
 /// // With custom color
-/// WinnieProgressBar(progress: goal.progressPercentage, color: goal.type.color)
+/// WinnieProgressBar(progress: goal.progressPercentage, color: goal.displayColor)
 ///
 /// // Show percentage label
 /// WinnieProgressBar(progress: 0.75, showLabel: true)
@@ -81,7 +81,7 @@ struct GoalProgressBar: View {
     init(goal: Goal) {
         self.current = goal.currentAmount
         self.target = goal.targetAmount
-        self.color = goal.type.color
+        self.color = goal.displayColor
     }
 
     init(current: Decimal, target: Decimal, color: Color) {
@@ -120,19 +120,19 @@ struct GoalProgressBar: View {
         VStack(alignment: .leading, spacing: WinnieSpacing.xs) {
             Text("50%")
                 .font(WinnieTypography.bodyS())
-            WinnieProgressBar(progress: 0.50, color: WinnieColors.peachGlow)
+            WinnieProgressBar(progress: 0.50, color: GoalPresetColor.blackberry.color)
         }
 
         VStack(alignment: .leading, spacing: WinnieSpacing.xs) {
             Text("75%")
                 .font(WinnieTypography.bodyS())
-            WinnieProgressBar(progress: 0.75, color: WinnieColors.successMint)
+            WinnieProgressBar(progress: 0.75, color: GoalPresetColor.sage.color)
         }
 
         VStack(alignment: .leading, spacing: WinnieSpacing.xs) {
             Text("100%")
                 .font(WinnieTypography.bodyS())
-            WinnieProgressBar(progress: 1.0, color: WinnieColors.successMint)
+            WinnieProgressBar(progress: 1.0, color: GoalPresetColor.terracotta.color)
         }
 
         VStack(alignment: .leading, spacing: WinnieSpacing.xs) {
@@ -145,30 +145,30 @@ struct GoalProgressBar: View {
     .background(WinnieColors.parchment)
 }
 
-#Preview("Goal Type Colors") {
+#Preview("Goal Preset Colors") {
     VStack(spacing: WinnieSpacing.l) {
         VStack(alignment: .leading, spacing: WinnieSpacing.xs) {
-            Text("House Goal")
+            Text("Amethyst (Default)")
                 .font(WinnieTypography.bodyS())
-            WinnieProgressBar(progress: 0.45, color: WinnieColors.goalHouse)
+            WinnieProgressBar(progress: 0.45, color: GoalPresetColor.amethyst.color)
         }
 
         VStack(alignment: .leading, spacing: WinnieSpacing.xs) {
-            Text("Retirement")
+            Text("Blackberry")
                 .font(WinnieTypography.bodyS())
-            WinnieProgressBar(progress: 0.30, color: WinnieColors.goalRetirement)
+            WinnieProgressBar(progress: 0.30, color: GoalPresetColor.blackberry.color)
         }
 
         VStack(alignment: .leading, spacing: WinnieSpacing.xs) {
-            Text("Vacation")
+            Text("Sand")
                 .font(WinnieTypography.bodyS())
-            WinnieProgressBar(progress: 0.80, color: WinnieColors.goalVacation)
+            WinnieProgressBar(progress: 0.80, color: GoalPresetColor.sand.color)
         }
 
         VStack(alignment: .leading, spacing: WinnieSpacing.xs) {
-            Text("Emergency Fund")
+            Text("Rose")
                 .font(WinnieTypography.bodyS())
-            WinnieProgressBar(progress: 0.60, color: WinnieColors.goalEmergency)
+            WinnieProgressBar(progress: 0.60, color: GoalPresetColor.rose.color)
         }
     }
     .padding(WinnieSpacing.l)
@@ -178,7 +178,7 @@ struct GoalProgressBar: View {
 #Preview("Dark Mode") {
     VStack(spacing: WinnieSpacing.l) {
         WinnieProgressBar(progress: 0.65)
-        WinnieProgressBar(progress: 0.45, color: WinnieColors.peachGlow)
+        WinnieProgressBar(progress: 0.45, color: GoalPresetColor.blackberry.color)
         WinnieProgressBar(progress: 0.80, showLabel: true)
     }
     .padding(WinnieSpacing.l)

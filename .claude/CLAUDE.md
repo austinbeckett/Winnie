@@ -39,9 +39,13 @@ Winnie/
 | Ink | `#131718` | Primary text (light), background (dark) |
 | Ink Elevated | `#1E2224` | Card backgrounds in dark mode |
 | Snow | `#FFFCFF` | Background (light), primary text (dark) |
-| Peach Glow | `#F9B58B` | Accent, warm CTAs, primary button (dark) |
-| Amethyst Smoke | `#A393BF` | Interactive elements, progress |
-| Blackberry Cream | `#5B325D` | Primary button background (light) |
+| Amethyst Smoke | `#A393BF` | Primary accent, interactive elements, progress, primary button (dark) |
+| Blackberry Cream | `#5B325D` | Secondary accent, primary button background (light) |
+
+### Goal Colors
+Goals use a preset palette (defined in `GoalPresetColor`). Users can select any color for their goals:
+- **Amethyst** `#A393BF` (default), **Blackberry** `#5B325D`, **Rose** `#D4A5A5`, **Sage** `#B5C4B1`
+- **Slate** `#8BA3B3`, **Sand** `#D4C4A8`, **Terracotta** `#C4907A`, **Storm** `#8B8B9B`
 
 ### Text Colors
 | Level | Light Mode | Dark Mode |

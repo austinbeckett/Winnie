@@ -17,16 +17,16 @@ struct GoalCard: View {
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
-        WinnieCard(accentColor: goal.type.color) {
+        WinnieCard(accentColor: goal.displayColor) {
             VStack(alignment: .leading, spacing: WinnieSpacing.m) {
                 // Header: Icon + Name
                 HStack(spacing: WinnieSpacing.s) {
                     // Goal type icon
                     Image(systemName: goal.type.iconName)
                         .font(.system(size: 20))
-                        .foregroundColor(goal.type.color)
+                        .foregroundColor(goal.displayColor)
                         .frame(width: 32, height: 32)
-                        .background(goal.type.color.opacity(0.15))
+                        .background(goal.displayColor.opacity(0.15))
                         .clipShape(RoundedRectangle(cornerRadius: 8))
 
                     // Goal name
@@ -45,7 +45,7 @@ struct GoalCard: View {
                 }
 
                 // Progress bar
-                WinnieProgressBar(progress: goal.progressPercentage, color: goal.type.color)
+                WinnieProgressBar(progress: goal.progressPercentage, color: goal.displayColor)
 
                 // Amounts: Current / Target
                 HStack {
@@ -95,14 +95,14 @@ struct GoalCardCompact: View {
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
-        WinnieCard(accentColor: goal.type.color) {
+        WinnieCard(accentColor: goal.displayColor) {
             HStack(spacing: WinnieSpacing.m) {
                 // Goal type icon
                 Image(systemName: goal.type.iconName)
                     .font(.system(size: 18))
-                    .foregroundColor(goal.type.color)
+                    .foregroundColor(goal.displayColor)
                     .frame(width: 28, height: 28)
-                    .background(goal.type.color.opacity(0.15))
+                    .background(goal.displayColor.opacity(0.15))
                     .clipShape(RoundedRectangle(cornerRadius: 6))
 
                 // Name and progress
@@ -113,7 +113,7 @@ struct GoalCardCompact: View {
                         .foregroundColor(WinnieColors.primaryText(for: colorScheme))
                         .lineLimit(1)
 
-                    WinnieProgressBar(progress: goal.progressPercentage, color: goal.type.color)
+                    WinnieProgressBar(progress: goal.progressPercentage, color: goal.displayColor)
                 }
 
                 // Percentage

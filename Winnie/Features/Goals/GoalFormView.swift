@@ -27,6 +27,7 @@ struct GoalFormView: View {
 
     // Form state
     @State private var selectedType: GoalType = .house
+    @State private var selectedColorHex: String = GoalPresetColor.defaultColor.rawValue
     @State private var name: String = ""
     @State private var targetAmountText: String = ""
     @State private var currentAmountText: String = ""
@@ -65,6 +66,7 @@ struct GoalFormView: View {
         // Pre-populate form if editing
         if let goal = goal {
             _selectedType = State(initialValue: goal.type)
+            _selectedColorHex = State(initialValue: goal.colorHex ?? GoalPresetColor.defaultColor.rawValue)
             _name = State(initialValue: goal.name)
             _targetAmountText = State(initialValue: "\(goal.targetAmount)")
             _currentAmountText = State(initialValue: "\(goal.currentAmount)")
@@ -80,6 +82,9 @@ struct GoalFormView: View {
                 VStack(spacing: WinnieSpacing.l) {
                     // Goal type picker
                     goalTypePicker
+
+                    // Color picker
+                    GoalColorPicker(selectedHex: $selectedColorHex)
 
                     // Name field
                     WinnieTextField(
@@ -173,15 +178,17 @@ struct GoalFormView: View {
     }
 
     private func goalTypeButton(_ type: GoalType) -> some View {
-        Button {
+        let accentColor = WinnieColors.amethystSmoke
+
+        return Button {
             selectedType = type
         } label: {
             VStack(spacing: WinnieSpacing.xs) {
                 Image(systemName: type.iconName)
                     .font(.system(size: 24))
-                    .foregroundColor(selectedType == type ? .white : type.color)
+                    .foregroundColor(selectedType == type ? .white : accentColor)
                     .frame(width: 48, height: 48)
-                    .background(selectedType == type ? type.color : type.color.opacity(0.15))
+                    .background(selectedType == type ? accentColor : accentColor.opacity(0.15))
                     .clipShape(RoundedRectangle(cornerRadius: 12))
 
                 Text(type.displayName)
@@ -204,7 +211,7 @@ struct GoalFormView: View {
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
                     .stroke(
-                        selectedType == type ? type.color : Color.clear,
+                        selectedType == type ? accentColor : Color.clear,
                         lineWidth: 2
                     )
             )
@@ -310,7 +317,8 @@ struct GoalFormView: View {
             priority: existingGoal?.priority ?? 0,
             createdAt: existingGoal?.createdAt ?? Date(),
             isActive: existingGoal?.isActive ?? true,
-            notes: notes.isEmpty ? nil : notes
+            notes: notes.isEmpty ? nil : notes,
+            colorHex: selectedColorHex
         )
 
         // Call the synchronous callback - parent view handles async save

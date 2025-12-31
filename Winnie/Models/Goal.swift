@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 /// A single financial goal with target amount and progress tracking
 struct Goal: Codable, Identifiable, Equatable, Sendable {
@@ -36,7 +37,19 @@ struct Goal: Codable, Identifiable, Equatable, Sendable {
     /// Optional notes or description
     var notes: String?
 
+    /// Custom color hex code (e.g., "#A393BF"). If nil, uses default Amethyst Smoke.
+    var colorHex: String?
+
     // MARK: - Computed Properties
+
+    /// The color to display for this goal
+    /// Uses custom colorHex if set, otherwise defaults to Amethyst Smoke
+    var displayColor: Color {
+        if let hex = colorHex {
+            return Color(hex: hex)
+        }
+        return WinnieColors.amethystSmoke
+    }
 
     /// Effective return rate (custom override or type default)
     var effectiveReturnRate: Decimal {
@@ -83,7 +96,8 @@ struct Goal: Codable, Identifiable, Equatable, Sendable {
         priority: Int = 0,
         createdAt: Date = Date(),
         isActive: Bool = true,
-        notes: String? = nil
+        notes: String? = nil,
+        colorHex: String? = nil
     ) {
         self.id = id
         self.type = type
@@ -96,6 +110,7 @@ struct Goal: Codable, Identifiable, Equatable, Sendable {
         self.createdAt = createdAt
         self.isActive = isActive
         self.notes = notes
+        self.colorHex = colorHex
     }
 }
 
@@ -109,7 +124,8 @@ extension Goal {
         name: "Down Payment",
         targetAmount: Decimal(60000),
         currentAmount: Decimal(15000),
-        priority: 1
+        priority: 1,
+        colorHex: GoalPresetColor.sage.rawValue
     )
 
     /// Sample retirement goal for previews
@@ -118,7 +134,8 @@ extension Goal {
         name: "Retirement Fund",
         targetAmount: Decimal(1000000),
         currentAmount: Decimal(50000),
-        priority: 2
+        priority: 2,
+        colorHex: GoalPresetColor.amethyst.rawValue
     )
 
     /// Sample vacation goal for previews
@@ -127,7 +144,8 @@ extension Goal {
         name: "Hawaii Trip",
         targetAmount: Decimal(8000),
         currentAmount: Decimal(2500),
-        priority: 3
+        priority: 3,
+        colorHex: GoalPresetColor.sand.rawValue
     )
 
     /// Sample emergency fund for previews
@@ -136,7 +154,8 @@ extension Goal {
         name: "Emergency Fund",
         targetAmount: Decimal(20000),
         currentAmount: Decimal(12000),
-        priority: 4
+        priority: 4,
+        colorHex: GoalPresetColor.terracotta.rawValue
     )
 
     /// Collection of sample goals

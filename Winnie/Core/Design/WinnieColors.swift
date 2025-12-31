@@ -1,5 +1,28 @@
 import SwiftUI
 
+// MARK: - Color Extension for Hex Support
+
+extension Color {
+    /// Initialize a Color from a hex string (e.g., "#A393BF" or "A393BF")
+    init(hex: String) {
+        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+        var int: UInt64 = 0
+        Scanner(string: hex).scanHexInt64(&int)
+        let r, g, b: UInt64
+        switch hex.count {
+        case 6: // RGB (24-bit)
+            (r, g, b) = ((int >> 16) & 0xFF, (int >> 8) & 0xFF, int & 0xFF)
+        default:
+            (r, g, b) = (0, 0, 0)
+        }
+        self.init(
+            red: Double(r) / 255,
+            green: Double(g) / 255,
+            blue: Double(b) / 255
+        )
+    }
+}
+
 /// Winnie Design System - Color Palette
 /// Light Mode First Design System
 /// Based on DesignSystem.md
@@ -20,21 +43,21 @@ enum WinnieColors {
     /// Hex: #FFFCFF
     static let snow = Color(red: 255/255, green: 252/255, blue: 255/255)
 
-    /// Legacy: Primary background color (light mode) - kept for accent uses
+    /// Warm neutral background for light mode
     /// Hex: #F2EFE9
     static let parchment = Color(red: 242/255, green: 239/255, blue: 233/255)
 
-    /// Warm accent color, secondary buttons, highlights
-    /// Hex: #F9B58B
-    static let peachGlow = Color(red: 249/255, green: 181/255, blue: 139/255)
+    // MARK: - Accent Colors
 
-    /// Purple accent, interactive elements, progress indicators, sliders
+    /// Primary accent - purple, interactive elements, progress indicators
     /// Hex: #A393BF
     static let amethystSmoke = Color(red: 163/255, green: 147/255, blue: 191/255)
 
-    /// Primary button background (light mode)
+    /// Secondary accent - deep plum, primary buttons in light mode
     /// Hex: #5B325D
     static let blackberryCream = Color(red: 91/255, green: 50/255, blue: 93/255)
+
+    // MARK: - Legacy Colors
 
     /// Legacy: Deep black - kept for compatibility
     /// Hex: #252627
@@ -42,50 +65,45 @@ enum WinnieColors {
 
     /// Pure white for legacy compatibility
     static let white = Color.white
+}
 
-    // MARK: - Financial Data Colors
+// MARK: - Goal Preset Colors
 
-    /// Progress bars, on-track indicators, positive states
-    /// Hex: #98D8AA
-    static let successMint = Color(red: 152/255, green: 216/255, blue: 170/255)
+/// User-selectable colors for goals
+/// These replace the automatic goal type colors with user choice
+enum GoalPresetColor: String, CaseIterable, Identifiable, Sendable {
+    case amethyst = "#A393BF"
+    case blackberry = "#5B325D"
+    case rose = "#D4A5A5"
+    case sage = "#B5C4B1"
+    case slate = "#8BA3B3"
+    case sand = "#D4C4A8"
+    case terracotta = "#C4907A"
+    case storm = "#8B8B9B"
 
-    /// Alerts, allocation warnings, attention needed
-    /// Hex: #F5C894
-    static let warningPeach = Color(red: 245/255, green: 200/255, blue: 148/255)
+    var id: String { rawValue }
 
-    /// Soft sage green - stability and growth
-    /// Hex: #A8C5B5
-    static let softSage = Color(red: 168/255, green: 197/255, blue: 181/255)
+    /// The SwiftUI Color for this preset
+    var color: Color {
+        Color(hex: rawValue)
+    }
 
-    /// Warm coral - safety and protection
-    /// Hex: #E8A898
-    static let warmCoral = Color(red: 232/255, green: 168/255, blue: 152/255)
+    /// User-facing display name
+    var displayName: String {
+        switch self {
+        case .amethyst: return "Amethyst"
+        case .blackberry: return "Blackberry"
+        case .rose: return "Rose"
+        case .sage: return "Sage"
+        case .slate: return "Slate"
+        case .sand: return "Sand"
+        case .terracotta: return "Terracotta"
+        case .storm: return "Storm"
+        }
+    }
 
-    /// Warm slate - neutral blue-gray for custom goals
-    /// Hex: #7492A6
-    static let warmSlate = Color(red: 116/255, green: 146/255, blue: 166/255)
-
-    /// Sandy dune - warm sand for vacation/travel
-    /// Hex: #D4C4A8
-    static let sandyDune = Color(red: 212/255, green: 196/255, blue: 168/255)
-
-    // MARK: - Goal Type Colors
-
-    /// House/home purchase goal identification
-    /// Hex: #A8C5B5 (Soft Sage)
-    static let goalHouse = softSage
-
-    /// Retirement goal identification
-    /// Hex: #F9B58B (Peach Glow - warm orange)
-    static let goalRetirement = peachGlow
-
-    /// Vacation/travel goal identification
-    /// Hex: #D4C4A8 (Sandy Dune)
-    static let goalVacation = sandyDune
-
-    /// Emergency fund goal identification
-    /// Hex: #E8A898 (Warm Coral)
-    static let goalEmergency = warmCoral
+    /// The default color for new goals
+    static let defaultColor: GoalPresetColor = .amethyst
 }
 
 // MARK: - Theme-Aware Colors (Light Mode Primary)
@@ -129,9 +147,9 @@ extension WinnieColors {
     // MARK: - Button Colors
 
     /// Primary button background
-    /// Light: Blackberry Cream (#5B325D) | Dark: Peach Glow (#F9B58B)
+    /// Light: Blackberry Cream (#5B325D) | Dark: Amethyst Smoke (#A393BF)
     static func primaryButtonBackground(for colorScheme: ColorScheme) -> Color {
-        colorScheme == .dark ? peachGlow : blackberryCream
+        colorScheme == .dark ? amethystSmoke : blackberryCream
     }
 
     /// Primary button text
@@ -141,15 +159,15 @@ extension WinnieColors {
     }
 
     /// Secondary button background
-    /// Light: Peach Glow (#F9B58B) | Dark: Amethyst Smoke (#A393BF)
+    /// Light: Amethyst Smoke (#A393BF) | Dark: Blackberry Cream (#5B325D)
     static func secondaryButtonBackground(for colorScheme: ColorScheme) -> Color {
-        colorScheme == .dark ? amethystSmoke : peachGlow
+        colorScheme == .dark ? blackberryCream : amethystSmoke
     }
 
     /// Secondary button border (for outlined style)
-    /// Light: Amethyst Smoke (#A393BF) | Dark: Peach Glow (#F9B58B)
+    /// Light: Amethyst Smoke (#A393BF) | Dark: Blackberry Cream (#5B325D)
     static func secondaryButtonBorder(for colorScheme: ColorScheme) -> Color {
-        colorScheme == .dark ? peachGlow : amethystSmoke
+        colorScheme == .dark ? blackberryCream : amethystSmoke
     }
 
     // MARK: - UI Element Colors
@@ -183,8 +201,8 @@ extension WinnieColors {
     /// Primary accent color (interactive elements, progress indicators)
     static var accent: Color { amethystSmoke }
 
-    /// Warm accent color (highlights, CTAs)
-    static var warmAccent: Color { peachGlow }
+    /// Secondary accent color (highlights, CTAs)
+    static var secondaryAccent: Color { blackberryCream }
 
     // MARK: - Shadow Colors
 
@@ -195,9 +213,9 @@ extension WinnieColors {
     }
 
     /// Button shadow color
-    /// Light: Ink at 15% | Dark: Peach Glow at 25%
+    /// Light: Ink at 15% | Dark: Amethyst Smoke at 25%
     static func buttonShadow(for colorScheme: ColorScheme) -> Color {
-        colorScheme == .dark ? peachGlow.opacity(0.25) : ink.opacity(0.15)
+        colorScheme == .dark ? amethystSmoke.opacity(0.25) : ink.opacity(0.15)
     }
 }
 

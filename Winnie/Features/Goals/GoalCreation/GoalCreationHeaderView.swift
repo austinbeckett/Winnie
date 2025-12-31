@@ -3,7 +3,7 @@ import SwiftUI
 /// The accent-colored header for goal creation with dynamic icon and name field.
 ///
 /// **How It Works:**
-/// - Displays a Peach Glow background (sheet provides rounded top corners)
+/// - Displays an Amethyst Smoke background (sheet provides rounded top corners)
 /// - Shows a large icon (64x64) that updates based on the goal name
 /// - Contains a text field for entering/editing the goal name
 /// - The icon animates smoothly when it changes
@@ -38,7 +38,7 @@ struct GoalCreationHeaderView: View {
         .padding(.top, WinnieSpacing.xxl)
         .padding(.bottom, WinnieSpacing.xl)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(WinnieColors.peachGlow)
+        .background(WinnieColors.amethystSmoke)
     }
 
     // MARK: - Icon Container
@@ -46,7 +46,7 @@ struct GoalCreationHeaderView: View {
     private var iconContainer: some View {
         Image(systemName: currentIcon)
             .font(.system(size: 32, weight: .medium))
-            .foregroundColor(WinnieColors.peachGlow)
+            .foregroundColor(WinnieColors.amethystSmoke)
             .frame(width: 64, height: 64)
             .background(WinnieColors.snow)
             .clipShape(RoundedRectangle(cornerRadius: 16))

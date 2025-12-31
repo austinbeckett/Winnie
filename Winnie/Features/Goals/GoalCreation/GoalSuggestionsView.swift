@@ -59,7 +59,7 @@ struct GoalSuggestionsView: View {
                 // Icon
                 Image(systemName: suggestion.icon)
                     .font(.system(size: 20, weight: .medium))
-                    .foregroundColor(WinnieColors.peachGlow)
+                    .foregroundColor(WinnieColors.amethystSmoke)
                     .frame(width: 32, height: 32)
 
                 // Name

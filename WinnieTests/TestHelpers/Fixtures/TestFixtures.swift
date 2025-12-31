@@ -263,7 +263,8 @@ enum TestFixtures {
         targetAmount: Decimal = 60000,
         currentAmount: Decimal = 15000,
         priority: Int = 0,
-        isActive: Bool = true
+        isActive: Bool = true,
+        colorHex: String? = nil
     ) -> Goal {
         Goal(
             id: id,
@@ -272,7 +273,8 @@ enum TestFixtures {
             targetAmount: targetAmount,
             currentAmount: currentAmount,
             priority: priority,
-            isActive: isActive
+            isActive: isActive,
+            colorHex: colorHex
         )
     }
 
@@ -335,9 +337,10 @@ enum TestFixtures {
         currentAmount: Double = 15000,
         priority: Int = 0,
         isActive: Bool = true,
+        colorHex: String? = nil,
         createdAt: Date = testDate
     ) -> [String: Any] {
-        [
+        var data: [String: Any] = [
             "id": id,
             "type": type,
             "name": name,
@@ -347,6 +350,10 @@ enum TestFixtures {
             "isActive": isActive,
             "createdAt": ISO8601DateFormatter().string(from: createdAt)
         ]
+
+        if let colorHex { data["colorHex"] = colorHex }
+
+        return data
     }
 
     // MARK: - Scenario

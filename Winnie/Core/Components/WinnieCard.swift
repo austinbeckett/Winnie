@@ -9,8 +9,8 @@ import SwiftUI
 ///     Text("Card content here")
 /// }
 ///
-/// // Card with accent border (for goal type)
-/// WinnieCard(accentColor: WinnieColors.goalHouse) {
+/// // Card with accent border (for goals)
+/// WinnieCard(accentColor: goal.displayColor) {
 ///     GoalContent()
 /// }
 /// ```
@@ -88,23 +88,23 @@ struct WinnieCard<Content: View>: View {
 
 #Preview("Cards with Accent Borders") {
     VStack(spacing: WinnieSpacing.m) {
-        WinnieCard(accentColor: WinnieColors.goalHouse) {
-            Text("House Goal")
+        WinnieCard(accentColor: GoalPresetColor.amethyst.color) {
+            Text("Amethyst Goal")
                 .font(WinnieTypography.headlineM())
         }
 
-        WinnieCard(accentColor: WinnieColors.goalRetirement) {
-            Text("Retirement Goal")
+        WinnieCard(accentColor: GoalPresetColor.blackberry.color) {
+            Text("Blackberry Goal")
                 .font(WinnieTypography.headlineM())
         }
 
-        WinnieCard(accentColor: WinnieColors.goalVacation) {
-            Text("Vacation Goal")
+        WinnieCard(accentColor: GoalPresetColor.sage.color) {
+            Text("Sage Goal")
                 .font(WinnieTypography.headlineM())
         }
 
-        WinnieCard(accentColor: WinnieColors.goalEmergency) {
-            Text("Emergency Fund")
+        WinnieCard(accentColor: GoalPresetColor.terracotta.color) {
+            Text("Terracotta Goal")
                 .font(WinnieTypography.headlineM())
         }
     }
@@ -119,7 +119,7 @@ struct WinnieCard<Content: View>: View {
                 .font(WinnieTypography.headlineM())
         }
 
-        WinnieCard(accentColor: WinnieColors.peachGlow) {
+        WinnieCard(accentColor: GoalPresetColor.amethyst.color) {
             Text("With Accent Border")
                 .font(WinnieTypography.headlineM())
         }

@@ -32,10 +32,9 @@ Your new color palette provides a warm, approachable feel that reduces financial
 | **Ink** | `#131718` | Primary text (light mode), background (dark mode) |
 | **Ink Elevated** | `#1E2224` | Elevated surfaces in dark mode (cards, panels) |
 | **Snow** | `#FFFCFF` | Background (light mode), primary text (dark mode) |
-| **Peach Glow** | `#F9B58B` | Accent color, highlights, warm CTAs, primary button (dark mode) |
-| **Amethyst Smoke** | `#A393BF` | Primary purple accent, interactive elements, progress indicators |
-| **Blackberry Cream** | `#5B325D` | Primary button background (light mode) |
-| **Parchment** | `#F2EFE9` | Legacy accent color for special surfaces |
+| **Amethyst Smoke** | `#A393BF` | Primary accent, interactive elements, progress, primary button (dark mode) |
+| **Blackberry Cream** | `#5B325D` | Secondary accent, primary button background (light mode) |
+| **Parchment** | `#F2EFE9` | Warm neutral for special surfaces |
 
 ### Light Mode (Primary Theme)
 
@@ -46,13 +45,10 @@ Your new color palette provides a warm, approachable feel that reduces financial
 | **Secondary Text** | `#131718` (Ink) at 80% opacity | Body text, descriptions |
 | **Tertiary Text** | `#131718` (Ink) at 50% opacity | Helper text, captions |
 | **Primary Button BG** | `#5B325D` (Blackberry Cream) | Primary action buttons |
-| **Primary Button Text** | `#FFFCFF` (Snow) | Text on dark buttons |
-| **Secondary Button BG** | `#F9B58B` (Peach Glow) | Secondary actions, warm CTAs |
-| **Accent Orange** | `#F9B58B` (Peach Glow) | Highlights, hover states, attention |
-| **Accent Purple** | `#A393BF` (Amethyst Smoke) | Interactive elements, links, progress |
+| **Primary Button Text** | `#FFFCFF` (Snow) | Text on primary buttons |
+| **Secondary Button BG** | `#A393BF` (Amethyst Smoke) | Secondary actions |
+| **Accent** | `#A393BF` (Amethyst Smoke) | Interactive elements, links, progress |
 | **Card Background** | `#FFFCFF` (Snow) | Goal cards, elevated surfaces |
-| **Card Accent - Purple** | `#A393BF` at 20% opacity | Subtle card backgrounds |
-| **Card Accent - Peach** | `#F9B58B` at 20% opacity | Warm card backgrounds |
 | **Borders** | `#131718` (Ink) at 20% opacity | Button outlines, input borders, dividers |
 
 ### Dark Mode (Secondary Theme)
@@ -63,40 +59,33 @@ Your new color palette provides a warm, approachable feel that reduces financial
 | **Primary Text** | `#FFFCFF` (Snow) | Headlines, important text |
 | **Secondary Text** | `#FFFCFF` (Snow) at 80% opacity | Body text, descriptions, labels |
 | **Tertiary Text** | `#FFFCFF` (Snow) at 50% opacity | Helper text, timestamps, captions |
-| **Primary Button BG** | `#F9B58B` (Peach Glow) | Primary action buttons (Continue, Save, etc.) |
-| **Primary Button Text** | `#131718` (Ink) | Text on peach buttons |
-| **Secondary Button BG** | `#A393BF` (Amethyst Smoke) | Secondary actions, alternate CTAs |
-| **Accent Purple** | `#A393BF` (Amethyst Smoke) | Progress indicators, selected states, highlights |
+| **Primary Button BG** | `#A393BF` (Amethyst Smoke) | Primary action buttons (Continue, Save, etc.) |
+| **Primary Button Text** | `#131718` (Ink) | Text on primary buttons |
+| **Secondary Button BG** | `#5B325D` (Blackberry Cream) | Secondary actions |
+| **Accent** | `#A393BF` (Amethyst Smoke) | Progress indicators, selected states, highlights |
 | **Card Background** | `#1E2224` (Ink Elevated) | Cards, panels, elevated surfaces |
 | **Borders / Dividers** | `#FFFCFF` (Snow) at 15% opacity | Border strokes, divider lines |
 
-### Winnie Financial Data Colors
+### Goal Preset Palette
 
-Additional colors specific to Winnie for representing financial states and goal types:
+Users can select a color for each goal from this preset palette. Colors are decoupled from goal types, allowing personalization while maintaining a cohesive design.
 
-#### State Colors
-| Purpose | Hex Code | Usage |
-|---------|----------|-------|
-| **Success / On Track** | `#98D8AA` (Success Mint) | Progress bars, on-track indicators, positive states |
-| **Warning / Attention** | `#F5C894` (Warning Peach) | Alerts, allocation warnings, attention needed |
+| Name | Hex Code | Description |
+|------|----------|-------------|
+| **Amethyst** | `#A393BF` | Default - soft purple (matches primary accent) |
+| **Blackberry** | `#5B325D` | Deep plum (matches secondary accent) |
+| **Rose** | `#D4A5A5` | Dusty rose |
+| **Sage** | `#B5C4B1` | Soft green |
+| **Slate** | `#8BA3B3` | Muted blue |
+| **Sand** | `#D4C4A8` | Warm beige |
+| **Terracotta** | `#C4907A` | Muted coral |
+| **Storm** | `#8B8B9B` | Cool gray |
 
-#### Accent Colors
-| Name | Hex Code | Usage |
-|------|----------|-------|
-| **Soft Sage** | `#A8C5B5` | Stability and growth |
-| **Warm Coral** | `#E8A898` | Safety and protection |
-| **Warm Slate** | `#7492A6` | Neutral blue-gray |
-| **Sandy Dune** | `#D4C4A8` | Vacation and travel |
-
-#### Goal Type Colors
-| Goal Type | Hex Code | Color Name |
-|-----------|----------|------------|
-| **House** | `#A8C5B5` | Soft Sage |
-| **Retirement** | `#F9B58B` | Peach Glow |
-| **Vacation** | `#D4C4A8` | Sandy Dune |
-| **Emergency Fund** | `#E8A898` | Warm Coral |
-| **Baby & Family** | `#A393BF` | Amethyst Smoke |
-| **Custom Goal** | `#7492A6` | Warm Slate |
+**Usage Notes:**
+- New goals default to Amethyst (`#A393BF`)
+- Goal types (House, Retirement, etc.) are preserved for categorization and financial assumptions
+- The selected color appears as a left accent border on goal cards
+- Users can change goal colors at any time via goal settings
 
 ---
 
@@ -186,19 +175,19 @@ Generous type sizing with ample line spacing for improved readability and calm a
 - **Shape**: Pill-shaped with full rounded corners (`border-radius: 28-32px`)
 - **Light mode background**: Blackberry Cream (`#5B325D`)
 - **Light mode text**: Snow (`#FFFCFF`)
-- **Dark mode background**: Peach Glow (`#F9B58B`)
+- **Dark mode background**: Amethyst Smoke (`#A393BF`)
 - **Dark mode text**: Ink (`#131718`)
 - **Padding**: Vertical 18px, Horizontal 48px (very generous)
 - **Typography**: 16pt, Bold (700), Lato
 - **Minimum width**: 280px or full-width on mobile
 - **Height**: 56px minimum touch target
 - **Shadow (light mode)**: Subtle `0px 2px 8px rgba(91, 50, 93, 0.15)`
-- **Shadow (dark mode)**: `0px 2px 12px rgba(249, 181, 139, 0.25)`
+- **Shadow (dark mode)**: `0px 2px 12px rgba(163, 147, 191, 0.25)`
 
 #### Secondary Button (outlined)
 
 - **Background**: Transparent
-- **Border**: 2px solid, Amethyst Smoke (`#A393BF`) in light mode, Peach Glow (`#F9B58B`) in dark mode
+- **Border**: 2px solid, Amethyst Smoke (`#A393BF`) in light mode, Blackberry Cream (`#5B325D`) in dark mode
 - **Text color**: Matches border color
 - **All other specs**: Same as primary
 
@@ -221,24 +210,20 @@ Generous type sizing with ample line spacing for improved readability and calm a
 
 #### Goal Cards
 
-- **Light mode background**: Snow (`#FFFCFF`) with subtle colored accent border
-- **Dark mode background**: Ink (`#131718`) with subtle border
+- **Light mode background**: Snow (`#FFFCFF`) with user-selected accent border
+- **Dark mode background**: Ink Elevated (`#1E2224`) with user-selected accent border
 - **Border radius**: 20px (generous rounding)
 - **Padding**: 24px all sides
 - **Minimum height**: 140px
 - **Shadow (light mode)**: `0px 2px 12px rgba(19, 23, 24, 0.08)`
-- **Border (dark mode)**: `1px solid rgba(255, 252, 255, 0.1)`
-- **Accent borders** (left side, 4px width):
-  - House goal: `#F9B58B` (Peach Glow)
-  - Retirement goal: `#A393BF` (Amethyst Smoke)
-  - Vacation goal: `#F9B58B` (Peach Glow)
-  - Emergency fund: `#5B325D` (Blackberry Cream)
+- **No shadow (dark mode)**: Use elevated background instead
+- **Accent border** (left side, 4px width): User-selected color from Goal Preset Palette
+- **Default accent**: Amethyst (`#A393BF`)
 - **Spacing**: 16px between cards in grid
 
 #### Colored Accent Cards (for variety)
 
 For special emphasis cards, use subtle background tints:
-- **Peach tint**: `#F9B58B` at 15% opacity on white background
 - **Purple tint**: `#A393BF` at 15% opacity on white background
 - **Dark tint**: `#5B325D` at 10% opacity on parchment background
 
@@ -257,7 +242,7 @@ For special emphasis cards, use subtle background tints:
 - **Focus state**: Border changes to full opacity Amethyst Smoke (`#A393BF`), 2px width
 - **Label**: Above input, 14pt Lato Bold, 8px margin below
 - **Placeholder**: 60% opacity of text color
-- **Error state**: Border color Peach Glow (`#F9B58B`), error text below in Peach Glow
+- **Error state**: Border color Blackberry Cream (`#5B325D`), error text below in Blackberry Cream
 
 ### Sliders (Allocation Controls)
 
@@ -280,7 +265,7 @@ For special emphasis cards, use subtle background tints:
 - **Background**:
   - Light mode: `#131718` (Ink) at 15% opacity
   - Dark mode: `#FFFCFF` (Snow) at 15% opacity
-- **Fill**: Peach Glow (`#F9B58B`) for on-track, Amethyst Smoke (`#A393BF`) for in-progress
+- **Fill**: User-selected goal color from Goal Preset Palette (default: Amethyst `#A393BF`)
 - **Animation**: Smooth width transition 400ms ease-out
 
 #### Circular Progress
@@ -423,7 +408,7 @@ For special emphasis cards, use subtle background tints:
 - Feature list with Amethyst Smoke checkmarks
 - Pricing cards: Side by side, Snow backgrounds with subtle shadows
   - Monthly: $8.99/mo (outlined in Amethyst Smoke)
-  - Annual: $89.99/yr (highlighted, Peach Glow pill "MOST POPULAR")
+  - Annual: $89.99/yr (highlighted, Blackberry Cream pill "MOST POPULAR")
 - CTA: "Start 14 days free trial" Blackberry Cream button with Snow text
 - Footer: "No commitment. Cancel anytime." (14pt) in Ink at 50% opacity
 
@@ -442,7 +427,7 @@ Create the Winnie dashboard screen in SwiftUI. Use light mode with Snow (#FFFCFF
 #### For a Button Component:
 
 ```
-Create a reusable Button component in SwiftUI that matches Winnie's design. Make it pill-shaped with 28px border radius, 18px vertical padding, 48px horizontal padding, minimum 56px height. For light mode: Blackberry Cream background (#5B325D) with Snow text (#FFFCFF). For dark mode: Peach Glow background (#F9B58B) with Ink text (#131718). Use 16pt Lato Bold for button text. Add a press animation that scales to 0.97 with spring physics (stiffness: 400, damping: 20). Include loading and disabled states.
+Create a reusable Button component in SwiftUI that matches Winnie's design. Make it pill-shaped with 28px border radius, 18px vertical padding, 48px horizontal padding, minimum 56px height. For light mode: Blackberry Cream background (#5B325D) with Snow text (#FFFCFF). For dark mode: Amethyst Smoke background (#A393BF) with Ink text (#131718). Use 16pt Lato Bold for button text. Add a press animation that scales to 0.97 with spring physics (stiffness: 400, damping: 20). Include loading and disabled states.
 ```
 
 ### Code Structure Tips
@@ -457,7 +442,7 @@ Create a reusable Button component in SwiftUI that matches Winnie's design. Make
 
 Before considering a screen complete, verify:
 
-- ☐ All buttons are pill-shaped with correct colors (Blackberry Cream bg in light mode, Peach Glow in dark)
+- ☐ All buttons are pill-shaped with correct colors (Blackberry Cream bg in light mode, Amethyst Smoke in dark)
 - ☐ Button text uses Snow (#FFFCFF) in light mode, Ink (#131718) in dark mode
 - ☐ Headlines use Playfair Display serif font
 - ☐ Financial amounts use Lato Bold with tabular figures
@@ -469,6 +454,7 @@ Before considering a screen complete, verify:
 - ☐ Animations use spring physics for organic feel
 - ☐ Safe areas respected (top notch, bottom home indicator)
 - ☐ Illustrations match line art style (2-3px strokes, organic shapes)
+- ☐ Goal colors use the Goal Preset Palette (default: Amethyst #A393BF)
 
 ---
 

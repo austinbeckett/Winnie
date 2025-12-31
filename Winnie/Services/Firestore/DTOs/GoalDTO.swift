@@ -38,6 +38,9 @@ struct GoalDTO: Codable {
     /// Optional notes or description
     var notes: String?
 
+    /// Custom color hex code (e.g., "#A393BF")
+    var colorHex: String?
+
     /// Last sync timestamp for cache invalidation
     var lastSyncedAt: Date?
 
@@ -55,6 +58,7 @@ struct GoalDTO: Codable {
         case createdAt
         case isActive
         case notes
+        case colorHex
         case lastSyncedAt
     }
 
@@ -75,6 +79,7 @@ struct GoalDTO: Codable {
         self.createdAt = goal.createdAt
         self.isActive = goal.isActive
         self.notes = goal.notes
+        self.colorHex = goal.colorHex
         self.lastSyncedAt = Date()
     }
 
@@ -99,7 +104,8 @@ struct GoalDTO: Codable {
             priority: priority,
             createdAt: createdAt,
             isActive: isActive,
-            notes: notes
+            notes: notes,
+            colorHex: colorHex
         )
     }
 
@@ -128,6 +134,10 @@ struct GoalDTO: Codable {
 
         if let notes {
             dict["notes"] = notes
+        }
+
+        if let colorHex {
+            dict["colorHex"] = colorHex
         }
 
         if let lastSyncedAt {

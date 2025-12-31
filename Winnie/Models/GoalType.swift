@@ -1,6 +1,6 @@
-import SwiftUI
+import Foundation
 
-/// Goal category types with associated colors, icons, and default return rates
+/// Goal category types with icons, default return rates, and financial assumptions
 enum GoalType: String, Codable, CaseIterable, Identifiable, Sendable {
     case house
     case retirement
@@ -22,18 +22,6 @@ enum GoalType: String, Codable, CaseIterable, Identifiable, Sendable {
         case .emergencyFund: return "Emergency Fund"
         case .babyFamily: return "Baby & Family"
         case .custom: return "Custom Goal"
-        }
-    }
-
-    /// Associated color from Winnie design system
-    var color: Color {
-        switch self {
-        case .house: return WinnieColors.goalHouse
-        case .retirement: return WinnieColors.goalRetirement
-        case .vacation: return WinnieColors.goalVacation
-        case .emergencyFund: return WinnieColors.goalEmergency
-        case .babyFamily: return WinnieColors.amethystSmoke
-        case .custom: return WinnieColors.warmSlate
         }
     }
 

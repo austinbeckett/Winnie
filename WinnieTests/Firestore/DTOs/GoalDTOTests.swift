@@ -290,6 +290,61 @@ final class GoalDTOTests: XCTestCase {
         XCTAssertEqual(decodedDTO.targetAmount, originalDTO.targetAmount, accuracy: 0.01)
     }
 
+    // MARK: - Color Hex Tests
+
+    func test_initFromGoal_copiesColorHex() {
+        let goal = Goal(
+            type: .house,
+            name: "Test",
+            targetAmount: 1000,
+            colorHex: "#A393BF"
+        )
+
+        let dto = GoalDTO(from: goal)
+
+        XCTAssertEqual(dto.colorHex, "#A393BF")
+    }
+
+    func test_toGoal_convertsColorHex() {
+        let goal = Goal(
+            type: .house,
+            name: "Test",
+            targetAmount: 1000,
+            colorHex: "#5B325D"
+        )
+        let dto = GoalDTO(from: goal)
+
+        let converted = dto.toGoal()!
+
+        XCTAssertEqual(converted.colorHex, "#5B325D")
+    }
+
+    func test_dictionary_includesColorHexWhenPresent() {
+        let goal = Goal(
+            type: .house,
+            name: "Test",
+            targetAmount: 1000,
+            colorHex: "#A393BF"
+        )
+        let dto = GoalDTO(from: goal)
+        let dict = dto.dictionary
+
+        XCTAssertEqual(dict["colorHex"] as? String, "#A393BF")
+    }
+
+    func test_dictionary_excludesColorHexWhenNil() {
+        let goal = Goal(
+            type: .house,
+            name: "Test",
+            targetAmount: 1000,
+            colorHex: nil
+        )
+        let dto = GoalDTO(from: goal)
+        let dict = dto.dictionary
+
+        XCTAssertNil(dict["colorHex"])
+    }
+
     // MARK: - Edge Cases
 
     func test_zeroAmounts_handled() {

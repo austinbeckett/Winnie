@@ -135,7 +135,7 @@ struct GoalCreationView: View {
         VStack(spacing: 0) {
             switch phase {
             case .nameEntry:
-                peachGlowButton("Continue", isEnabled: canContinue) {
+                accentButton("Continue", isEnabled: canContinue) {
                     withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
                         phase = .detailsEntry
                     }
@@ -143,7 +143,7 @@ struct GoalCreationView: View {
                 }
 
             case .detailsEntry:
-                peachGlowButton("Create Goal", isEnabled: canCreate && !isSaving) {
+                accentButton("Create Goal", isEnabled: canCreate && !isSaving) {
                     saveGoal()
                 }
             }
@@ -153,7 +153,7 @@ struct GoalCreationView: View {
         .background(WinnieColors.background(for: colorScheme))
     }
 
-    private func peachGlowButton(_ title: String, isEnabled: Bool, action: @escaping () -> Void) -> some View {
+    private func accentButton(_ title: String, isEnabled: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Text(title)
                 .font(WinnieTypography.bodyM())
@@ -161,12 +161,12 @@ struct GoalCreationView: View {
                 .foregroundColor(WinnieColors.snow)
                 .frame(maxWidth: .infinity)
                 .frame(height: WinnieSpacing.buttonHeight)
-                .background(WinnieColors.peachGlow)
+                .background(WinnieColors.amethystSmoke)
                 .clipShape(RoundedRectangle(cornerRadius: WinnieSpacing.buttonCornerRadius))
         }
         .disabled(!isEnabled)
         .opacity(isEnabled ? 1.0 : 0.5)
-        .buttonStyle(PeachGlowButtonStyle())
+        .buttonStyle(AccentButtonStyle())
     }
 
     // MARK: - Validation
@@ -210,7 +210,8 @@ struct GoalCreationView: View {
             priority: 0,
             createdAt: Date(),
             isActive: true,
-            notes: notes.isEmpty ? nil : notes
+            notes: notes.isEmpty ? nil : notes,
+            colorHex: GoalPresetColor.defaultColor.rawValue
         )
 
         // Call the callback - parent handles async save
@@ -232,8 +233,8 @@ struct GoalCreationView: View {
 
 // MARK: - Button Style
 
-/// Custom button style with scale animation for the Peach Glow buttons.
-private struct PeachGlowButtonStyle: ButtonStyle {
+/// Custom button style with scale animation for accent buttons.
+private struct AccentButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .scaleEffect(configuration.isPressed ? 0.97 : 1.0)
