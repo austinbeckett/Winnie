@@ -224,7 +224,7 @@ struct GoalDetailView: View {
     private func formatCurrency(_ amount: Decimal) -> String {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
-        formatter.currencyCode = "USD"
+        formatter.currencySymbol = "$"
         formatter.maximumFractionDigits = 0
         let number = NSDecimalNumber(decimal: amount)
         return formatter.string(from: number) ?? "$0"
