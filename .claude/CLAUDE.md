@@ -13,7 +13,7 @@ A couples financial planning iOS app that helps partners answer forward-looking 
 
 ## Tech Stack
 
-- **Frontend:** SwiftUI (iOS 17+)
+- **Frontend:** SwiftUI (iOS 18+)
 - **Backend:** Firebase (Auth, Cloud Firestore)
 - **State Management:** @Observation
 - **Auth Methods:** Apple Sign-In, Email/Password
@@ -39,6 +39,7 @@ Winnie/
 | Ink | `#131718` | Primary text (light), background (dark) |
 | Ink Elevated | `#1E2224` | Card backgrounds in dark mode |
 | Snow | `#FFFCFF` | Background (light), primary text (dark) |
+| Snow Elevated | `#F7F4F7` | Card backgrounds in light mode |
 | Amethyst Smoke | `#A393BF` | Primary accent, interactive elements, progress, primary button (dark) |
 | Blackberry Cream | `#5B325D` | Secondary accent, primary button background (light) |
 

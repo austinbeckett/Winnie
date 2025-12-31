@@ -32,6 +32,7 @@ Your new color palette provides a warm, approachable feel that reduces financial
 | **Ink** | `#131718` | Primary text (light mode), background (dark mode) |
 | **Ink Elevated** | `#1E2224` | Elevated surfaces in dark mode (cards, panels) |
 | **Snow** | `#FFFCFF` | Background (light mode), primary text (dark mode) |
+| **Snow Elevated** | `#F7F4F7` | Elevated surfaces in light mode (cards, panels) |
 | **Amethyst Smoke** | `#A393BF` | Primary accent, interactive elements, progress, primary button (dark mode) |
 | **Blackberry Cream** | `#5B325D` | Secondary accent, primary button background (light mode) |
 | **Parchment** | `#F2EFE9` | Warm neutral for special surfaces |
@@ -48,7 +49,7 @@ Your new color palette provides a warm, approachable feel that reduces financial
 | **Primary Button Text** | `#FFFCFF` (Snow) | Text on primary buttons |
 | **Secondary Button BG** | `#A393BF` (Amethyst Smoke) | Secondary actions |
 | **Accent** | `#A393BF` (Amethyst Smoke) | Interactive elements, links, progress |
-| **Card Background** | `#FFFCFF` (Snow) | Goal cards, elevated surfaces |
+| **Card Background** | `#F7F4F7` (Snow Elevated) | Goal cards, elevated surfaces |
 | **Borders** | `#131718` (Ink) at 20% opacity | Button outlines, input borders, dividers |
 
 ### Dark Mode (Secondary Theme)
@@ -215,7 +216,7 @@ Generous type sizing with ample line spacing for improved readability and calm a
 - **Border radius**: 20px (generous rounding)
 - **Padding**: 24px all sides
 - **Minimum height**: 140px
-- **Shadow (light mode)**: `0px 2px 12px rgba(19, 23, 24, 0.08)`
+- **Shadow (light mode)**: `0px 3px 16px rgba(19, 23, 24, 0.12)`
 - **No shadow (dark mode)**: Use elevated background instead
 - **Accent border** (left side, 4px width): User-selected color from Goal Preset Palette
 - **Default accent**: Amethyst (`#A393BF`)

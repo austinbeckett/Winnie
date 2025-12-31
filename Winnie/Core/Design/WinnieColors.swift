@@ -43,6 +43,11 @@ enum WinnieColors {
     /// Hex: #FFFCFF
     static let snow = Color(red: 255/255, green: 252/255, blue: 255/255)
 
+    /// Elevated surface color for light mode (cards, panels)
+    /// Slightly darker than snow for visual hierarchy
+    /// Hex: #F7F4F7
+    static let snowElevated = Color(red: 247/255, green: 244/255, blue: 247/255)
+
     /// Warm neutral background for light mode
     /// Hex: #F2EFE9
     static let parchment = Color(red: 242/255, green: 239/255, blue: 233/255)
@@ -119,9 +124,9 @@ extension WinnieColors {
     }
 
     /// Card and elevated surface background
-    /// Light: Snow (#FFFCFF) | Dark: Ink Elevated (#1E2224)
+    /// Light: Snow Elevated (#F7F4F7) | Dark: Ink Elevated (#1E2224)
     static func cardBackground(for colorScheme: ColorScheme) -> Color {
-        colorScheme == .dark ? inkElevated : snow
+        colorScheme == .dark ? inkElevated : snowElevated
     }
 
     // MARK: - Text Colors
@@ -207,9 +212,9 @@ extension WinnieColors {
     // MARK: - Shadow Colors
 
     /// Card shadow color
-    /// Light: Ink at 8% | Dark: transparent
+    /// Light: Ink at 12% | Dark: transparent
     static func cardShadow(for colorScheme: ColorScheme) -> Color {
-        colorScheme == .dark ? .clear : ink.opacity(0.08)
+        colorScheme == .dark ? .clear : ink.opacity(0.12)
     }
 
     /// Button shadow color

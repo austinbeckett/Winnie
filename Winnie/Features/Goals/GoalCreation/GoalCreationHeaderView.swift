@@ -48,8 +48,12 @@ struct GoalCreationHeaderView: View {
             .font(.system(size: 32, weight: .medium))
             .foregroundColor(WinnieColors.amethystSmoke)
             .frame(width: 64, height: 64)
-            .background(WinnieColors.snow)
+            .background(WinnieColors.cardBackground(for: colorScheme))
             .clipShape(RoundedRectangle(cornerRadius: 16))
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(WinnieColors.snow, lineWidth: 3)
+            )
             .shadow(color: WinnieColors.ink.opacity(0.1), radius: 4, y: 2)
             .contentTransition(.symbolEffect(.replace))
             .animation(.spring(response: 0.3, dampingFraction: 0.7), value: currentIcon)

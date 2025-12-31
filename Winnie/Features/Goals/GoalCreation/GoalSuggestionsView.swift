@@ -3,8 +3,9 @@ import SwiftUI
 /// A vertical list of suggestion rows for quick goal selection in Phase 1.
 ///
 /// **How It Works:**
-/// - Displays a "Suggestions" header with a list of goal suggestions
-/// - Each row shows an icon and goal name with a divider
+/// - Displays a "Suggestions" header above a card containing suggestions
+/// - Each row shows an icon and goal name
+/// - Rows are separated by inset dividers (not running to card edges)
 /// - Tapping a row triggers the `onSelect` callback
 /// - Parent view uses this to fill the goal name field
 ///
@@ -20,29 +21,36 @@ struct GoalSuggestionsView: View {
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            // Section header
+        VStack(alignment: .leading, spacing: WinnieSpacing.s) {
+            // Section header (outside the card)
             Text("Suggestions")
                 .font(WinnieTypography.bodyS())
                 .fontWeight(.medium)
                 .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
-                .padding(.horizontal, WinnieSpacing.screenMarginMobile)
-                .padding(.top, WinnieSpacing.l)
-                .padding(.bottom, WinnieSpacing.s)
 
-            // Suggestions list
+            // Suggestions card with shadow
             VStack(spacing: 0) {
-                ForEach(GoalSuggestion.defaults) { suggestion in
+                ForEach(Array(GoalSuggestion.defaults.enumerated()), id: \.element.id) { index, suggestion in
                     suggestionRow(suggestion)
 
-                    // Divider (except after last item)
-                    if suggestion.id != GoalSuggestion.defaults.last?.id {
+                    // Inset divider (except after last item)
+                    if index < GoalSuggestion.defaults.count - 1 {
                         Divider()
-                            .padding(.leading, WinnieSpacing.screenMarginMobile + 44)
+                            .padding(.horizontal, WinnieSpacing.m)
                     }
                 }
             }
+            .background(WinnieColors.cardBackground(for: colorScheme))
+            .clipShape(RoundedRectangle(cornerRadius: WinnieSpacing.cardCornerRadius))
+            .shadow(
+                color: WinnieColors.cardShadow(for: colorScheme),
+                radius: 8,
+                x: 0,
+                y: 3
+            )
         }
+        .padding(.horizontal, WinnieSpacing.screenMarginMobile)
+        .padding(.top, WinnieSpacing.l)
     }
 
     // MARK: - Suggestion Row
@@ -70,7 +78,7 @@ struct GoalSuggestionsView: View {
 
                 Spacer()
             }
-            .padding(.horizontal, WinnieSpacing.screenMarginMobile)
+            .padding(.horizontal, WinnieSpacing.m)
             .padding(.vertical, WinnieSpacing.m)
             .contentShape(Rectangle())
         }

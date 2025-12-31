@@ -41,9 +41,9 @@ struct WinnieCard<Content: View>: View {
             .overlay(accentBorderOverlay)
             .shadow(
                 color: WinnieColors.cardShadow(for: colorScheme),
-                radius: 6,
+                radius: 8,
                 x: 0,
-                y: 2
+                y: 3
             )
     }
 
