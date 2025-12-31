@@ -145,7 +145,7 @@ struct GoalsListView: View {
         } label: {
             Image(systemName: "plus")
                 .font(.system(size: 18, weight: .semibold))
-                .foregroundColor(WinnieColors.amethystSmoke)
+                .foregroundColor(.primary)
         }
     }
 

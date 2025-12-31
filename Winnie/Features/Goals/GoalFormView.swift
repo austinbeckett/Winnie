@@ -127,7 +127,7 @@ struct GoalFormView: View {
                     Button("Cancel") {
                         dismiss()
                     }
-                    .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
+                    .foregroundColor(.primary)
                 }
 
                 ToolbarItem(placement: .topBarTrailing) {
@@ -135,7 +135,7 @@ struct GoalFormView: View {
                         saveGoal()
                     }
                     .fontWeight(.semibold)
-                    .foregroundColor(isValid ? WinnieColors.amethystSmoke : WinnieColors.tertiaryText(for: colorScheme))
+                    .foregroundColor(isValid ? .primary : WinnieColors.tertiaryText(for: colorScheme))
                     .disabled(!isValid || isSaving)
                 }
             }

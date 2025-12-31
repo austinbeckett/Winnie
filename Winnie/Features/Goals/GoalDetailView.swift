@@ -28,9 +28,6 @@ struct GoalDetailView: View {
                     notesCard(notes)
                 }
 
-                // Action buttons
-                actionButtons
-
                 Spacer(minLength: WinnieSpacing.xxl)
             }
             .padding(.horizontal, WinnieSpacing.screenMarginMobile)
@@ -40,6 +37,9 @@ struct GoalDetailView: View {
         .navigationTitle(goal.name)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                trashButton
+            }
             ToolbarItem(placement: .topBarTrailing) {
                 editButton
             }
@@ -201,29 +201,21 @@ struct GoalDetailView: View {
         }
     }
 
-    // MARK: - Action Buttons
+    // MARK: - Toolbar Buttons
 
-    private var actionButtons: some View {
-        VStack(spacing: WinnieSpacing.s) {
-            WinnieButton("Edit Goal", style: .secondary) {
-                showEditSheet = true
-            }
-
-            WinnieButton("Delete Goal", style: .text) {
-                showDeleteConfirmation = true
-            }
+    private var trashButton: some View {
+        Button {
+            showDeleteConfirmation = true
+        } label: {
+            Image(systemName: "trash")
         }
     }
-
-    // MARK: - Edit Button
 
     private var editButton: some View {
         Button {
             showEditSheet = true
         } label: {
-            Text("Edit")
-                .font(WinnieTypography.bodyM())
-                .foregroundColor(WinnieColors.amethystSmoke)
+            Image(systemName: "square.and.pencil")
         }
     }
 
