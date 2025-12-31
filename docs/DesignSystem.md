@@ -216,7 +216,7 @@ Generous type sizing with ample line spacing for improved readability and calm a
 - **Border radius**: 20px (generous rounding)
 - **Padding**: 24px all sides
 - **Minimum height**: 140px
-- **Shadow (light mode)**: `0px 3px 16px rgba(19, 23, 24, 0.12)`
+- **Shadow (light mode)**: `0px 2px 12px rgba(19, 23, 24, 0.08)`
 - **No shadow (dark mode)**: Use elevated background instead
 - **Accent border** (left side, 4px width): User-selected color from Goal Preset Palette
 - **Default accent**: Amethyst (`#A393BF`)

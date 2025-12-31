@@ -212,9 +212,9 @@ extension WinnieColors {
     // MARK: - Shadow Colors
 
     /// Card shadow color
-    /// Light: Ink at 12% | Dark: transparent
+    /// Light: Ink at 8% | Dark: transparent
     static func cardShadow(for colorScheme: ColorScheme) -> Color {
-        colorScheme == .dark ? .clear : ink.opacity(0.12)
+        colorScheme == .dark ? .clear : ink.opacity(0.08)
     }
 
     /// Button shadow color

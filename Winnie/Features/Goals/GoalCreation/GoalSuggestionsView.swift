@@ -44,9 +44,9 @@ struct GoalSuggestionsView: View {
             .clipShape(RoundedRectangle(cornerRadius: WinnieSpacing.cardCornerRadius))
             .shadow(
                 color: WinnieColors.cardShadow(for: colorScheme),
-                radius: 8,
+                radius: 6,
                 x: 0,
-                y: 3
+                y: 2
             )
         }
         .padding(.horizontal, WinnieSpacing.screenMarginMobile)
