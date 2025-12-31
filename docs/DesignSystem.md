@@ -29,45 +29,46 @@ Your new color palette provides a warm, approachable feel that reduces financial
 
 | Color Name | Hex Code | Usage |
 |------------|----------|-------|
-| **Parchment** | `#F2EFE9` | Light mode background, primary button backgrounds |
-| **Peach Glow** | `#F9B58B` | Accent color, highlights, warm CTAs, success states |
+| **Ink** | `#131718` | Primary text (light mode), background (dark mode) |
+| **Ink Elevated** | `#1E2224` | Elevated surfaces in dark mode (cards, panels) |
+| **Snow** | `#FFFCFF` | Background (light mode), primary text (dark mode) |
+| **Peach Glow** | `#F9B58B` | Accent color, highlights, warm CTAs, primary button (dark mode) |
 | **Amethyst Smoke** | `#A393BF` | Primary purple accent, interactive elements, progress indicators |
-| **Blackberry Cream** | `#5B325D` | Dark mode background, headers, primary text in light mode |
-| **Carbon Black** | `#252627` | Pure black text, deep backgrounds, high contrast text |
+| **Blackberry Cream** | `#5B325D` | Primary button background (light mode) |
+| **Parchment** | `#F2EFE9` | Legacy accent color for special surfaces |
 
 ### Light Mode (Primary Theme)
 
 | Element | Hex Code | Usage |
 |---------|----------|-------|
-| **Background** | `#F2EFE9` (Parchment) | Main app background |
-| **Primary Text** | `#252627` (Carbon Black) | Headlines, important text |
-| **Secondary Text** | `#5B325D` (Blackberry Cream) | Body text, descriptions |
-| **Tertiary Text** | `#5B325D` at 60% opacity | Helper text, captions |
+| **Background** | `#FFFCFF` (Snow) | Main app background |
+| **Primary Text** | `#131718` (Ink) | Headlines, important text |
+| **Secondary Text** | `#131718` (Ink) at 80% opacity | Body text, descriptions |
+| **Tertiary Text** | `#131718` (Ink) at 50% opacity | Helper text, captions |
 | **Primary Button BG** | `#5B325D` (Blackberry Cream) | Primary action buttons |
-| **Primary Button Text** | `#F2EFE9` (Parchment) | Text on dark buttons |
+| **Primary Button Text** | `#FFFCFF` (Snow) | Text on dark buttons |
 | **Secondary Button BG** | `#F9B58B` (Peach Glow) | Secondary actions, warm CTAs |
 | **Accent Orange** | `#F9B58B` (Peach Glow) | Highlights, hover states, attention |
 | **Accent Purple** | `#A393BF` (Amethyst Smoke) | Interactive elements, links, progress |
-| **Card Background** | `#FFFFFF` (Pure White) | Goal cards, elevated surfaces |
+| **Card Background** | `#FFFCFF` (Snow) | Goal cards, elevated surfaces |
 | **Card Accent - Purple** | `#A393BF` at 20% opacity | Subtle card backgrounds |
 | **Card Accent - Peach** | `#F9B58B` at 20% opacity | Warm card backgrounds |
-| **Borders** | `#5B325D` at 20% opacity | Button outlines, input borders, dividers |
+| **Borders** | `#131718` (Ink) at 20% opacity | Button outlines, input borders, dividers |
 
 ### Dark Mode (Secondary Theme)
 
 | Element | Hex Code | Usage |
 |---------|----------|-------|
-| **Background** | `#5B325D` (Blackberry Cream) | Main app background |
-| **Background - Deep** | `#252627` (Carbon Black) | Bottom gradient, elevated cards |
-| **Primary Text** | `#F2EFE9` (Parchment) | Headlines, important text, button text |
-| **Secondary Text** | `#F2EFE9` at 80% opacity | Body text, descriptions, labels |
-| **Tertiary Text** | `#F2EFE9` at 50% opacity | Helper text, timestamps, captions |
+| **Background** | `#131718` (Ink) | Main app background |
+| **Primary Text** | `#FFFCFF` (Snow) | Headlines, important text |
+| **Secondary Text** | `#FFFCFF` (Snow) at 80% opacity | Body text, descriptions, labels |
+| **Tertiary Text** | `#FFFCFF` (Snow) at 50% opacity | Helper text, timestamps, captions |
 | **Primary Button BG** | `#F9B58B` (Peach Glow) | Primary action buttons (Continue, Save, etc.) |
-| **Primary Button Text** | `#252627` (Carbon Black) | Text on peach buttons |
+| **Primary Button Text** | `#131718` (Ink) | Text on peach buttons |
 | **Secondary Button BG** | `#A393BF` (Amethyst Smoke) | Secondary actions, alternate CTAs |
 | **Accent Purple** | `#A393BF` (Amethyst Smoke) | Progress indicators, selected states, highlights |
-| **Card Background** | `#252627` (Carbon Black) | Cards, panels, elevated surfaces |
-| **Borders / Dividers** | `#F2EFE9` at 15% opacity | Border strokes, divider lines |
+| **Card Background** | `#1E2224` (Ink Elevated) | Cards, panels, elevated surfaces |
+| **Borders / Dividers** | `#FFFCFF` (Snow) at 15% opacity | Border strokes, divider lines |
 
 ### Winnie Financial Data Colors
 
@@ -184,9 +185,9 @@ Generous type sizing with ample line spacing for improved readability and calm a
 
 - **Shape**: Pill-shaped with full rounded corners (`border-radius: 28-32px`)
 - **Light mode background**: Blackberry Cream (`#5B325D`)
-- **Light mode text**: Parchment (`#F2EFE9`)
+- **Light mode text**: Snow (`#FFFCFF`)
 - **Dark mode background**: Peach Glow (`#F9B58B`)
-- **Dark mode text**: Carbon Black (`#252627`)
+- **Dark mode text**: Ink (`#131718`)
 - **Padding**: Vertical 18px, Horizontal 48px (very generous)
 - **Typography**: 16pt, Bold (700), Lato
 - **Minimum width**: 280px or full-width on mobile
@@ -220,13 +221,13 @@ Generous type sizing with ample line spacing for improved readability and calm a
 
 #### Goal Cards
 
-- **Light mode background**: Pure White (`#FFFFFF`) with subtle colored accent border
-- **Dark mode background**: Carbon Black (`#252627`) with subtle border
+- **Light mode background**: Snow (`#FFFCFF`) with subtle colored accent border
+- **Dark mode background**: Ink (`#131718`) with subtle border
 - **Border radius**: 20px (generous rounding)
 - **Padding**: 24px all sides
 - **Minimum height**: 140px
-- **Shadow (light mode)**: `0px 2px 12px rgba(91, 50, 93, 0.08)`
-- **Border (dark mode)**: `1px solid rgba(242, 239, 233, 0.1)`
+- **Shadow (light mode)**: `0px 2px 12px rgba(19, 23, 24, 0.08)`
+- **Border (dark mode)**: `1px solid rgba(255, 252, 255, 0.1)`
 - **Accent borders** (left side, 4px width):
   - House goal: `#F9B58B` (Peach Glow)
   - Retirement goal: `#A393BF` (Amethyst Smoke)
@@ -245,11 +246,11 @@ For special emphasis cards, use subtle background tints:
 
 - **Border radius**: 16px
 - **Border**: 1.5px solid
-  - Light mode: `#5B325D` at 30% opacity
-  - Dark mode: `#F2EFE9` at 30% opacity
+  - Light mode: `#131718` (Ink) at 30% opacity
+  - Dark mode: `#FFFCFF` (Snow) at 30% opacity
 - **Background**:
-  - Light mode: `#FFFFFF` (white)
-  - Dark mode: `#252627` (Carbon Black)
+  - Light mode: `#FFFCFF` (Snow)
+  - Dark mode: `#131718` (Ink)
 - **Padding**: 18px horizontal, 16px vertical
 - **Height**: 56px minimum
 - **Typography**: 16pt Lato Regular
@@ -262,10 +263,10 @@ For special emphasis cards, use subtle background tints:
 
 - **Track height**: 6px
 - **Track background**:
-  - Light mode: `#5B325D` at 20% opacity
-  - Dark mode: `#F2EFE9` at 20% opacity
+  - Light mode: `#131718` (Ink) at 20% opacity
+  - Dark mode: `#FFFCFF` (Snow) at 20% opacity
 - **Track fill**: Amethyst Smoke (`#A393BF`)
-- **Thumb**: 28px circle, Parchment (`#F2EFE9`) with `0px 2px 8px rgba(91, 50, 93, 0.3)` shadow
+- **Thumb**: 28px circle, Snow (`#FFFCFF`) with `0px 2px 8px rgba(19, 23, 24, 0.3)` shadow
 - **Value display**: Large financial text (32pt Lato Bold) above slider
 - **Animation**: Smooth 200ms ease-out on value changes
 - **Active state**: Thumb scales to 32px
@@ -277,8 +278,8 @@ For special emphasis cards, use subtle background tints:
 - **Height**: 8px
 - **Border radius**: 4px (fully rounded)
 - **Background**:
-  - Light mode: `#5B325D` at 15% opacity
-  - Dark mode: `#F2EFE9` at 15% opacity
+  - Light mode: `#131718` (Ink) at 15% opacity
+  - Dark mode: `#FFFCFF` (Snow) at 15% opacity
 - **Fill**: Peach Glow (`#F9B58B`) for on-track, Amethyst Smoke (`#A393BF`) for in-progress
 - **Animation**: Smooth width transition 400ms ease-out
 
@@ -355,16 +356,16 @@ For special emphasis cards, use subtle background tints:
 
 #### Light Mode (primary)
 
-- **Background**: Parchment (`#F2EFE9`)
-- **Alternative cards**: Pure white (`#FFFFFF`) cards on Parchment background for contrast
+- **Background**: Snow (`#FFFCFF`)
+- **Cards**: Snow (`#FFFCFF`) cards with subtle shadow for depth
 - **Shadows**: Subtle shadows on cards and buttons for depth
-  - Cards: `0px 2px 12px rgba(91, 50, 93, 0.08)`
-  - Buttons: `0px 2px 8px rgba(91, 50, 93, 0.15)`
+  - Cards: `0px 2px 12px rgba(19, 23, 24, 0.08)`
+  - Buttons: `0px 2px 8px rgba(19, 23, 24, 0.15)`
 
 #### Dark Mode
 
-- **Background**: Solid Blackberry Cream (`#5B325D`)
-- **Alternative**: Gradient from Blackberry Cream (`#5B325D`) to Carbon Black (`#252627`) for depth
+- **Background**: Ink (`#131718`)
+- **Cards**: Ink (`#131718`) with subtle borders for definition
 - **Glow effect**: Soft radial gradient (Amethyst Smoke `#A393BF` at 30% opacity) behind key illustrations
 
 ### Animations & Transitions
@@ -385,46 +386,46 @@ For special emphasis cards, use subtle background tints:
 
 ### 1. Welcome Screen
 
-- Background: Parchment (`#F2EFE9`)
+- Background: Snow (`#FFFCFF`)
 - Top 1/3: Winnie logo + tagline
 - Middle: Line art illustration (couple + financial symbols)
-- Display text (52pt serif): "Plan your future together" in Carbon Black
-- Body text (18pt): "Answer money questions as a team" in Blackberry Cream
-- Bottom: Blackberry Cream "Get Started" button with Parchment text, 24px from safe area bottom
+- Display text (52pt serif): "Plan your future together" in Ink (`#131718`)
+- Body text (18pt): "Answer money questions as a team" in Ink at 80% opacity
+- Bottom: Blackberry Cream "Get Started" button with Snow text, 24px from safe area bottom
 
 ### 2. Dashboard
 
-- Background: Parchment (`#F2EFE9`)
-- Top bar: User name (left) in Carbon Black, settings icon (right), 24px horizontal margins
-- Hero section: "Disposable Income" label in Blackberry Cream + $X,XXX/month in large financial text (40pt) Carbon Black
-- Section header (28pt serif): "Your Goals" in Carbon Black
-- Grid: 2 columns, 16px gap, white cards with pastel accent borders
+- Background: Snow (`#FFFCFF`)
+- Top bar: User name (left) in Ink (`#131718`), settings icon (right), 24px horizontal margins
+- Hero section: "Disposable Income" label in Ink at 80% + $X,XXX/month in large financial text (40pt) Ink
+- Section header (28pt serif): "Your Goals" in Ink
+- Grid: 2 columns, 16px gap, Snow cards with pastel accent borders
 - Each card shows: Icon, Goal name (22pt), Current/Target (24pt financial), Timeline
 - FAB: '+' button bottom right, Amethyst Smoke background, 56px diameter
 
 ### 3. Allocation Modeling
 
-- Background: Parchment (`#F2EFE9`)
-- Header: "Adjust Your Allocation" (36pt serif) in Carbon Black
-- Top indicator: "Remaining: $XXX" in Blackberry Cream with Amethyst Smoke progress bar
+- Background: Snow (`#FFFCFF`)
+- Header: "Adjust Your Allocation" (36pt serif) in Ink (`#131718`)
+- Top indicator: "Remaining: $XXX" in Ink at 80% with Amethyst Smoke progress bar
 - For each goal:
-  - White card with pastel accent border (left side, 4px)
-  - Goal name + icon in Carbon Black
-  - Large $ amount (32pt) in Carbon Black
+  - Snow card with pastel accent border (left side, 4px)
+  - Goal name + icon in Ink
+  - Large $ amount (32pt) in Ink
   - Slider control with Amethyst Smoke fill
-  - Timeline: "2.8 years" with calendar icon in Blackberry Cream
+  - Timeline: "2.8 years" with calendar icon in Ink at 80%
 - Bottom: Blackberry Cream "Save as Scenario" button
 
 ### 4. Paywall / Subscription
 
-- Background: Parchment (`#F2EFE9`)
-- Display headline (44pt serif): "Unlock unlimited scenarios" in Carbon Black
+- Background: Snow (`#FFFCFF`)
+- Display headline (44pt serif): "Unlock unlimited scenarios" in Ink (`#131718`)
 - Feature list with Amethyst Smoke checkmarks
-- Pricing cards: Side by side, white backgrounds with subtle shadows
+- Pricing cards: Side by side, Snow backgrounds with subtle shadows
   - Monthly: $8.99/mo (outlined in Amethyst Smoke)
   - Annual: $89.99/yr (highlighted, Peach Glow pill "MOST POPULAR")
-- CTA: "Start 14 days free trial" Blackberry Cream button with Parchment text
-- Footer: "No commitment. Cancel anytime." (14pt) in Blackberry Cream at 60% opacity
+- CTA: "Start 14 days free trial" Blackberry Cream button with Snow text
+- Footer: "No commitment. Cancel anytime." (14pt) in Ink at 50% opacity
 
 ---
 
@@ -435,13 +436,13 @@ For special emphasis cards, use subtle background tints:
 #### For the Dashboard:
 
 ```
-Create the Winnie dashboard screen in SwiftUI. Use light mode with Parchment (#F2EFE9) background. Display "Disposable Income" in 18pt Lato regular in Blackberry Cream (#5B325D), then show the amount $4,200/month in 40pt Lato Bold Carbon Black (#252627) with tabular figures. Below that, add "Your Goals" in 36pt Playfair Display Carbon Black. Create a 2-column grid with 16px gaps showing goal cards. Each card has white background with colored left accent border (4px), 20px border radius, 24px padding, subtle shadow, and shows the goal name in 22pt Lato Semibold, current vs target in 24pt Lato Medium, and timeline below. Use generous spacing throughout: 48px top margin, 32px between sections.
+Create the Winnie dashboard screen in SwiftUI. Use light mode with Snow (#FFFCFF) background. Display "Disposable Income" in 18pt Lato regular in Ink at 80% opacity, then show the amount $4,200/month in 40pt Lato Bold Ink (#131718) with tabular figures. Below that, add "Your Goals" in 36pt Playfair Display Ink. Create a 2-column grid with 16px gaps showing goal cards. Each card has Snow background with colored left accent border (4px), 20px border radius, 24px padding, subtle shadow, and shows the goal name in 22pt Lato Semibold, current vs target in 24pt Lato Medium, and timeline below. Use generous spacing throughout: 48px top margin, 32px between sections.
 ```
 
 #### For a Button Component:
 
 ```
-Create a reusable Button component in SwiftUI that matches Winnie's design. Make it pill-shaped with 28px border radius, 18px vertical padding, 48px horizontal padding, minimum 56px height. For light mode: Blackberry Cream background (#5B325D) with Parchment text (#F2EFE9). For dark mode: Peach Glow background (#F9B58B) with Carbon Black text (#252627). Use 16pt Lato Bold for button text. Add a press animation that scales to 0.97 with spring physics (stiffness: 400, damping: 20). Include loading and disabled states.
+Create a reusable Button component in SwiftUI that matches Winnie's design. Make it pill-shaped with 28px border radius, 18px vertical padding, 48px horizontal padding, minimum 56px height. For light mode: Blackberry Cream background (#5B325D) with Snow text (#FFFCFF). For dark mode: Peach Glow background (#F9B58B) with Ink text (#131718). Use 16pt Lato Bold for button text. Add a press animation that scales to 0.97 with spring physics (stiffness: 400, damping: 20). Include loading and disabled states.
 ```
 
 ### Code Structure Tips
@@ -457,11 +458,13 @@ Create a reusable Button component in SwiftUI that matches Winnie's design. Make
 Before considering a screen complete, verify:
 
 - ☐ All buttons are pill-shaped with correct colors (Blackberry Cream bg in light mode, Peach Glow in dark)
+- ☐ Button text uses Snow (#FFFCFF) in light mode, Ink (#131718) in dark mode
 - ☐ Headlines use Playfair Display serif font
 - ☐ Financial amounts use Lato Bold with tabular figures
 - ☐ Spacing follows 8pt grid (multiples of 4, 8, 16, 24, 32, 48)
-- ☐ Cards have 20px radius, 24px padding, white background with subtle shadow (light mode)
-- ☐ Light mode uses Parchment (#F2EFE9) background
+- ☐ Cards have 20px radius, 24px padding, Snow background with subtle shadow (light mode)
+- ☐ Light mode uses Snow (#FFFCFF) background, Dark mode uses Ink (#131718)
+- ☐ Primary text uses Ink (light) / Snow (dark), Secondary at 80%, Tertiary at 50%
 - ☐ All touch targets are minimum 44x44pt (iOS guideline)
 - ☐ Animations use spring physics for organic feel
 - ☐ Safe areas respected (top notch, bottom home indicator)

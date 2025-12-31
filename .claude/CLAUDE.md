@@ -36,11 +36,19 @@ Winnie/
 ### Colors
 | Name | Hex | Usage |
 |------|-----|-------|
-| Parchment | `#F2EFE9` | Light mode background |
-| Peach Glow | `#F9B58B` | Accent, warm CTAs |
+| Ink | `#131718` | Primary text (light), background (dark) |
+| Ink Elevated | `#1E2224` | Card backgrounds in dark mode |
+| Snow | `#FFFCFF` | Background (light), primary text (dark) |
+| Peach Glow | `#F9B58B` | Accent, warm CTAs, primary button (dark) |
 | Amethyst Smoke | `#A393BF` | Interactive elements, progress |
-| Blackberry Cream | `#5B325D` | Dark mode bg, primary buttons (light) |
-| Carbon Black | `#252627` | Primary text |
+| Blackberry Cream | `#5B325D` | Primary button background (light) |
+
+### Text Colors
+| Level | Light Mode | Dark Mode |
+|-------|------------|-----------|
+| Primary | Ink (#131718) | Snow (#FFFCFF) |
+| Secondary | Ink @ 80% | Snow @ 80% |
+| Tertiary | Ink @ 50% | Snow @ 50% |
 
 ### Typography
 - **Headlines:** Playfair Display (serif) - warmth and sophistication
