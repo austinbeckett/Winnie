@@ -78,7 +78,7 @@ struct GoalFormView: View {
                     WinnieTextField(
                         "Goal Name",
                         text: $name,
-                        placeholder: "e.g., Dream Home Down Payment",
+                        placeholder: "e.g., Down Payment, Wedding, College Fund, etc.",
                         error: nameError
                     )
                     .onChange(of: name) { _, _ in
@@ -87,7 +87,7 @@ struct GoalFormView: View {
 
                     // Target amount
                     WinnieCurrencyField(
-                        "Target Amount",
+                        "Target Savings",
                         text: $targetAmountText,
                         error: targetAmountError
                     )
@@ -95,13 +95,11 @@ struct GoalFormView: View {
                         validateTargetAmount()
                     }
 
-                    // Current amount (edit mode only)
-                    if isEditMode {
-                        WinnieCurrencyField(
-                            "Current Savings",
-                            text: $currentAmountText
-                        )
-                    }
+                    // Current progress
+                    WinnieCurrencyField(
+                        "Current Savings",
+                        text: $currentAmountText
+                    )
 
                     // Target date toggle and picker
                     targetDateSection
@@ -146,7 +144,7 @@ struct GoalFormView: View {
 
     private var goalTypePicker: some View {
         VStack(alignment: .leading, spacing: WinnieSpacing.s) {
-            Text("Goal Type")
+            Text("Goal Category")
                 .font(WinnieTypography.bodyS())
                 .fontWeight(.medium)
                 .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
@@ -306,7 +304,7 @@ struct GoalFormView: View {
             type: selectedType,
             name: name.trimmingCharacters(in: .whitespaces),
             targetAmount: targetAmount,
-            currentAmount: isEditMode ? currentAmount : 0,
+            currentAmount: currentAmount,
             desiredDate: hasTargetDate ? targetDate : nil,
             customReturnRate: existingGoal?.customReturnRate,
             priority: existingGoal?.priority ?? 0,
