@@ -56,7 +56,6 @@ struct GoalsListView: View {
             }
         }
         .onAppear {
-            configureNavigationBarAppearance()
             viewModel.startListening()
         }
         .onDisappear {
@@ -150,40 +149,6 @@ struct GoalsListView: View {
         }
     }
 
-    // MARK: - Navigation Bar Appearance
-
-    private func configureNavigationBarAppearance() {
-        // Create appearance for large title (scrolled to top)
-        let appearance = UINavigationBarAppearance()
-        appearance.configureWithTransparentBackground()
-
-        // Create serif fonts using font descriptor
-        let largeTitleFont: UIFont = {
-            let descriptor = UIFont.systemFont(ofSize: 34, weight: .bold).fontDescriptor.withDesign(.serif)
-            return descriptor.map { UIFont(descriptor: $0, size: 34) } ?? UIFont.systemFont(ofSize: 34, weight: .bold)
-        }()
-
-        let inlineTitleFont: UIFont = {
-            let descriptor = UIFont.systemFont(ofSize: 17, weight: .semibold).fontDescriptor.withDesign(.serif)
-            return descriptor.map { UIFont(descriptor: $0, size: 17) } ?? UIFont.systemFont(ofSize: 17, weight: .semibold)
-        }()
-
-        // Large title font (serif)
-        appearance.largeTitleTextAttributes = [
-            .font: largeTitleFont,
-            .foregroundColor: UIColor(WinnieColors.primaryText(for: colorScheme))
-        ]
-
-        // Inline title font (when scrolled)
-        appearance.titleTextAttributes = [
-            .font: inlineTitleFont,
-            .foregroundColor: UIColor(WinnieColors.primaryText(for: colorScheme))
-        ]
-
-        // Apply to navigation bar
-        UINavigationBar.appearance().standardAppearance = appearance
-        UINavigationBar.appearance().scrollEdgeAppearance = appearance
-    }
 }
 
 // MARK: - Preview

@@ -200,3 +200,34 @@ extension WinnieColors {
         colorScheme == .dark ? peachGlow.opacity(0.25) : ink.opacity(0.15)
     }
 }
+
+// MARK: - UIKit Compatibility
+
+// Usage Guide:
+//
+// SwiftUI Views (Text, Button, VStack, etc.):
+//   Use: WinnieColors.primaryText(for: colorScheme)
+//   With: @Environment(\.colorScheme) private var colorScheme
+//   Why:  SwiftUI automatically re-renders when colorScheme changes
+//
+// UIKit Components (UINavigationBar, UITabBar, etc.):
+//   Use: WinnieColors.primaryTextUIColor
+//   Why:  UIKit needs trait-collection-based dynamic colors
+//   Note: Configured globally in WinnieApp.configureGlobalAppearance()
+
+extension WinnieColors {
+
+    /// Dynamic UIColor for primary text - automatically updates with dark/light mode.
+    /// Use this for UIKit components (UINavigationBar, UITabBar, etc.).
+    /// For SwiftUI views, use `primaryText(for: colorScheme)` instead.
+    static var primaryTextUIColor: UIColor {
+        UIColor { traitCollection in
+            switch traitCollection.userInterfaceStyle {
+            case .dark:
+                return UIColor(snow)
+            default:
+                return UIColor(ink)
+            }
+        }
+    }
+}

@@ -20,6 +20,38 @@ struct WinnieApp: App {
 
     init() {
         FirebaseApp.configure()
+        configureGlobalAppearance()
+    }
+
+    /// Configures global UIKit appearance for the app.
+    /// Called once at app startup. Uses dynamic UIColors for automatic dark/light mode support.
+    /// Note: SwiftUI views use WinnieColors with @Environment(\.colorScheme) instead.
+    private func configureGlobalAppearance() {
+        // Serif fonts for navigation titles (matches Winnie design system)
+        let largeTitleFont: UIFont = {
+            let descriptor = UIFont.systemFont(ofSize: 34, weight: .bold).fontDescriptor.withDesign(.serif)
+            return descriptor.map { UIFont(descriptor: $0, size: 34) } ?? UIFont.systemFont(ofSize: 34, weight: .bold)
+        }()
+
+        let inlineTitleFont: UIFont = {
+            let descriptor = UIFont.systemFont(ofSize: 17, weight: .semibold).fontDescriptor.withDesign(.serif)
+            return descriptor.map { UIFont(descriptor: $0, size: 17) } ?? UIFont.systemFont(ofSize: 17, weight: .semibold)
+        }()
+
+        // Configure navigation bar
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithTransparentBackground()
+        appearance.largeTitleTextAttributes = [
+            .font: largeTitleFont,
+            .foregroundColor: WinnieColors.primaryTextUIColor
+        ]
+        appearance.titleTextAttributes = [
+            .font: inlineTitleFont,
+            .foregroundColor: WinnieColors.primaryTextUIColor
+        ]
+
+        UINavigationBar.appearance().standardAppearance = appearance
+        UINavigationBar.appearance().scrollEdgeAppearance = appearance
     }
 
     // MARK: - Body
