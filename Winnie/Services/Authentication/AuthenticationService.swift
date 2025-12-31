@@ -49,9 +49,22 @@ final class AuthenticationService: ObservableObject {
     // MARK: - Initialization
 
     /// Production initializer - uses Firebase Auth via `FirebaseAuthProvider.shared`.
+    /// In test environments (when XCTestCase is loaded), this creates a no-op service
+    /// that doesn't connect to Firebase.
     init() {
-        self.authProvider = FirebaseAuthProvider.shared
-        startListening()
+        // Skip Firebase Auth when running unit tests
+        if Self.isRunningTests {
+            self.authProvider = NoOpAuthProvider()
+            // Don't start listening in test mode
+        } else {
+            self.authProvider = FirebaseAuthProvider.shared
+            startListening()
+        }
+    }
+
+    /// Detect if we're running in a unit test environment
+    private static var isRunningTests: Bool {
+        NSClassFromString("XCTestCase") != nil
     }
 
     /// Test initializer - accepts any `AuthProviding` implementation.
@@ -267,4 +280,41 @@ final class AuthenticationService: ObservableObject {
 
 extension Notification.Name {
     static let newUserSignedUp = Notification.Name("newUserSignedUp")
+}
+
+// MARK: - No-Op Auth Provider (for test environment)
+
+/// A no-op auth provider used when the app runs during unit tests.
+/// This prevents Firebase Auth from being initialized when tests run.
+private final class NoOpAuthProvider: AuthProviding {
+    var currentUser: AuthUserProviding? { nil }
+
+    func addStateDidChangeListener(_ handler: @escaping (AuthUserProviding?) -> Void) -> AuthStateListenerHandle {
+        // Return a dummy handle
+        return NSObject()
+    }
+
+    nonisolated func removeStateDidChangeListener(_ handle: AuthStateListenerHandle) {
+        // No-op
+    }
+
+    func createUser(withEmail email: String, password: String) async throws -> AuthResultProviding {
+        throw AuthenticationError.unknown("Auth not available in test environment")
+    }
+
+    func signIn(withEmail email: String, password: String) async throws -> AuthResultProviding {
+        throw AuthenticationError.unknown("Auth not available in test environment")
+    }
+
+    func sendPasswordReset(withEmail email: String) async throws {
+        throw AuthenticationError.unknown("Auth not available in test environment")
+    }
+
+    func signIn(with credential: AuthCredentialProviding) async throws -> AuthResultProviding {
+        throw AuthenticationError.unknown("Auth not available in test environment")
+    }
+
+    func signOut() throws {
+        // No-op
+    }
 }

@@ -19,8 +19,17 @@ struct WinnieApp: App {
     // MARK: - Initialization
 
     init() {
+        // Skip Firebase initialization when running unit tests
+        // Tests use mocked services and don't need real Firebase
+        guard !Self.isRunningTests else { return }
+
         FirebaseApp.configure()
         configureGlobalAppearance()
+    }
+
+    /// Detect if we're running in a unit test environment
+    private static var isRunningTests: Bool {
+        NSClassFromString("XCTestCase") != nil
     }
 
     /// Configures global UIKit appearance for the app.

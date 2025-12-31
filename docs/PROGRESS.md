@@ -1,6 +1,6 @@
 # Winnie App - Development Progress
 
-**Last Updated:** December 30, 2024
+**Last Updated:** December 31, 2024
 
 ---
 
@@ -92,7 +92,8 @@
 | Dashboard | Not Started | |
 | Goals list | Done | GoalsListView with empty state |
 | Goal detail | Done | GoalDetailView with edit/delete |
-| Goal form | Done | GoalFormView (create/edit) |
+| Goal creation | Done | GoalCreationView (two-phase flow with suggestions) |
+| Goal edit | Done | GoalEditView (matches Phase 2 of creation) |
 | Scenario editor (sliders) | Not Started | |
 | Scenario comparison | Not Started | |
 | Settings | Not Started | |
@@ -227,13 +228,44 @@
 | `Features/Goals/GoalsViewModel.swift` | @Observable state management for goals |
 | `Features/Goals/GoalsListView.swift` | Main goals list screen |
 | `Features/Goals/GoalDetailView.swift` | Single goal detail view |
-| `Features/Goals/GoalFormView.swift` | Create/edit goal form |
+| `Features/Goals/GoalEditView.swift` | Edit goal form (matches Phase 2 of creation) |
+| **Goal Creation Flow** | |
+| `Features/Goals/GoalCreation/GoalCreationView.swift` | Two-phase goal creation modal |
+| `Features/Goals/GoalCreation/GoalCreationHeaderView.swift` | Colored header with tappable icon |
+| `Features/Goals/GoalCreation/GoalDetailsFormView.swift` | Form fields (amounts, category, date, notes) |
+| `Features/Goals/GoalCreation/GoalSuggestionsView.swift` | Goal name suggestions in Phase 1 |
+| `Features/Goals/GoalCreation/GoalAppearanceSheet.swift` | Icon and color picker sheet |
+| `Features/Goals/GoalCreation/GoalIconPicker.swift` | Icon selection with Auto option |
+| `Features/Goals/GoalCreation/GoalCategoryDropdown.swift` | Category selection dropdown |
 | **Code Audit Fixes** | |
 | `WinnieTests/README.md` | Test suite documentation: structure, naming, @MainActor rationale |
 
 ---
 
 ## Recent Sessions
+
+### December 31, 2024 (Session 13) - Goal Creation & Edit UI Refinements
+- **GoalIconMapper Expansion**: Expanded from ~80 to 300+ keywords across 20+ categories
+- Added 9 new GoalType enum cases: debt, car, education, hobby, fitness, gift, homeImprovement, investment, charity
+- Fixed word boundary matching so "credit card" doesn't incorrectly match "car" icon
+- Auto-populate category from goal name when entering Phase 2 of creation
+- **UI Improvements**:
+  - Removed X button, added native iOS drag indicator to sheets
+  - Fixed header text color (snow in light mode, ink in dark mode for readability)
+  - Made header icon tappable in Phase 2 with pencil badge
+  - Created `GoalAppearanceSheet` for icon/color customization (color picker + icon picker)
+  - Moved icon/color pickers out of form into tappable header
+- **GoalEditView Created**: New edit view matching Phase 2 of goal creation
+  - Reuses `GoalCreationHeaderView`, `GoalDetailsFormView`, `GoalAppearanceSheet`
+  - Pre-populates from existing goal
+  - "Save Changes" button at bottom
+- **Deleted GoalFormView**: No longer needed (creation uses GoalCreationView, edit uses GoalEditView)
+- **Test Environment Isolation**: Fixed crash when running unit tests
+  - Added `isRunningTests` check using `NSClassFromString("XCTestCase")`
+  - `WinnieApp` skips `FirebaseApp.configure()` during tests
+  - `AuthenticationService` uses `NoOpAuthProvider` during tests
+  - Prevents real Firebase from running alongside mock-based tests
+- **Total files**: 7 new/modified files in GoalCreation folder + GoalEditView
 
 ### December 30, 2024 (Session 12) - Goals Vertical Slice Complete
 - **Goals Vertical Slice Complete**: First full UI feature with CRUD operations working end-to-end
@@ -247,10 +279,10 @@
 - Created 3 goal views in `Features/Goals/`:
   - `GoalsListView` - Main screen with empty state, loading, and goal cards
   - `GoalDetailView` - Full goal info with progress, edit/delete actions
-  - `GoalFormView` - Combined create/edit form with type picker and validation
+  - Goal creation/edit forms (later refactored into GoalCreationView and GoalEditView)
 - Wired up navigation in ContentView (shows GoalsListView after sign-in)
 - Added `Sendable` conformance to Goal and GoalType for async safety
-- **Critical Bug Fixed**: Async closures across sheet boundaries caused memory corruption (EXC_BAD_ACCESS with 8GB allocation failure). Solution: GoalFormView uses sync callback, parent wraps in Task.
+- **Critical Bug Fixed**: Async closures across sheet boundaries caused memory corruption (EXC_BAD_ACCESS with 8GB allocation failure). Solution: Form views use sync callback, parent wraps in Task.
 - **Pattern Established**: Sheet forms use sync `onSave` callbacks; parent views handle async operations via Task wrapper
 - **Total new files**: 9 files created for vertical slice
 

@@ -235,6 +235,50 @@ In Xcode:
 
 ---
 
+## Test Environment Isolation
+
+When unit tests run, **Firebase is completely disabled**. This is intentional.
+
+### Why Firebase is Disabled
+
+Xcode's test runner "hosts" tests inside the app, meaning `WinnieApp.init()` runs before tests start. Without isolation:
+1. `FirebaseApp.configure()` would initialize the real Firebase SDK
+2. `AuthenticationService` would set up real auth listeners
+3. If signed in, `GoalsListView` would create real Firestore listeners
+4. These real listeners would run **alongside** your mock-based tests, causing conflicts and crashes
+
+### How It Works
+
+Both `WinnieApp` and `AuthenticationService` detect the test environment:
+
+```swift
+private static var isRunningTests: Bool {
+    NSClassFromString("XCTestCase") != nil
+}
+```
+
+When running tests:
+- `WinnieApp` skips `FirebaseApp.configure()`
+- `AuthenticationService` uses `NoOpAuthProvider` instead of `FirebaseAuthProvider`
+
+### Why This Doesn't Affect Production
+
+In production, the `XCTestCase` class doesn't exist, so `isRunningTests` returns `false` and Firebase initializes normally.
+
+### What This Means for Your Tests
+
+- **Unit tests**: Use `MockFirestoreService` and `MockAuthProvider` as usual. Real Firebase never runs.
+- **UI tests**: If you need real Firebase for integration/UI tests, you'd use a different detection method (e.g., launch arguments).
+
+### Files Involved
+
+| File | What It Does |
+|------|--------------|
+| `WinnieApp.swift` | Skips `FirebaseApp.configure()` during tests |
+| `AuthenticationService.swift` | Uses `NoOpAuthProvider` during tests |
+
+---
+
 ## Test Organization by Phase
 
 | Phase | Scope | Files |

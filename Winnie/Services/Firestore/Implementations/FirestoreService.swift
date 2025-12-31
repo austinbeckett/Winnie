@@ -24,7 +24,7 @@ import FirebaseFirestore
 ///     }
 /// }
 /// ```
-final class FirestoreService: FirestoreProviding {
+final class FirestoreService: FirestoreProviding, @unchecked Sendable {
 
     // MARK: - Shared Instance
 
@@ -75,7 +75,7 @@ final class FirestoreService: FirestoreProviding {
 // MARK: - Collection Wrapper
 
 /// Wraps `CollectionReference` to conform to `CollectionProviding`
-final class FirestoreCollectionWrapper: CollectionProviding {
+final class FirestoreCollectionWrapper: CollectionProviding, @unchecked Sendable {
 
     private let reference: CollectionReference
 
@@ -122,7 +122,7 @@ final class FirestoreCollectionWrapper: CollectionProviding {
 // MARK: - Document Wrapper
 
 /// Wraps `DocumentReference` to conform to `DocumentProviding`
-final class FirestoreDocumentWrapper: DocumentProviding {
+final class FirestoreDocumentWrapper: DocumentProviding, @unchecked Sendable {
 
     private let reference: DocumentReference
 
@@ -173,7 +173,7 @@ final class FirestoreDocumentWrapper: DocumentProviding {
 // MARK: - Query Wrapper
 
 /// Wraps `Query` to conform to `QueryProviding`
-final class FirestoreQueryWrapper: QueryProviding {
+final class FirestoreQueryWrapper: QueryProviding, @unchecked Sendable {
 
     private let query: Query
 
@@ -220,7 +220,7 @@ final class FirestoreQueryWrapper: QueryProviding {
 // MARK: - Write Batch Wrapper
 
 /// Wraps `WriteBatch` to conform to `WriteBatchProviding`
-final class FirestoreWriteBatchWrapper: WriteBatchProviding {
+final class FirestoreWriteBatchWrapper: WriteBatchProviding, @unchecked Sendable {
 
     private let batch: WriteBatch
 
@@ -262,7 +262,7 @@ final class FirestoreWriteBatchWrapper: WriteBatchProviding {
 // MARK: - Transaction Wrapper
 
 /// Wraps `Transaction` to conform to `TransactionProviding`
-final class FirestoreTransactionWrapper: TransactionProviding {
+final class FirestoreTransactionWrapper: TransactionProviding, @unchecked Sendable {
 
     private let transaction: Transaction
 
@@ -308,7 +308,7 @@ final class FirestoreTransactionWrapper: TransactionProviding {
 // MARK: - Document Snapshot Wrapper
 
 /// Wraps `DocumentSnapshot` to conform to `DocumentSnapshotProviding`
-final class FirestoreDocumentSnapshotWrapper: DocumentSnapshotProviding {
+final class FirestoreDocumentSnapshotWrapper: DocumentSnapshotProviding, @unchecked Sendable {
 
     private let snapshot: DocumentSnapshot
 
@@ -341,7 +341,7 @@ final class FirestoreDocumentSnapshotWrapper: DocumentSnapshotProviding {
 // MARK: - Query Snapshot Wrapper
 
 /// Wraps `QuerySnapshot` to conform to `QuerySnapshotProviding`
-final class FirestoreQuerySnapshotWrapper: QuerySnapshotProviding {
+final class FirestoreQuerySnapshotWrapper: QuerySnapshotProviding, @unchecked Sendable {
 
     private let snapshot: QuerySnapshot
 
@@ -366,7 +366,7 @@ final class FirestoreQuerySnapshotWrapper: QuerySnapshotProviding {
 // MARK: - Listener Registration Wrapper
 
 /// Wraps `ListenerRegistration` to conform to `ListenerRegistrationProviding`
-final class FirestoreListenerRegistrationWrapper: ListenerRegistrationProviding {
+final class FirestoreListenerRegistrationWrapper: ListenerRegistrationProviding, @unchecked Sendable {
 
     private let registration: ListenerRegistration
 

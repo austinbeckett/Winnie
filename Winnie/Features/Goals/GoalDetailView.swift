@@ -45,7 +45,7 @@ struct GoalDetailView: View {
             }
         }
         .sheet(isPresented: $showEditSheet) {
-            GoalFormView(goal: goal) { updatedGoal in
+            GoalEditView(existingGoal: goal) { updatedGoal in
                 // Handle async save in a Task - form uses sync callback
                 Task {
                     await viewModel.updateGoal(updatedGoal)
