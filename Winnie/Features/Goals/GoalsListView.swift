@@ -38,7 +38,7 @@ struct GoalsListView: View {
                 }
             }
             .sheet(isPresented: $showCreateGoal) {
-                GoalFormView(goal: nil) { newGoal in
+                GoalCreationView { newGoal in
                     // Handle async save in a Task - form uses sync callback
                     Task {
                         await viewModel.createGoal(newGoal)

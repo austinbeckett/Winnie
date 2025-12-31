@@ -1,0 +1,185 @@
+import SwiftUI
+
+/// The form fields for Phase 2 of goal creation.
+///
+/// **How It Works:**
+/// - Displays target savings, current savings, target date, and notes fields
+/// - All fields are bound to parent state via `@Binding`
+/// - Reuses existing design components (WinnieCurrencyField, DatePicker, TextEditor)
+///
+/// **Usage:**
+/// ```swift
+/// GoalDetailsFormView(
+///     targetAmountText: $targetAmountText,
+///     currentAmountText: $currentAmountText,
+///     hasTargetDate: $hasTargetDate,
+///     targetDate: $targetDate,
+///     notes: $notes,
+///     targetAmountError: targetAmountError
+/// )
+/// ```
+struct GoalDetailsFormView: View {
+    @Binding var targetAmountText: String
+    @Binding var currentAmountText: String
+    @Binding var hasTargetDate: Bool
+    @Binding var targetDate: Date
+    @Binding var notes: String
+
+    let targetAmountError: String?
+
+    @Environment(\.colorScheme) private var colorScheme
+
+    var body: some View {
+        VStack(spacing: WinnieSpacing.l) {
+            // Target savings
+            WinnieCurrencyField(
+                "Target Savings",
+                text: $targetAmountText,
+                error: targetAmountError
+            )
+
+            // Current savings
+            WinnieCurrencyField(
+                "Current Savings",
+                text: $currentAmountText
+            )
+
+            // Target date section
+            targetDateSection
+
+            // Notes section
+            notesSection
+        }
+        .padding(.horizontal, WinnieSpacing.screenMarginMobile)
+        .padding(.top, WinnieSpacing.l)
+    }
+
+    // MARK: - Target Date Section
+
+    private var targetDateSection: some View {
+        VStack(alignment: .leading, spacing: WinnieSpacing.s) {
+            Toggle(isOn: $hasTargetDate) {
+                Text("Set Target Date")
+                    .font(WinnieTypography.bodyM())
+                    .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+            }
+            .tint(WinnieColors.amethystSmoke)
+
+            if hasTargetDate {
+                DatePicker(
+                    "Target Date",
+                    selection: $targetDate,
+                    in: Date()...,
+                    displayedComponents: .date
+                )
+                .datePickerStyle(.graphical)
+                .tint(WinnieColors.amethystSmoke)
+                .padding(WinnieSpacing.m)
+                .background(WinnieColors.cardBackground(for: colorScheme))
+                .clipShape(RoundedRectangle(cornerRadius: WinnieSpacing.inputCornerRadius))
+            }
+        }
+    }
+
+    // MARK: - Notes Section
+
+    private var notesSection: some View {
+        VStack(alignment: .leading, spacing: WinnieSpacing.xs) {
+            Text("Notes (Optional)")
+                .font(WinnieTypography.bodyS())
+                .fontWeight(.medium)
+                .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
+
+            TextEditor(text: $notes)
+                .font(WinnieTypography.bodyM())
+                .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+                .scrollContentBackground(.hidden)
+                .padding(WinnieSpacing.m)
+                .frame(minHeight: 100)
+                .background(WinnieColors.cardBackground(for: colorScheme))
+                .clipShape(RoundedRectangle(cornerRadius: WinnieSpacing.inputCornerRadius))
+                .overlay(
+                    RoundedRectangle(cornerRadius: WinnieSpacing.inputCornerRadius)
+                        .stroke(WinnieColors.inputBorder(for: colorScheme), lineWidth: 1)
+                )
+        }
+    }
+}
+
+// MARK: - Preview
+
+#Preview("Light Mode") {
+    struct PreviewWrapper: View {
+        @State private var targetAmount = "50000"
+        @State private var currentAmount = "10000"
+        @State private var hasTargetDate = true
+        @State private var targetDate = Date()
+        @State private var notes = ""
+
+        var body: some View {
+            ScrollView {
+                GoalDetailsFormView(
+                    targetAmountText: $targetAmount,
+                    currentAmountText: $currentAmount,
+                    hasTargetDate: $hasTargetDate,
+                    targetDate: $targetDate,
+                    notes: $notes,
+                    targetAmountError: nil
+                )
+            }
+            .background(Color(.systemGroupedBackground))
+        }
+    }
+    return PreviewWrapper()
+}
+
+#Preview("With Error") {
+    struct PreviewWrapper: View {
+        @State private var targetAmount = ""
+        @State private var currentAmount = ""
+        @State private var hasTargetDate = false
+        @State private var targetDate = Date()
+        @State private var notes = ""
+
+        var body: some View {
+            ScrollView {
+                GoalDetailsFormView(
+                    targetAmountText: $targetAmount,
+                    currentAmountText: $currentAmount,
+                    hasTargetDate: $hasTargetDate,
+                    targetDate: $targetDate,
+                    notes: $notes,
+                    targetAmountError: "Target amount is required"
+                )
+            }
+            .background(Color(.systemGroupedBackground))
+        }
+    }
+    return PreviewWrapper()
+}
+
+#Preview("Dark Mode") {
+    struct PreviewWrapper: View {
+        @State private var targetAmount = "100000"
+        @State private var currentAmount = "25000"
+        @State private var hasTargetDate = true
+        @State private var targetDate = Date()
+        @State private var notes = "Saving for our dream home down payment"
+
+        var body: some View {
+            ScrollView {
+                GoalDetailsFormView(
+                    targetAmountText: $targetAmount,
+                    currentAmountText: $currentAmount,
+                    hasTargetDate: $hasTargetDate,
+                    targetDate: $targetDate,
+                    notes: $notes,
+                    targetAmountError: nil
+                )
+            }
+            .background(Color(.systemGroupedBackground))
+            .preferredColorScheme(.dark)
+        }
+    }
+    return PreviewWrapper()
+}
