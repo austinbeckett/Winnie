@@ -40,7 +40,16 @@ struct Goal: Codable, Identifiable, Equatable, Sendable {
     /// Custom color hex code (e.g., "#A393BF"). If nil, uses default Amethyst Smoke.
     var colorHex: String?
 
+    /// Custom SF Symbol icon name (e.g., "heart.fill"). If nil, uses type default.
+    var iconName: String?
+
     // MARK: - Computed Properties
+
+    /// The SF Symbol icon to display for this goal.
+    /// Uses custom iconName if set, otherwise falls back to type default.
+    var displayIcon: String {
+        iconName ?? type.iconName
+    }
 
     /// The color to display for this goal
     /// Uses custom colorHex if set, otherwise defaults to Amethyst Smoke
@@ -97,7 +106,8 @@ struct Goal: Codable, Identifiable, Equatable, Sendable {
         createdAt: Date = Date(),
         isActive: Bool = true,
         notes: String? = nil,
-        colorHex: String? = nil
+        colorHex: String? = nil,
+        iconName: String? = nil
     ) {
         self.id = id
         self.type = type
@@ -111,6 +121,7 @@ struct Goal: Codable, Identifiable, Equatable, Sendable {
         self.isActive = isActive
         self.notes = notes
         self.colorHex = colorHex
+        self.iconName = iconName
     }
 }
 
@@ -125,7 +136,8 @@ extension Goal {
         targetAmount: Decimal(60000),
         currentAmount: Decimal(15000),
         priority: 1,
-        colorHex: GoalPresetColor.sage.rawValue
+        colorHex: GoalPresetColor.sage.rawValue,
+        iconName: "house.fill"
     )
 
     /// Sample retirement goal for previews
@@ -135,7 +147,8 @@ extension Goal {
         targetAmount: Decimal(1000000),
         currentAmount: Decimal(50000),
         priority: 2,
-        colorHex: GoalPresetColor.amethyst.rawValue
+        colorHex: GoalPresetColor.amethyst.rawValue,
+        iconName: "chart.line.uptrend.xyaxis"
     )
 
     /// Sample vacation goal for previews
@@ -145,7 +158,8 @@ extension Goal {
         targetAmount: Decimal(8000),
         currentAmount: Decimal(2500),
         priority: 3,
-        colorHex: GoalPresetColor.sand.rawValue
+        colorHex: GoalPresetColor.sand.rawValue,
+        iconName: "airplane"
     )
 
     /// Sample emergency fund for previews
@@ -155,7 +169,8 @@ extension Goal {
         targetAmount: Decimal(20000),
         currentAmount: Decimal(12000),
         priority: 4,
-        colorHex: GoalPresetColor.terracotta.rawValue
+        colorHex: GoalPresetColor.terracotta.rawValue,
+        iconName: "shield.fill"
     )
 
     /// Collection of sample goals

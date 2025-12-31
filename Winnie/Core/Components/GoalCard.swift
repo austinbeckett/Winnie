@@ -21,8 +21,8 @@ struct GoalCard: View {
             VStack(alignment: .leading, spacing: WinnieSpacing.m) {
                 // Header: Icon + Name
                 HStack(spacing: WinnieSpacing.s) {
-                    // Goal type icon
-                    Image(systemName: goal.type.iconName)
+                    // Goal icon
+                    Image(systemName: goal.displayIcon)
                         .font(.system(size: 20))
                         .foregroundColor(goal.displayColor)
                         .frame(width: 32, height: 32)
@@ -97,8 +97,8 @@ struct GoalCardCompact: View {
     var body: some View {
         WinnieCard(accentColor: goal.displayColor) {
             HStack(spacing: WinnieSpacing.m) {
-                // Goal type icon
-                Image(systemName: goal.type.iconName)
+                // Goal icon
+                Image(systemName: goal.displayIcon)
                     .font(.system(size: 18))
                     .foregroundColor(goal.displayColor)
                     .frame(width: 28, height: 28)

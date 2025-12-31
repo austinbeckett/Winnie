@@ -72,7 +72,7 @@ struct GoalDetailView: View {
             VStack(spacing: WinnieSpacing.l) {
                 // Icon and type
                 HStack(spacing: WinnieSpacing.s) {
-                    Image(systemName: goal.type.iconName)
+                    Image(systemName: goal.displayIcon)
                         .font(.system(size: 24))
                         .foregroundColor(goal.displayColor)
                         .frame(width: 44, height: 44)
