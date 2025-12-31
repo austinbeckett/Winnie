@@ -154,6 +154,9 @@ struct GoalCreationView: View {
             switch phase {
             case .nameEntry:
                 accentButton("Continue", isEnabled: canContinue) {
+                    // Auto-populate category based on goal name
+                    selectedType = GoalIconMapper.inferGoalType(from: goalName)
+
                     withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
                         phase = .detailsEntry
                     }
