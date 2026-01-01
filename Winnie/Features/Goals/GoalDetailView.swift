@@ -135,7 +135,7 @@ struct GoalDetailView: View {
                 Circle()
                     .stroke(
                         WinnieColors.progressBackground(for: colorScheme),
-                        lineWidth: 12
+                        lineWidth: 18
                     )
 
                 // Progress arc
@@ -143,7 +143,7 @@ struct GoalDetailView: View {
                     .trim(from: 0, to: CGFloat(viewModel.goal.progressPercentage))
                     .stroke(
                         viewModel.goal.displayColor,
-                        style: StrokeStyle(lineWidth: 12, lineCap: .round)
+                        style: StrokeStyle(lineWidth: 18, lineCap: .round)
                     )
                     .rotationEffect(.degrees(-90))
                     .animation(.spring(response: 0.6, dampingFraction: 0.8), value: viewModel.goal.progressPercentage)
