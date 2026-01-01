@@ -166,7 +166,7 @@ struct GoalDetailView: View {
                 }
                 .padding(.horizontal, 20)
             }
-            .frame(width: 180, height: 180)
+            .frame(width: 200, height: 200)
         }
         .padding(.vertical, WinnieSpacing.m)
     }
@@ -246,6 +246,7 @@ struct GoalDetailView: View {
 
                 // Target Date
                 detailRow(
+                    icon: "calendar",
                     label: "Target Date",
                     value: viewModel.goal.desiredDate.map { formatDate($0) } ?? "Not set"
                 )
@@ -255,18 +256,21 @@ struct GoalDetailView: View {
 
                 // Interest Rate (APY)
                 detailRow(
+                    icon: "percent",
                     label: "Interest Rate (APY)",
                     value: formatPercentage(viewModel.goal.effectiveReturnRate)
                 )
 
                 // Account
                 detailRow(
+                    icon: "building.columns",
                     label: "Account",
                     value: viewModel.goal.accountName ?? "Not set"
                 )
 
                 // Created date
                 detailRow(
+                    icon: "clock",
                     label: "Created",
                     value: formatDate(viewModel.goal.createdAt)
                 )
@@ -274,12 +278,19 @@ struct GoalDetailView: View {
         }
     }
 
-    private func detailRow(label: String, value: String) -> some View {
-        HStack {
+    private func detailRow(icon: String, label: String, value: String) -> some View {
+        HStack(spacing: WinnieSpacing.s) {
+            Image(systemName: icon)
+                .font(.system(size: 16))
+                .foregroundColor(WinnieColors.amethystSmoke)
+                .frame(width: 20)
+
             Text(label)
                 .font(WinnieTypography.bodyM())
                 .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
+
             Spacer()
+
             Text(value)
                 .font(WinnieTypography.bodyM())
                 .foregroundColor(WinnieColors.primaryText(for: colorScheme))
@@ -287,10 +298,16 @@ struct GoalDetailView: View {
     }
 
     private var statusRow: some View {
-        HStack {
+        HStack(spacing: WinnieSpacing.s) {
+            Image(systemName: "flag")
+                .font(.system(size: 16))
+                .foregroundColor(WinnieColors.amethystSmoke)
+                .frame(width: 20)
+
             Text("Status")
                 .font(WinnieTypography.bodyM())
                 .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
+
             Spacer()
 
             HStack(spacing: WinnieSpacing.xs) {
