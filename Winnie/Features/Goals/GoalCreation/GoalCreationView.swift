@@ -40,7 +40,7 @@ struct GoalCreationView: View {
     @State private var targetAmountText: String = ""
     @State private var currentAmountText: String = ""
     @State private var hasTargetDate: Bool = false
-    @State private var targetDate: Date = Calendar.current.date(byAdding: .year, value: 1, to: Date()) ?? Date()
+    @State private var targetDate: Date = Date()
     @State private var notes: String = ""
     @State private var accountName: String?
 
@@ -100,33 +100,48 @@ struct GoalCreationView: View {
                 )
 
                 // Scrollable content
-                ScrollView {
-                    switch phase {
-                    case .nameEntry:
-                        GoalSuggestionsView { suggestion in
-                            goalName = suggestion.name
+                ScrollViewReader { proxy in
+                    ScrollView {
+                        // Invisible anchor at top for scroll reset
+                        Color.clear
+                            .frame(height: 0)
+                            .id("scrollTop")
+
+                        switch phase {
+                        case .nameEntry:
+                            GoalSuggestionsView { suggestion in
+                                goalName = suggestion.name
+                            }
+
+                        case .detailsEntry:
+                            GoalDetailsFormView(
+                                targetAmountText: $targetAmountText,
+                                currentAmountText: $currentAmountText,
+                                selectedType: $selectedType,
+                                hasTargetDate: $hasTargetDate,
+                                targetDate: $targetDate,
+                                notes: $notes,
+                                accountName: $accountName,
+                                targetAmountError: targetAmountError
+                            )
+                            .onChange(of: targetAmountText) { _, _ in
+                                validateTargetAmount()
+                            }
                         }
 
-                    case .detailsEntry:
-                        GoalDetailsFormView(
-                            targetAmountText: $targetAmountText,
-                            currentAmountText: $currentAmountText,
-                            selectedType: $selectedType,
-                            hasTargetDate: $hasTargetDate,
-                            targetDate: $targetDate,
-                            notes: $notes,
-                            accountName: $accountName,
-                            targetAmountError: targetAmountError
-                        )
-                        .onChange(of: targetAmountText) { _, _ in
-                            validateTargetAmount()
+                        // Extra padding at bottom for button
+                        Spacer(minLength: 100)
+                    }
+                    .scrollDismissesKeyboard(.interactively)
+                    .onChange(of: phase) { _, newPhase in
+                        if newPhase == .detailsEntry {
+                            // Scroll to top when entering Phase 2
+                            withAnimation {
+                                proxy.scrollTo("scrollTop", anchor: .top)
+                            }
                         }
                     }
-
-                    // Extra padding at bottom for button
-                    Spacer(minLength: 100)
                 }
-                .scrollDismissesKeyboard(.interactively)
 
                 // Bottom button
                 bottomButton

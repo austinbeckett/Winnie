@@ -16,6 +16,9 @@ struct GoalDetailView: View {
     @State private var showAddContribution = false
     @State private var contributionToEdit: Contribution?
 
+    // Animation state for progress ring entrance
+    @State private var showRing = false
+
     init(goal: Goal, currentUser: User, partner: User?, coupleID: String, goalsViewModel: GoalsViewModel) {
         _viewModel = State(initialValue: GoalDetailViewModel(
             goal: goal,
@@ -41,9 +44,6 @@ struct GoalDetailView: View {
 
                 // Contributions section
                 contributionsSection
-
-                // Add Funds button
-                addFundsButton
 
                 // Details card
                 detailsCard
@@ -128,31 +128,36 @@ struct GoalDetailView: View {
     // MARK: - Progress Header
 
     private var progressHeader: some View {
-        VStack(spacing: WinnieSpacing.m) {
+        let ringSize: CGFloat = 200
+        let strokeWidth: CGFloat = 18
+        let goalColor = viewModel.goal.displayColor
+
+        return VStack(spacing: WinnieSpacing.m) {
             // Circular progress ring
             ZStack {
-                // Background circle
+                // Background circle with subtle shadow
                 Circle()
                     .stroke(
                         WinnieColors.progressBackground(for: colorScheme),
-                        lineWidth: 18
+                        lineWidth: strokeWidth
                     )
+                    .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 4)
 
                 // Progress arc
                 Circle()
-                    .trim(from: 0, to: CGFloat(viewModel.goal.progressPercentage))
+                    .trim(from: 0, to: viewModel.goal.progressPercentage)
                     .stroke(
-                        viewModel.goal.displayColor,
-                        style: StrokeStyle(lineWidth: 18, lineCap: .round)
+                        goalColor,
+                        style: StrokeStyle(lineWidth: strokeWidth, lineCap: .round)
                     )
                     .rotationEffect(.degrees(-90))
-                    .animation(.spring(response: 0.6, dampingFraction: 0.8), value: viewModel.goal.progressPercentage)
 
                 // Center content
                 VStack(spacing: WinnieSpacing.xxs) {
-                    Text("\(viewModel.goal.progressPercentageInt)%")
+                    Text(milestoneMessage)
                         .font(WinnieTypography.bodyS())
-                        .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
+                        .fontWeight(.medium)
+                        .foregroundColor(goalColor)
 
                     Text(formatCurrency(viewModel.goal.currentAmount))
                         .font(WinnieTypography.financialXL())
@@ -166,9 +171,16 @@ struct GoalDetailView: View {
                 }
                 .padding(.horizontal, 20)
             }
-            .frame(width: 200, height: 200)
+            .frame(width: ringSize, height: ringSize)
+            .scaleEffect(showRing ? 1 : 0.9)
+            .opacity(showRing ? 1 : 0)
         }
         .padding(.vertical, WinnieSpacing.m)
+        .onAppear {
+            withAnimation(.easeOut(duration: 0.4)) {
+                showRing = true
+            }
+        }
     }
 
     // MARK: - Contributions Section
@@ -201,6 +213,9 @@ struct GoalDetailView: View {
 
                     Spacer()
                 }
+
+                // Add Funds button
+                addFundsButton
             }
         }
     }
@@ -227,7 +242,7 @@ struct GoalDetailView: View {
     // MARK: - Add Funds Button
 
     private var addFundsButton: some View {
-        WinnieButton("Add Funds", style: .primary) {
+        WinnieButton("Log Contribution", style: .primary) {
             showAddContribution = true
         }
     }
@@ -236,44 +251,72 @@ struct GoalDetailView: View {
 
     private var detailsCard: some View {
         WinnieCard {
-            VStack(spacing: WinnieSpacing.m) {
+            VStack(spacing: WinnieSpacing.l) {
                 Text("Details")
                     .font(WinnieTypography.headlineM())
                     .foregroundColor(WinnieColors.primaryText(for: colorScheme))
                     .frame(maxWidth: .infinity, alignment: .leading)
 
+                // MARK: Timeline Group
+                VStack(alignment: .leading, spacing: WinnieSpacing.s) {
+                    Text("Timeline")
+                        .font(WinnieTypography.caption())
+                        .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
+                        .textCase(.uppercase)
+                        .tracking(0.5)
+
+                    detailRow(
+                        icon: "calendar",
+                        label: "Target Date",
+                        value: viewModel.goal.desiredDate.map { formatDate($0) } ?? "Not set"
+                    )
+
+                    statusRow
+                }
+
                 Divider()
 
-                // Target Date
-                detailRow(
-                    icon: "calendar",
-                    label: "Target Date",
-                    value: viewModel.goal.desiredDate.map { formatDate($0) } ?? "Not set"
-                )
+                // MARK: Growth Group
+                VStack(alignment: .leading, spacing: WinnieSpacing.s) {
+                    Text("Growth")
+                        .font(WinnieTypography.caption())
+                        .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
+                        .textCase(.uppercase)
+                        .tracking(0.5)
 
-                // Status
-                statusRow
+                    detailRow(
+                        icon: "percent",
+                        label: "Interest Rate (APY)",
+                        value: formatPercentage(viewModel.goal.effectiveReturnRate)
+                    )
 
-                // Interest Rate (APY)
-                detailRow(
-                    icon: "percent",
-                    label: "Interest Rate (APY)",
-                    value: formatPercentage(viewModel.goal.effectiveReturnRate)
-                )
+                    detailRow(
+                        icon: "dollarsign.arrow.circlepath",
+                        label: "Monthly Contribution",
+                        value: "$300"
+                    )
 
-                // Account
-                detailRow(
-                    icon: "building.columns",
-                    label: "Account",
-                    value: viewModel.goal.accountName ?? "Not set"
-                )
+                    detailRow(
+                        icon: "building.columns",
+                        label: "Account",
+                        value: viewModel.goal.accountName ?? "Not set"
+                    )
+                }
 
-                // Created date
-                detailRow(
-                    icon: "clock",
-                    label: "Created",
-                    value: formatDate(viewModel.goal.createdAt)
-                )
+                Divider()
+
+                // MARK: Meta (smaller, less prominent)
+                HStack(spacing: WinnieSpacing.xs) {
+                    Image(systemName: "clock")
+                        .font(.system(size: 12))
+                        .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
+
+                    Text("Created \(formatDate(viewModel.goal.createdAt))")
+                        .font(WinnieTypography.caption())
+                        .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
+
+                    Spacer()
+                }
             }
         }
     }
@@ -310,15 +353,21 @@ struct GoalDetailView: View {
 
             Spacer()
 
+            // Status chip/badge
             HStack(spacing: WinnieSpacing.xs) {
                 Circle()
                     .fill(statusColor)
                     .frame(width: 8, height: 8)
 
                 Text(statusText)
-                    .font(WinnieTypography.bodyM())
-                    .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+                    .font(WinnieTypography.bodyS())
+                    .fontWeight(.medium)
+                    .foregroundColor(statusTextColor)
             }
+            .padding(.horizontal, WinnieSpacing.s)
+            .padding(.vertical, WinnieSpacing.xs)
+            .background(statusBackgroundColor)
+            .clipShape(Capsule())
         }
     }
 
@@ -337,6 +386,24 @@ struct GoalDetailView: View {
         case .behind: return .orange
         case .completed: return WinnieColors.amethystSmoke
         case .noTarget: return WinnieColors.tertiaryText(for: colorScheme)
+        }
+    }
+
+    private var statusTextColor: Color {
+        switch viewModel.onTrackStatus {
+        case .onTrack: return .green
+        case .behind: return .orange
+        case .completed: return WinnieColors.amethystSmoke
+        case .noTarget: return WinnieColors.secondaryText(for: colorScheme)
+        }
+    }
+
+    private var statusBackgroundColor: Color {
+        switch viewModel.onTrackStatus {
+        case .onTrack: return .green.opacity(0.12)
+        case .behind: return .orange.opacity(0.12)
+        case .completed: return WinnieColors.amethystSmoke.opacity(0.15)
+        case .noTarget: return WinnieColors.tertiaryText(for: colorScheme).opacity(0.1)
         }
     }
 
@@ -408,13 +475,46 @@ struct GoalDetailView: View {
                     .font(WinnieTypography.bodyM())
                     .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
 
-                Text("Tap \"Add Funds\" to record your first contribution")
+                Text("Tap \"Log Contribution\" to record your first contribution")
                     .font(WinnieTypography.caption())
                     .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
                     .multilineTextAlignment(.center)
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, WinnieSpacing.m)
+        }
+    }
+
+    // MARK: - Milestone Message
+
+    private var milestoneMessage: String {
+        switch viewModel.goal.progressPercentageInt {
+        case 0:
+            return "Every dollar counts!"
+        case 1..<11:
+            return "Great start!"
+        case 11..<21:
+            return "Building momentum!"
+        case 21..<31:
+            return "Keep it up!"
+        case 31..<41:
+            return "Making progress!"
+        case 41..<50:
+            return "Almost halfway!"
+        case 50:
+            return "Halfway there!"
+        case 51..<61:
+            return "Over halfway!"
+        case 61..<71:
+            return "Looking good!"
+        case 71..<81:
+            return "Strong progress!"
+        case 81..<91:
+            return "So close!"
+        case 91..<100:
+            return "Almost done!"
+        default:
+            return "Goal reached!"
         }
     }
 
