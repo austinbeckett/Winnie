@@ -156,12 +156,15 @@ struct GoalDetailView: View {
 
                     Text(formatCurrency(viewModel.goal.currentAmount))
                         .font(WinnieTypography.financialXL())
+                        .minimumScaleFactor(0.5)
+                        .lineLimit(1)
                         .foregroundColor(WinnieColors.primaryText(for: colorScheme))
 
                     Text(formatCurrency(viewModel.goal.targetAmount) + " goal")
                         .font(WinnieTypography.bodyS())
                         .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
                 }
+                .padding(.horizontal, 20)
             }
             .frame(width: 180, height: 180)
         }
