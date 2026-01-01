@@ -26,6 +26,7 @@ struct GoalDetailsFormView: View {
     @Binding var hasTargetDate: Bool
     @Binding var targetDate: Date
     @Binding var notes: String
+    @Binding var accountName: String?
 
     let targetAmountError: String?
 
@@ -48,6 +49,9 @@ struct GoalDetailsFormView: View {
 
             // Category dropdown (placed after current savings per requirements)
             GoalCategoryDropdown(selectedType: $selectedType)
+
+            // Account dropdown
+            AccountDropdown(selectedAccount: $accountName)
 
             // Target date section
             targetDateSection
@@ -121,6 +125,7 @@ struct GoalDetailsFormView: View {
         @State private var hasTargetDate = true
         @State private var targetDate = Date()
         @State private var notes = ""
+        @State private var accountName: String?
 
         var body: some View {
             ScrollView {
@@ -131,6 +136,7 @@ struct GoalDetailsFormView: View {
                     hasTargetDate: $hasTargetDate,
                     targetDate: $targetDate,
                     notes: $notes,
+                    accountName: $accountName,
                     targetAmountError: nil
                 )
             }
@@ -148,6 +154,7 @@ struct GoalDetailsFormView: View {
         @State private var hasTargetDate = false
         @State private var targetDate = Date()
         @State private var notes = ""
+        @State private var accountName: String?
 
         var body: some View {
             ScrollView {
@@ -158,6 +165,7 @@ struct GoalDetailsFormView: View {
                     hasTargetDate: $hasTargetDate,
                     targetDate: $targetDate,
                     notes: $notes,
+                    accountName: $accountName,
                     targetAmountError: "Target amount is required"
                 )
             }
@@ -175,6 +183,7 @@ struct GoalDetailsFormView: View {
         @State private var hasTargetDate = true
         @State private var targetDate = Date()
         @State private var notes = "Saving for our dream home down payment"
+        @State private var accountName: String? = "Savings Account"
 
         var body: some View {
             ScrollView {
@@ -185,6 +194,7 @@ struct GoalDetailsFormView: View {
                     hasTargetDate: $hasTargetDate,
                     targetDate: $targetDate,
                     notes: $notes,
+                    accountName: $accountName,
                     targetAmountError: nil
                 )
             }

@@ -44,6 +44,9 @@ struct GoalDTO: Codable {
     /// Custom SF Symbol icon name (e.g., "heart.fill")
     var iconName: String?
 
+    /// User-specified account name (e.g., "Chase Savings", "Ally HYSA")
+    var accountName: String?
+
     /// Last sync timestamp for cache invalidation
     var lastSyncedAt: Date?
 
@@ -63,6 +66,7 @@ struct GoalDTO: Codable {
         case notes
         case colorHex
         case iconName
+        case accountName
         case lastSyncedAt
     }
 
@@ -85,6 +89,7 @@ struct GoalDTO: Codable {
         self.notes = goal.notes
         self.colorHex = goal.colorHex
         self.iconName = goal.iconName
+        self.accountName = goal.accountName
         self.lastSyncedAt = Date()
     }
 
@@ -111,7 +116,8 @@ struct GoalDTO: Codable {
             isActive: isActive,
             notes: notes,
             colorHex: colorHex,
-            iconName: iconName
+            iconName: iconName,
+            accountName: accountName
         )
     }
 
@@ -148,6 +154,10 @@ struct GoalDTO: Codable {
 
         if let iconName {
             dict["iconName"] = iconName
+        }
+
+        if let accountName {
+            dict["accountName"] = accountName
         }
 
         if let lastSyncedAt {

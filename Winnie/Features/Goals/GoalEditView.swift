@@ -36,6 +36,7 @@ struct GoalEditView: View {
     @State private var hasTargetDate: Bool
     @State private var targetDate: Date
     @State private var notes: String
+    @State private var accountName: String?
 
     // MARK: - UI State
 
@@ -78,6 +79,7 @@ struct GoalEditView: View {
         _hasTargetDate = State(initialValue: existingGoal.desiredDate != nil)
         _targetDate = State(initialValue: existingGoal.desiredDate ?? Calendar.current.date(byAdding: .year, value: 1, to: Date()) ?? Date())
         _notes = State(initialValue: existingGoal.notes ?? "")
+        _accountName = State(initialValue: existingGoal.accountName)
 
         // Pre-populate color from hex
         let color = GoalPresetColor(rawValue: existingGoal.colorHex ?? GoalPresetColor.defaultColor.rawValue) ?? .amethyst
@@ -116,6 +118,7 @@ struct GoalEditView: View {
                         hasTargetDate: $hasTargetDate,
                         targetDate: $targetDate,
                         notes: $notes,
+                        accountName: $accountName,
                         targetAmountError: targetAmountError
                     )
                     .onChange(of: targetAmountText) { _, _ in
@@ -207,7 +210,8 @@ struct GoalEditView: View {
             isActive: existingGoal.isActive,
             notes: notes.isEmpty ? nil : notes,
             colorHex: selectedColor.rawValue,
-            iconName: effectiveIcon
+            iconName: effectiveIcon,
+            accountName: accountName
         )
 
         // Call the callback - parent handles async save

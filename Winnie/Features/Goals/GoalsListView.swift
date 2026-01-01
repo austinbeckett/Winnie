@@ -10,13 +10,39 @@ struct GoalsListView: View {
 
     @Environment(\.colorScheme) private var colorScheme
 
+    /// Current user for contribution tracking
+    private let currentUser: User
+
+    /// Partner user (if connected)
+    private let partner: User?
+
+    /// Couple ID for data queries
+    private let coupleID: String
+
     /// Initialize with a couple ID.
+    /// Creates a minimal User from the coupleID for development/testing.
     init(coupleID: String) {
+        self.coupleID = coupleID
+        // Create minimal user from coupleID for development
+        // TODO: Accept actual User once auth flow provides it
+        self.currentUser = User(id: coupleID, displayName: "You")
+        self.partner = nil
+        _viewModel = State(initialValue: GoalsViewModel(coupleID: coupleID))
+    }
+
+    /// Initialize with user context for full contribution tracking.
+    init(coupleID: String, currentUser: User, partner: User?) {
+        self.coupleID = coupleID
+        self.currentUser = currentUser
+        self.partner = partner
         _viewModel = State(initialValue: GoalsViewModel(coupleID: coupleID))
     }
 
     /// Initialize with an injected ViewModel (for previews/testing).
-    init(viewModel: GoalsViewModel) {
+    init(viewModel: GoalsViewModel, currentUser: User = .sample, partner: User? = .samplePartner) {
+        self.coupleID = "preview"
+        self.currentUser = currentUser
+        self.partner = partner
         _viewModel = State(initialValue: viewModel)
     }
 
@@ -82,7 +108,15 @@ struct GoalsListView: View {
         ScrollView {
             LazyVStack(spacing: WinnieSpacing.m) {
                 ForEach(viewModel.goals) { goal in
-                    NavigationLink(destination: GoalDetailView(goal: goal, viewModel: viewModel)) {
+                    NavigationLink {
+                        GoalDetailView(
+                            goal: goal,
+                            currentUser: currentUser,
+                            partner: partner,
+                            coupleID: coupleID,
+                            goalsViewModel: viewModel
+                        )
+                    } label: {
                         GoalCard(goal: goal)
                     }
                     .buttonStyle(.plain)

@@ -42,6 +42,7 @@ struct GoalCreationView: View {
     @State private var hasTargetDate: Bool = false
     @State private var targetDate: Date = Calendar.current.date(byAdding: .year, value: 1, to: Date()) ?? Date()
     @State private var notes: String = ""
+    @State private var accountName: String?
 
     // MARK: - Category & Appearance State
 
@@ -114,6 +115,7 @@ struct GoalCreationView: View {
                             hasTargetDate: $hasTargetDate,
                             targetDate: $targetDate,
                             notes: $notes,
+                            accountName: $accountName,
                             targetAmountError: targetAmountError
                         )
                         .onChange(of: targetAmountText) { _, _ in
@@ -232,7 +234,8 @@ struct GoalCreationView: View {
             isActive: true,
             notes: notes.isEmpty ? nil : notes,
             colorHex: selectedColor.rawValue,
-            iconName: effectiveIcon
+            iconName: effectiveIcon,
+            accountName: accountName
         )
 
         // Call the callback - parent handles async save

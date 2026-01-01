@@ -7,7 +7,9 @@ import SwiftUI
 /// GoalCard(goal: myGoal)
 ///
 /// // As a tappable navigation link
-/// NavigationLink(destination: GoalDetailView(goal: goal)) {
+/// NavigationLink {
+///     GoalDetailView(goal: goal, currentUser: user, partner: partner, coupleID: id, goalsViewModel: vm)
+/// } label: {
 ///     GoalCard(goal: goal)
 /// }
 /// ```

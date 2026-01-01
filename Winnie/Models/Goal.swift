@@ -43,6 +43,9 @@ struct Goal: Codable, Identifiable, Equatable, Sendable {
     /// Custom SF Symbol icon name (e.g., "heart.fill"). If nil, uses type default.
     var iconName: String?
 
+    /// User-specified account name (e.g., "Chase Savings", "Ally HYSA")
+    var accountName: String?
+
     // MARK: - Computed Properties
 
     /// The SF Symbol icon to display for this goal.
@@ -107,7 +110,8 @@ struct Goal: Codable, Identifiable, Equatable, Sendable {
         isActive: Bool = true,
         notes: String? = nil,
         colorHex: String? = nil,
-        iconName: String? = nil
+        iconName: String? = nil,
+        accountName: String? = nil
     ) {
         self.id = id
         self.type = type
@@ -122,6 +126,7 @@ struct Goal: Codable, Identifiable, Equatable, Sendable {
         self.notes = notes
         self.colorHex = colorHex
         self.iconName = iconName
+        self.accountName = accountName
     }
 }
 

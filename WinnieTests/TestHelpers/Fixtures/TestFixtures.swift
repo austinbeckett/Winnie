@@ -394,6 +394,55 @@ enum TestFixtures {
         )
     }
 
+    // MARK: - Contribution
+
+    /// Create a Contribution for testing
+    static func makeContribution(
+        id: String = "test-contribution-id",
+        goalId: String = "test-goal-id",
+        userId: String = "test-user-id",
+        amount: Decimal = 150,
+        date: Date = testDate,
+        notes: String? = nil,
+        createdAt: Date = testDate
+    ) -> Contribution {
+        Contribution(
+            id: id,
+            goalId: goalId,
+            userId: userId,
+            amount: amount,
+            date: date,
+            notes: notes,
+            createdAt: createdAt
+        )
+    }
+
+    // MARK: - Contribution Data (Dictionary Format)
+
+    /// Create a dictionary representation of a Contribution for stubbing Firestore
+    static func makeContributionData(
+        id: String = "test-contribution-id",
+        goalId: String = "test-goal-id",
+        userId: String = "test-user-id",
+        amount: Double = 150,
+        date: Date = testDate,
+        notes: String? = nil,
+        createdAt: Date = testDate
+    ) -> [String: Any] {
+        var data: [String: Any] = [
+            "id": id,
+            "goalId": goalId,
+            "userId": userId,
+            "amount": amount,
+            "date": ISO8601DateFormatter().string(from: date),
+            "createdAt": ISO8601DateFormatter().string(from: createdAt)
+        ]
+
+        if let notes { data["notes"] = notes }
+
+        return data
+    }
+
     // MARK: - Scenario Data (Dictionary Format)
 
     /// Create a dictionary representation of a Scenario for stubbing Firestore
