@@ -304,7 +304,7 @@ final class AuthenticationServiceTests: XCTestCase {
         XCTAssertEqual(mockAuthProvider.signInWithCredentialCalls.count, 1)
     }
 
-    func test_signInWithApple_postsNotificationForNewUser() async throws {
+    func test_signInWithApple_returnsNewUserInfoForNewUser() async throws {
         // Arrange
         mockAuthProvider.simulateNewUser = true
         let user = TestFixtures.makeAuthUser(uid: "new-apple-user", email: "apple@test.com")
@@ -317,32 +317,27 @@ final class AuthenticationServiceTests: XCTestCase {
             email: "apple@test.com"
         )
 
-        // Set up notification observer using a sendable box
-        let expectation = XCTestExpectation(description: "New user notification")
-        let userInfoBox = UserInfoBox()
+        // Act
+        let newUserInfo = try await service.signInWithApple(data: data)
 
-        let observer = NotificationCenter.default.addObserver(
-            forName: .newUserSignedUp,
-            object: nil,
-            queue: .main
-        ) { notification in
-            userInfoBox.userInfo = notification.userInfo
-            expectation.fulfill()
-        }
+        // Assert - returns NewUserInfo for new users
+        XCTAssertNotNil(newUserInfo)
+        XCTAssertEqual(newUserInfo?.uid, "new-apple-user")
+        XCTAssertEqual(newUserInfo?.email, "apple@test.com")
+        XCTAssertEqual(newUserInfo?.displayName, "John Doe")
+    }
 
-        defer {
-            NotificationCenter.default.removeObserver(observer)
-        }
+    func test_signInWithApple_returnsNilForExistingUser() async throws {
+        // Arrange
+        mockAuthProvider.simulateNewUser = false
+        _ = service.prepareAppleSignIn()
+        let data = TestFixtures.makeAppleCredentialData()
 
         // Act
-        try await service.signInWithApple(data: data)
+        let newUserInfo = try await service.signInWithApple(data: data)
 
-        // Assert
-        await fulfillment(of: [expectation], timeout: 1.0)
-        let receivedUserInfo = userInfoBox.userInfo
-        XCTAssertNotNil(receivedUserInfo)
-        XCTAssertEqual(receivedUserInfo?["uid"] as? String, "new-apple-user")
-        XCTAssertEqual(receivedUserInfo?["email"] as? String, "apple@test.com")
+        // Assert - returns nil for existing users
+        XCTAssertNil(newUserInfo)
     }
 
     func test_signInWithApple_clearsNonceAfterSuccess() async throws {
@@ -469,13 +464,3 @@ final class AuthenticationServiceTests: XCTestCase {
     }
 }
 
-// MARK: - Test Helpers
-
-/// A sendable box for capturing notification userInfo in closures.
-///
-/// Swift's strict concurrency requires captured variables in `@Sendable` closures
-/// to be sendable. This class uses `@unchecked Sendable` because we know the
-/// notification observer runs on the main queue and tests run on MainActor.
-private final class UserInfoBox: @unchecked Sendable {
-    var userInfo: [AnyHashable: Any]?
-}

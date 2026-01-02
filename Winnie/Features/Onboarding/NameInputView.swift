@@ -48,9 +48,9 @@ struct NameInputView: View {
                     .font(WinnieTypography.bodyL())
                     .padding(WinnieSpacing.m)
                     .background(WinnieColors.cardBackground(for: colorScheme))
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .clipShape(RoundedRectangle(cornerRadius: WinnieSpacing.inputCornerRadius))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 16)
+                        RoundedRectangle(cornerRadius: WinnieSpacing.inputCornerRadius)
                             .stroke(WinnieColors.tertiaryText(for: colorScheme).opacity(0.3), lineWidth: 1)
                     )
                     .textContentType(.givenName)
@@ -68,7 +68,7 @@ struct NameInputView: View {
             .padding(.horizontal, WinnieSpacing.screenMarginMobile)
             .padding(.bottom, WinnieSpacing.l)
         }
-        .background(WinnieColors.background(for: colorScheme).ignoresSafeArea())
+        .background(WinnieColors.background(for: colorScheme).ignoresSafeArea(edges: .all))
     }
 
     // MARK: - Helpers

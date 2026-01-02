@@ -50,7 +50,7 @@ struct GoalsListView: View {
             ZStack {
                 // Background
                 WinnieColors.background(for: colorScheme)
-                    .ignoresSafeArea()
+                    .ignoresSafeArea(edges: .all)
 
                 // Content
                 content

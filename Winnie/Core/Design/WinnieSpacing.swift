@@ -61,4 +61,15 @@ enum WinnieSpacing {
 
     /// Standard card minimum height
     static let cardMinHeight: CGFloat = 140
+
+    // MARK: - Icon Sizes
+
+    /// Large icon size (32pt) - Header icons, prominent UI elements
+    static let iconSizeL: CGFloat = 32
+
+    /// Medium icon size (20pt) - List item icons, suggestion rows
+    static let iconSizeM: CGFloat = 20
+
+    /// Small icon size (16pt) - Inline icons, detail rows
+    static let iconSizeS: CGFloat = 16
 }

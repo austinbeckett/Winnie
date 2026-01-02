@@ -91,7 +91,7 @@ struct GoalCreationHeaderView: View {
     private var iconContainer: some View {
         ZStack(alignment: .bottomTrailing) {
             Image(systemName: currentIcon)
-                .font(.system(size: 32, weight: .medium))
+                .font(.system(size: WinnieSpacing.iconSizeL, weight: .medium))
                 .foregroundColor(selectedColor.color)
                 .frame(width: 64, height: 64)
                 .background(WinnieColors.cardBackground(for: colorScheme))

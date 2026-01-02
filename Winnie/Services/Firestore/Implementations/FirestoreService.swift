@@ -13,6 +13,13 @@ import FirebaseFirestore
 /// (the protocol) rather than `Firestore` (the concrete class). This allows us to
 /// swap in a mock implementation during tests.
 ///
+/// ## Thread Safety (@unchecked Sendable)
+/// This class and its wrapper types use `@unchecked Sendable` because:
+/// - Firebase SDK types are Objective-C classes that don't adopt Swift's Sendable protocol
+/// - Firebase guarantees thread safety for all Firestore operations (can be called from any thread)
+/// - These wrappers are thin and don't introduce additional mutable state
+/// - Read-only snapshot wrappers contain immutable data from Firebase
+///
 /// ## Usage
 /// In production, repositories use this automatically:
 /// ```swift

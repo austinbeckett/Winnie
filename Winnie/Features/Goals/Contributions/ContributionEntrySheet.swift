@@ -77,7 +77,7 @@ struct ContributionEntrySheet: View {
                 .padding(.horizontal, WinnieSpacing.screenMarginMobile)
                 .padding(.top, WinnieSpacing.m)
             }
-            .background(WinnieColors.background(for: colorScheme).ignoresSafeArea())
+            .background(WinnieColors.background(for: colorScheme).ignoresSafeArea(edges: .all))
             .navigationTitle(mode.title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

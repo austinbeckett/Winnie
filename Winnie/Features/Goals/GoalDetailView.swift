@@ -56,7 +56,7 @@ struct GoalDetailView: View {
             .padding(.horizontal, WinnieSpacing.screenMarginMobile)
             .padding(.top, WinnieSpacing.m)
         }
-        .background(WinnieColors.background(for: colorScheme).ignoresSafeArea())
+        .background(WinnieColors.background(for: colorScheme).ignoresSafeArea(edges: .all))
         .navigationTitle(viewModel.goal.name)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {

@@ -45,8 +45,8 @@ class AppState {
     // MARK: - Initialization
 
     init() {
-        // No dependencies initialized here to avoid Firebase initialization order issues
-        // UserRepository is created when needed in methods below
+        // No dependencies initialized here to avoid Firebase initialization order issues.
+        // UserRepository is created when needed in methods below.
     }
 
     // MARK: - User Loading
@@ -55,11 +55,13 @@ class AppState {
     ///
     /// This method:
     /// 1. Checks if a user document exists
-    /// 2. Creates one if it doesn't (new user)
+    /// 2. Creates one if it doesn't (new user), using provided initial data if available
     /// 3. Loads partner data if the user is connected
     ///
-    /// - Parameter uid: The Firebase Auth user ID
-    func loadUser(uid: String) async {
+    /// - Parameters:
+    ///   - uid: The Firebase Auth user ID
+    ///   - initialData: Optional data from Apple Sign-In for new users (displayName, email)
+    func loadUser(uid: String, initialData: NewUserInfo? = nil) async {
         isLoading = true
         errorMessage = nil
         defer { isLoading = false }
@@ -85,9 +87,11 @@ class AppState {
                     }
                 }
             } else {
-                // Create new user document (name will be set in onboarding)
-                try await userRepository.createUser(id: uid, displayName: nil, email: nil)
-                currentUser = User(id: uid)
+                // Create new user document, using Apple Sign-In data if available
+                let displayName = initialData?.displayName
+                let email = initialData?.email
+                try await userRepository.createUser(id: uid, displayName: displayName, email: email)
+                currentUser = User(id: uid, displayName: displayName, email: email)
             }
         } catch {
             errorMessage = "Failed to load user: \(error.localizedDescription)"

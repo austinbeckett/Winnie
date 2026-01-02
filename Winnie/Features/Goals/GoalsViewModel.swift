@@ -60,6 +60,7 @@ final class GoalsViewModel: ErrorHandlingViewModel {
         self.init(coupleID: coupleID, repository: GoalRepository(), contributionRepository: ContributionRepository())
     }
 
+
     /// Call this to clean up resources before the ViewModel is deallocated.
     /// Typically called in .onDisappear or when navigating away.
     func cleanup() {

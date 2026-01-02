@@ -45,7 +45,7 @@ enum AuthenticationError: LocalizedError, Equatable {
         case .emailAlreadyInUse:
             return "An account already exists with this email."
         case .weakPassword:
-            return "Password must be at least 8 characters."
+            return "Password must be at least 6 characters."
         case .networkError:
             return "Network error. Please check your connection."
         case .userDisabled:

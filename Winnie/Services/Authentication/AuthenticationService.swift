@@ -134,8 +134,10 @@ final class AuthenticationService: ObservableObject {
     ///
     /// This is the testable version that accepts `AppleCredentialData`.
     /// - Parameter data: Data extracted from `ASAuthorizationAppleIDCredential`
+    /// - Returns: `NewUserInfo` if this is the user's first sign-in (for creating user document), `nil` for returning users
     /// - Throws: `AuthenticationError` on failure
-    func signInWithApple(data: AppleCredentialData) async throws {
+    @discardableResult
+    func signInWithApple(data: AppleCredentialData) async throws -> NewUserInfo? {
         guard let nonce = currentNonce else {
             throw AuthenticationError.missingNonce
         }
@@ -164,20 +166,15 @@ final class AuthenticationService: ObservableObject {
             let isNewUser = result.additionalUserInfo?.isNewUser ?? false
             if isNewUser {
                 // Apple only provides name/email on first sign-in
-                let displayName = formatDisplayName(from: data.fullName)
-                let email = data.email
-
-                // Notify listeners to create user document
-                NotificationCenter.default.post(
-                    name: .newUserSignedUp,
-                    object: nil,
-                    userInfo: [
-                        "uid": result.user.uid,
-                        "displayName": displayName as Any,
-                        "email": email as Any
-                    ]
+                // Return this info so caller can create user document with it
+                return NewUserInfo(
+                    uid: result.user.uid,
+                    displayName: formatDisplayName(from: data.fullName),
+                    email: data.email
                 )
             }
+
+            return nil
 
         } catch {
             throw AuthenticationError.from(error)
@@ -188,8 +185,10 @@ final class AuthenticationService: ObservableObject {
     ///
     /// Convenience method that extracts data and calls `signInWithApple(data:)`.
     /// - Parameter credential: The credential from Apple's authorization controller
+    /// - Returns: `NewUserInfo` if this is a new user, `nil` for returning users
     /// - Throws: `AuthenticationError` on failure
-    func signInWithApple(credential: ASAuthorizationAppleIDCredential) async throws {
+    @discardableResult
+    func signInWithApple(credential: ASAuthorizationAppleIDCredential) async throws -> NewUserInfo? {
         try await signInWithApple(data: AppleCredentialData(from: credential))
     }
 
@@ -197,6 +196,11 @@ final class AuthenticationService: ObservableObject {
 
     /// Create a new account with email and password.
     func signUp(email: String, password: String) async throws {
+        // Basic length check - Firebase also validates but we give a friendlier error
+        guard password.count >= 6 else {
+            throw AuthenticationError.weakPassword
+        }
+
         isLoading = true
         defer { isLoading = false }
 
@@ -280,10 +284,14 @@ final class AuthenticationService: ObservableObject {
     }
 }
 
-// MARK: - Notification Names
+// MARK: - New User Info
 
-extension Notification.Name {
-    static let newUserSignedUp = Notification.Name("newUserSignedUp")
+/// Information about a newly signed up user from Apple Sign-In.
+/// This data is only available during the first sign-in with Apple.
+struct NewUserInfo {
+    let uid: String
+    let displayName: String?
+    let email: String?
 }
 
 // MARK: - No-Op Auth Provider (for test environment)

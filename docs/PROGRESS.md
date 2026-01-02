@@ -1,6 +1,6 @@
 # Winnie App - Development Progress
 
-**Last Updated:** January 1, 2025
+**Last Updated:** January 2, 2026
 
 ---
 
@@ -252,6 +252,23 @@
 ---
 
 ## Recent Sessions
+
+### January 2, 2026 (Session 15) - Code Audit Medium Priority Fixes
+- **Completed all 9 medium priority issues** from code audit
+- **Task.sleep Removal**: Replaced `Task.sleep` timing hack in GoalCreationView with `.onAppear`
+- **Safe Area Standardization**: Updated 5 files to use explicit `.ignoresSafeArea(edges: .all)`
+- **@unchecked Sendable**: Added documentation explaining why usage is intentional (Firebase SDK thread-safe)
+- **Listener Cleanup**: Added `deinit` to GoalsViewModel for automatic listener removal
+- **Repository Caching**: AppState now uses lazy cached UserRepository instead of creating per-call
+- **Design Tokens**: Added `iconSizeL/M/S` to WinnieSpacing, updated views to use design tokens
+- **Password Security**: Strengthened to 10+ chars with uppercase, lowercase, and number requirements
+- **NotificationCenter Refactor**:
+  - Removed fire-and-forget notification pattern for new Apple Sign-In users
+  - `signInWithApple()` now returns `NewUserInfo?` for proper data flow
+  - `AppState.loadUser()` accepts optional `initialData` for new user info
+  - Updated tests to verify return value instead of notification
+- **Files modified**: 14 files across Services, Features, Core, and Tests
+- **Code audit status**: All Immediate, High, and Medium items resolved (1 deferred for future)
 
 ### January 1, 2025 (Session 14) - Avatar Profile Pictures & User Data Flow
 - **Avatar System**: Replaced initials-based avatars with illustrated profile pictures

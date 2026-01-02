@@ -66,7 +66,7 @@ struct GoalSuggestionsView: View {
             HStack(spacing: WinnieSpacing.s) {
                 // Icon
                 Image(systemName: suggestion.icon)
-                    .font(.system(size: 20, weight: .medium))
+                    .font(.system(size: WinnieSpacing.iconSizeM, weight: .medium))
                     .foregroundColor(WinnieColors.amethystSmoke)
                     .frame(width: 32, height: 32)
 
