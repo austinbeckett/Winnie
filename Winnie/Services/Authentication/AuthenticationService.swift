@@ -75,6 +75,9 @@ final class AuthenticationService: ObservableObject {
     }
 
     deinit {
+        // Clean up the auth state listener.
+        // In production this is never called (service is app-scoped),
+        // but it's needed for tests where multiple instances are created.
         if let handle = authStateHandle {
             authProvider.removeStateDidChangeListener(handle)
         }
@@ -252,11 +255,12 @@ final class AuthenticationService: ObservableObject {
     // MARK: - Private Helpers
 
     /// Generate a cryptographically secure random nonce.
+    /// - Parameter length: Length of the nonce (1-256 bytes, default 32)
     private func randomNonceString(length: Int = 32) -> String {
-        precondition(length > 0)
+        precondition(length > 0 && length <= 256, "Nonce length must be between 1 and 256")
         var randomBytes = [UInt8](repeating: 0, count: length)
         let errorCode = SecRandomCopyBytes(kSecRandomDefault, randomBytes.count, &randomBytes)
-        precondition(errorCode == errSecSuccess)
+        precondition(errorCode == errSecSuccess, "Failed to generate random bytes")
 
         let charset: [Character] = Array("0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._")
         return String(randomBytes.map { charset[Int($0) % charset.count] })

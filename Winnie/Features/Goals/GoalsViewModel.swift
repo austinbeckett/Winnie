@@ -211,29 +211,3 @@ final class GoalsViewModel {
         showError = true
     }
 }
-
-// MARK: - FirestoreError Extension
-
-private extension FirestoreError {
-    /// User-friendly error message
-    var userMessage: String {
-        switch self {
-        case .documentNotFound:
-            return "The goal could not be found."
-        case .decodingFailed:
-            return "There was a problem loading the goal data."
-        case .encodingFailed:
-            return "There was a problem saving the goal."
-        case .unauthorized:
-            return "You don't have permission to access this goal."
-        case .transactionFailed:
-            return "The operation failed. Please try again."
-        case .invalidData(let reason):
-            return "Invalid data: \(reason)"
-        case .inviteCodeExpired, .inviteCodeAlreadyUsed, .coupleAlreadyComplete:
-            return "An unexpected error occurred."
-        case .unknown(let error):
-            return error.localizedDescription
-        }
-    }
-}

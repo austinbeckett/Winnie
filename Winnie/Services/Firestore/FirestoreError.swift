@@ -91,4 +91,33 @@ enum FirestoreError: LocalizedError, Equatable {
             return false
         }
     }
+
+    // MARK: - User-Friendly Messages
+
+    /// User-friendly error message for display in the UI.
+    /// More conversational than `localizedDescription`.
+    var userMessage: String {
+        switch self {
+        case .documentNotFound:
+            return "The item could not be found."
+        case .decodingFailed:
+            return "There was a problem loading the data."
+        case .encodingFailed:
+            return "There was a problem saving your changes."
+        case .unauthorized:
+            return "You don't have permission to do this."
+        case .transactionFailed:
+            return "The operation failed. Please try again."
+        case .invalidData(let reason):
+            return "Invalid data: \(reason)"
+        case .inviteCodeExpired:
+            return "This invite code has expired."
+        case .inviteCodeAlreadyUsed:
+            return "This invite code has already been used."
+        case .coupleAlreadyComplete:
+            return "This couple already has two members."
+        case .unknown(let error):
+            return error.localizedDescription
+        }
+    }
 }

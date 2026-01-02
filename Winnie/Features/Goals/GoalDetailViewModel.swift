@@ -179,7 +179,7 @@ final class GoalDetailViewModel {
                 )
                 contributions = fetched
             } catch {
-                // Silently fail - contributions will just be empty
+                handleError(error, context: "loading contributions")
             }
             isLoading = false
         }
@@ -346,7 +346,7 @@ final class GoalDetailViewModel {
         #endif
 
         if let firestoreError = error as? FirestoreError {
-            errorMessage = firestoreError.localizedDescription
+            errorMessage = firestoreError.userMessage
         } else {
             errorMessage = "Something went wrong while \(context). Please try again."
         }
