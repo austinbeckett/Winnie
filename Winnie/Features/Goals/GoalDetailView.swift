@@ -192,46 +192,37 @@ struct GoalDetailView: View {
                     .font(WinnieTypography.headlineM())
                     .foregroundColor(WinnieColors.primaryText(for: colorScheme))
 
-                HStack(spacing: WinnieSpacing.l) {
-                    // Current user contribution
-                    contributionBadge(
-                        name: viewModel.currentUserName,
-                        amount: viewModel.currentUserTotal,
-                        isCurrentUser: true
-                    )
-
-                    // Partner contribution (if exists)
-                    if viewModel.partnerTotal > 0 || viewModel.currentUserTotal > 0 {
-                        contributionBadge(
-                            name: viewModel.partnerName,
-                            amount: viewModel.partnerTotal,
-                            isCurrentUser: false
-                        )
+                VStack(spacing: WinnieSpacing.s) {
+                    // Current user row
+                    HStack(spacing: WinnieSpacing.s) {
+                        UserProfileAvatar(isCurrentUser: true, size: .small)
+                        Text(viewModel.currentUserName)
+                            .font(WinnieTypography.bodyM())
+                            .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+                        Spacer()
+                        Text(formatCurrency(viewModel.currentUserTotal))
+                            .font(WinnieTypography.bodyM())
+                            .fontWeight(.semibold)
+                            .foregroundColor(WinnieColors.primaryText(for: colorScheme))
                     }
 
-                    Spacer()
+                    // Partner row
+                    HStack(spacing: WinnieSpacing.s) {
+                        UserProfileAvatar(isCurrentUser: false, size: .small)
+                        Text(viewModel.partnerName)
+                            .font(WinnieTypography.bodyM())
+                            .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+                        Spacer()
+                        Text(formatCurrency(viewModel.partnerTotal))
+                            .font(WinnieTypography.bodyM())
+                            .fontWeight(.semibold)
+                            .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+                    }
                 }
 
                 // Add Funds button
                 addFundsButton
             }
-        }
-    }
-
-    private func contributionBadge(
-        name: String,
-        amount: Decimal,
-        isCurrentUser: Bool
-    ) -> some View {
-        HStack(spacing: WinnieSpacing.xs) {
-            UserProfileAvatar(
-                isCurrentUser: isCurrentUser,
-                size: .small
-            )
-
-            Text("\(name): \(formatCurrency(amount))")
-                .font(WinnieTypography.bodyM())
-                .foregroundColor(WinnieColors.primaryText(for: colorScheme))
         }
     }
 

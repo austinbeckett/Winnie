@@ -144,7 +144,7 @@ final class GoalDetailViewModel {
     /// Get display name for a contribution's user
     func displayName(for contribution: Contribution) -> String {
         if contribution.userId == currentUser.id {
-            return "You"
+            return currentUserName
         } else if contribution.userId == partner?.id {
             return partnerName
         } else {
