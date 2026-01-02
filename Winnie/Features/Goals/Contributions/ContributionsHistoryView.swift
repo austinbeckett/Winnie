@@ -73,7 +73,6 @@ struct ContributionsHistoryView: View {
                 SwipeableContributionRow(
                     contribution: contribution,
                     displayName: viewModel.displayName(for: contribution),
-                    initials: viewModel.initials(for: contribution.userId),
                     isCurrentUser: viewModel.isCurrentUserContribution(contribution),
                     onEdit: {
                         contributionToEdit = contribution

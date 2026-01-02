@@ -63,11 +63,16 @@ struct WinnieApp: App {
         UINavigationBar.appearance().scrollEdgeAppearance = appearance
     }
 
+    // MARK: - State
+
+    /// App-wide state containing user and couple data
+    @State private var appState = AppState()
+
     // MARK: - Body
 
     var body: some Scene {
         WindowGroup {
-            RootView()
+            RootView(appState: appState)
                 .environmentObject(authService)
         }
     }
@@ -78,7 +83,11 @@ struct WinnieApp: App {
 /// Root view that handles authentication state routing
 struct RootView: View {
 
+    @Bindable var appState: AppState
     @EnvironmentObject var authService: AuthenticationService
+
+    /// Track the last loaded UID to avoid reloading unnecessarily
+    @State private var lastLoadedUID: String?
 
     var body: some View {
         Group {
@@ -92,12 +101,53 @@ struct RootView: View {
                 // Show authentication flow
                 AuthenticationView()
 
-            case .signedIn:
-                // Show main app content
-                ContentView()
+            case .signedIn(let uid):
+                // Show appropriate view based on user state
+                signedInContent(uid: uid)
             }
         }
         .animation(.easeInOut(duration: 0.3), value: authService.authState)
+        .onChange(of: authService.authState) { oldState, newState in
+            // Clear user data on sign out
+            if case .signedOut = newState {
+                appState.clearUserData()
+                lastLoadedUID = nil
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func signedInContent(uid: String) -> some View {
+        if appState.isLoading {
+            // Loading user data from Firestore
+            ProgressView("Loading...")
+                .scaleEffect(1.2)
+                .task {
+                    // Load user if not already loaded
+                    if lastLoadedUID != uid {
+                        await appState.loadUser(uid: uid)
+                        lastLoadedUID = uid
+                    }
+                }
+        } else if appState.currentUser == nil {
+            // User not loaded yet, trigger load
+            ProgressView("Loading...")
+                .scaleEffect(1.2)
+                .task {
+                    if lastLoadedUID != uid {
+                        await appState.loadUser(uid: uid)
+                        lastLoadedUID = uid
+                    }
+                }
+        } else if appState.currentUser?.displayName == nil {
+            // User hasn't completed onboarding - show name input
+            NameInputView(appState: appState) {
+                // Name saved, view will update automatically
+            }
+        } else {
+            // User is fully set up - show main content
+            ContentView(appState: appState)
+        }
     }
 }
 

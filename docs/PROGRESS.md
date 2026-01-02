@@ -1,6 +1,6 @@
 # Winnie App - Development Progress
 
-**Last Updated:** December 31, 2024
+**Last Updated:** January 1, 2025
 
 ---
 
@@ -81,6 +81,8 @@
 | Feature | Status | Notes |
 |---------|--------|-------|
 | Welcome screen | Not Started | |
+| Name input | Done | "What should we call you?" screen |
+| Avatar creation | Not Started | Allow user to customize their illustrated avatar |
 | Partner invite/skip | Not Started | |
 | Financial baseline input | Not Started | |
 | First goal creation | Not Started | |
@@ -239,10 +241,30 @@
 | `Features/Goals/GoalCreation/GoalCategoryDropdown.swift` | Category selection dropdown |
 | **Code Audit Fixes** | |
 | `WinnieTests/README.md` | Test suite documentation: structure, naming, @MainActor rationale |
+| **Avatar System** | |
+| `Core/Components/UserProfileAvatar.swift` | Illustrated avatar component (placeholder for customization) |
+| `Assets.xcassets/MaleAvatarCircle.imageset` | Male avatar SVG asset |
+| `Assets.xcassets/FemaleAvatarCircle.imageset` | Female avatar SVG asset |
+| **User Data & Onboarding** | |
+| `Core/AppState.swift` | Central state container for user/couple data |
+| `Features/Onboarding/NameInputView.swift` | "What should we call you?" onboarding screen |
 
 ---
 
 ## Recent Sessions
+
+### January 1, 2025 (Session 14) - Avatar Profile Pictures & User Data Flow
+- **Avatar System**: Replaced initials-based avatars with illustrated profile pictures
+- Created `UserProfileAvatar` component using SVG assets
+- Imported avatar SVGs into Xcode asset catalog (MaleAvatarCircle, FemaleAvatarCircle)
+- Updated GoalDetailView and ContributionRow to use avatars
+- **User Data Flow**: Fixed hardcoded "You" placeholder to use real user data
+- Created `AppState` class to hold user/partner data centrally
+- Created `NameInputView` for onboarding name collection (industry standard)
+- Updated WinnieApp to load user from Firestore on auth
+- Updated ContentView to pass real user data to GoalsListView
+- **Flow**: Sign in → Load user from Firestore → Show name input if needed → Show main app
+- Users without displayName see "What should we call you?" screen
 
 ### December 31, 2024 (Session 13) - Goal Creation & Edit UI Refinements
 - **GoalIconMapper Expansion**: Expanded from ~80 to 300+ keywords across 20+ categories

@@ -39,6 +39,7 @@ final class GoalsViewModel {
 
     private let coupleID: String
     private let repository: GoalRepository
+    private let contributionRepository: ContributionRepository
     private var listenerRegistration: ListenerRegistrationProviding?
 
     // MARK: - Initialization
@@ -46,15 +47,17 @@ final class GoalsViewModel {
     /// Create a ViewModel with a couple ID.
     /// - Parameters:
     ///   - coupleID: The couple's Firestore document ID
-    ///   - repository: Repository for data access (defaults to production)
-    init(coupleID: String, repository: GoalRepository) {
+    ///   - repository: Repository for data access
+    ///   - contributionRepository: Repository for contribution operations
+    init(coupleID: String, repository: GoalRepository, contributionRepository: ContributionRepository) {
         self.coupleID = coupleID
         self.repository = repository
+        self.contributionRepository = contributionRepository
     }
 
-    /// Convenience initializer using default production repository.
+    /// Convenience initializer using default production repositories.
     convenience init(coupleID: String) {
-        self.init(coupleID: coupleID, repository: GoalRepository())
+        self.init(coupleID: coupleID, repository: GoalRepository(), contributionRepository: ContributionRepository())
     }
 
     /// Call this to clean up resources before the ViewModel is deallocated.
@@ -93,13 +96,32 @@ final class GoalsViewModel {
 
     // MARK: - CRUD Operations
 
-    /// Create a new goal.
-    func createGoal(_ goal: Goal) async {
+    /// Create a new goal, optionally with an initial contribution for starting balance.
+    /// - Parameters:
+    ///   - goal: The goal to create
+    ///   - userID: The ID of the user creating the goal (required for initial contribution)
+    func createGoal(_ goal: Goal, userID: String) async {
         isLoading = true
         errorMessage = nil
 
         do {
             try await repository.createGoal(goal, coupleID: coupleID)
+
+            // Create initial contribution if there's a starting balance
+            if goal.currentAmount > 0 {
+                let contribution = Contribution(
+                    goalId: goal.id,
+                    userId: userID,
+                    amount: goal.currentAmount,
+                    date: goal.createdAt,
+                    notes: "Starting balance"
+                )
+                try await contributionRepository.createContribution(
+                    contribution,
+                    coupleID: coupleID,
+                    goalID: goal.id
+                )
+            }
             // Real-time listener will update the goals array
         } catch {
             handleError(error, context: "creating goal")

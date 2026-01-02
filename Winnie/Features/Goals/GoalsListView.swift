@@ -19,13 +19,12 @@ struct GoalsListView: View {
     /// Couple ID for data queries
     private let coupleID: String
 
-    /// Initialize with a couple ID.
-    /// Creates a minimal User from the coupleID for development/testing.
+    /// Initialize with just a couple ID (for previews/testing only).
+    /// Creates a placeholder User - real app uses init(coupleID:currentUser:partner:).
     init(coupleID: String) {
         self.coupleID = coupleID
-        // Create minimal user from coupleID for development
-        // TODO: Accept actual User once auth flow provides it
-        self.currentUser = User(id: coupleID, displayName: "You")
+        // Placeholder user for previews - production uses real User from AppState
+        self.currentUser = User(id: coupleID, displayName: "Preview User")
         self.partner = nil
         _viewModel = State(initialValue: GoalsViewModel(coupleID: coupleID))
     }
@@ -67,7 +66,7 @@ struct GoalsListView: View {
                 GoalCreationView { newGoal in
                     // Handle async save in a Task - form uses sync callback
                     Task {
-                        await viewModel.createGoal(newGoal)
+                        await viewModel.createGoal(newGoal, userID: currentUser.id)
                     }
                 }
             }

@@ -12,37 +12,30 @@ import SwiftUI
 /// Currently shows the Goals list. Will eventually be expanded to include
 /// a tab bar with Dashboard, Goals, Scenarios, and Settings.
 struct ContentView: View {
+    @Bindable var appState: AppState
     @EnvironmentObject var authService: AuthenticationService
 
     var body: some View {
         Group {
-            if let userID = currentUserID {
-                // TODO: Replace userID with actual coupleID once partner system is built
-                // For now, we use the user's UID as a temporary "coupleID" for testing
+            if let currentUser = appState.currentUser {
+                // Use user's UID as coupleID until partner system is built
                 // This allows each user to have their own goals during development
-                GoalsListView(coupleID: userID)
-                    .overlay(alignment: .bottom) {
-                        // Temporary sign out button for testing
-                        signOutButton
-                    }
+                GoalsListView(
+                    coupleID: currentUser.coupleID ?? currentUser.id,
+                    currentUser: currentUser,
+                    partner: appState.partner
+                )
+                .overlay(alignment: .bottom) {
+                    // Temporary sign out button for testing
+                    signOutButton
+                }
             } else {
-                // Fallback if somehow signed in without a user ID
+                // Fallback if somehow signed in without user data
                 VStack {
                     Text("Loading...")
                     ProgressView()
                 }
             }
-        }
-    }
-
-    // MARK: - User ID
-
-    private var currentUserID: String? {
-        switch authService.authState {
-        case .signedIn(let uid):
-            return uid
-        default:
-            return nil
         }
     }
 
@@ -65,6 +58,8 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    let appState = AppState()
+    appState.currentUser = .sample
+    return ContentView(appState: appState)
         .environmentObject(AuthenticationService())
 }

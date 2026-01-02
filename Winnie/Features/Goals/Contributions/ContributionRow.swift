@@ -9,8 +9,7 @@ import SwiftUI
 /// ```swift
 /// ContributionRow(
 ///     contribution: contribution,
-///     displayName: "You",
-///     initials: "AJ",
+///     displayName: "Austin",
 ///     isCurrentUser: true,
 ///     onEdit: { ... },
 ///     onDelete: { ... }
@@ -19,7 +18,6 @@ import SwiftUI
 struct ContributionRow: View {
     let contribution: Contribution
     let displayName: String
-    let initials: String
     let isCurrentUser: Bool
     let onEdit: (() -> Void)?
     let onDelete: (() -> Void)?
@@ -29,14 +27,12 @@ struct ContributionRow: View {
     init(
         contribution: Contribution,
         displayName: String,
-        initials: String,
         isCurrentUser: Bool,
         onEdit: (() -> Void)? = nil,
         onDelete: (() -> Void)? = nil
     ) {
         self.contribution = contribution
         self.displayName = displayName
-        self.initials = initials
         self.isCurrentUser = isCurrentUser
         self.onEdit = onEdit
         self.onDelete = onDelete
@@ -45,10 +41,9 @@ struct ContributionRow: View {
     var body: some View {
         HStack(spacing: WinnieSpacing.s) {
             // Avatar
-            UserInitialsAvatar(
-                initials: initials,
-                size: .small,
-                isCurrentUser: isCurrentUser
+            UserProfileAvatar(
+                isCurrentUser: isCurrentUser,
+                size: .small
             )
 
             // Description
@@ -98,7 +93,6 @@ struct ContributionRow: View {
 struct SwipeableContributionRow: View {
     let contribution: Contribution
     let displayName: String
-    let initials: String
     let isCurrentUser: Bool
     let onEdit: () -> Void
     let onDelete: () -> Void
@@ -109,7 +103,6 @@ struct SwipeableContributionRow: View {
         ContributionRow(
             contribution: contribution,
             displayName: displayName,
-            initials: initials,
             isCurrentUser: isCurrentUser
         )
         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
@@ -150,8 +143,7 @@ struct SwipeableContributionRow: View {
                 amount: Decimal(150),
                 date: Calendar.current.date(byAdding: .day, value: -1, to: Date())!
             ),
-            displayName: "You",
-            initials: "AJ",
+            displayName: "Austin",
             isCurrentUser: true
         )
 
@@ -164,8 +156,7 @@ struct SwipeableContributionRow: View {
                 amount: Decimal(75),
                 date: Calendar.current.date(byAdding: .day, value: -3, to: Date())!
             ),
-            displayName: "Alex",
-            initials: "AB",
+            displayName: "Paige",
             isCurrentUser: false
         )
     }
@@ -181,8 +172,7 @@ struct SwipeableContributionRow: View {
                 amount: Decimal(150),
                 date: Date()
             ),
-            displayName: "You",
-            initials: "AJ",
+            displayName: "Austin",
             isCurrentUser: true,
             onEdit: { print("Edit tapped") },
             onDelete: { print("Delete tapped") }
@@ -195,8 +185,7 @@ struct SwipeableContributionRow: View {
                 amount: Decimal(75),
                 date: Calendar.current.date(byAdding: .day, value: -2, to: Date())!
             ),
-            displayName: "Alex",
-            initials: "AB",
+            displayName: "Paige",
             isCurrentUser: false,
             onEdit: { },
             onDelete: { }
@@ -213,8 +202,7 @@ struct SwipeableContributionRow: View {
             amount: Decimal(50),
             date: Calendar.current.date(byAdding: .hour, value: -2, to: Date())!
         ),
-        displayName: "You",
-        initials: "AJ",
+        displayName: "Austin",
         isCurrentUser: true
     )
     .padding()

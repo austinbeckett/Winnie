@@ -157,7 +157,7 @@ struct GoalDetailView: View {
                     Text(milestoneMessage)
                         .font(WinnieTypography.bodyS())
                         .fontWeight(.medium)
-                        .foregroundColor(goalColor)
+                        .foregroundColor(WinnieColors.primaryText(for: colorScheme))
 
                     Text(formatCurrency(viewModel.goal.currentAmount))
                         .font(WinnieTypography.financialXL())
@@ -195,8 +195,7 @@ struct GoalDetailView: View {
                 HStack(spacing: WinnieSpacing.l) {
                     // Current user contribution
                     contributionBadge(
-                        initials: viewModel.initials(for: viewModel.currentUserID),
-                        name: "You",
+                        name: viewModel.currentUserName,
                         amount: viewModel.currentUserTotal,
                         isCurrentUser: true
                     )
@@ -204,7 +203,6 @@ struct GoalDetailView: View {
                     // Partner contribution (if exists)
                     if viewModel.partnerTotal > 0 || viewModel.currentUserTotal > 0 {
                         contributionBadge(
-                            initials: viewModel.initials(for: viewModel.partner?.id ?? ""),
                             name: viewModel.partnerName,
                             amount: viewModel.partnerTotal,
                             isCurrentUser: false
@@ -221,16 +219,14 @@ struct GoalDetailView: View {
     }
 
     private func contributionBadge(
-        initials: String,
         name: String,
         amount: Decimal,
         isCurrentUser: Bool
     ) -> some View {
         HStack(spacing: WinnieSpacing.xs) {
-            UserInitialsAvatar(
-                initials: initials,
-                size: .small,
-                isCurrentUser: isCurrentUser
+            UserProfileAvatar(
+                isCurrentUser: isCurrentUser,
+                size: .small
             )
 
             Text("\(name): \(formatCurrency(amount))")
@@ -325,7 +321,7 @@ struct GoalDetailView: View {
         HStack(spacing: WinnieSpacing.s) {
             Image(systemName: icon)
                 .font(.system(size: 16))
-                .foregroundColor(WinnieColors.amethystSmoke)
+                .foregroundColor(viewModel.goal.displayColor)
                 .frame(width: 20)
 
             Text(label)
@@ -344,7 +340,7 @@ struct GoalDetailView: View {
         HStack(spacing: WinnieSpacing.s) {
             Image(systemName: "flag")
                 .font(.system(size: 16))
-                .foregroundColor(WinnieColors.amethystSmoke)
+                .foregroundColor(viewModel.goal.displayColor)
                 .frame(width: 20)
 
             Text("Status")
@@ -424,7 +420,6 @@ struct GoalDetailView: View {
                             ContributionRow(
                                 contribution: contribution,
                                 displayName: viewModel.displayName(for: contribution),
-                                initials: viewModel.initials(for: contribution.userId),
                                 isCurrentUser: viewModel.isCurrentUserContribution(contribution),
                                 onEdit: {
                                     contributionToEdit = contribution

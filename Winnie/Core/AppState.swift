@@ -1,0 +1,124 @@
+import Foundation
+
+/// Central state container for the app's user and couple data.
+///
+/// AppState is responsible for:
+/// - Loading the current user from Firestore after authentication
+/// - Creating a new user document if one doesn't exist
+/// - Loading partner data if the user is connected to a partner
+///
+/// ## Usage
+/// ```swift
+/// @State private var appState = AppState()
+///
+/// // After auth state changes to signedIn
+/// await appState.loadUser(uid: uid)
+///
+/// // Access user data
+/// if let user = appState.currentUser {
+///     Text("Hello, \(user.greetingName)")
+/// }
+/// ```
+@Observable
+@MainActor
+class AppState {
+
+    // MARK: - User Data
+
+    /// The currently signed-in user
+    var currentUser: User?
+
+    /// The current user's partner (if connected)
+    var partner: User?
+
+    /// The couple container (if user is in a couple)
+    var couple: Couple?
+
+    // MARK: - Loading State
+
+    /// Whether user data is currently being loaded
+    var isLoading = false
+
+    /// Error message if loading failed
+    var errorMessage: String?
+
+    // MARK: - Initialization
+
+    init() {
+        // No dependencies initialized here to avoid Firebase initialization order issues
+        // UserRepository is created when needed in methods below
+    }
+
+    // MARK: - User Loading
+
+    /// Load the current user's data from Firestore.
+    ///
+    /// This method:
+    /// 1. Checks if a user document exists
+    /// 2. Creates one if it doesn't (new user)
+    /// 3. Loads partner data if the user is connected
+    ///
+    /// - Parameter uid: The Firebase Auth user ID
+    func loadUser(uid: String) async {
+        isLoading = true
+        errorMessage = nil
+        defer { isLoading = false }
+
+        // Create repository here (after FirebaseApp.configure() has been called)
+        let userRepository = UserRepository()
+
+        do {
+            // Check if user document exists
+            let exists = try await userRepository.userExists(id: uid)
+
+            if exists {
+                // Load existing user
+                currentUser = try await userRepository.fetchUser(id: uid)
+
+                // Load partner if connected
+                if let partnerID = currentUser?.partnerID {
+                    do {
+                        partner = try await userRepository.fetchUser(id: partnerID)
+                    } catch {
+                        // Partner might not exist yet, that's okay
+                        partner = nil
+                    }
+                }
+            } else {
+                // Create new user document (name will be set in onboarding)
+                try await userRepository.createUser(id: uid, displayName: nil, email: nil)
+                currentUser = User(id: uid)
+            }
+        } catch {
+            errorMessage = "Failed to load user: \(error.localizedDescription)"
+            print("AppState: Error loading user - \(error)")
+        }
+    }
+
+    /// Update the current user's display name.
+    ///
+    /// Called after onboarding name input.
+    /// - Parameter name: The display name to set
+    func updateDisplayName(_ name: String) async {
+        guard let uid = currentUser?.id else { return }
+
+        let userRepository = UserRepository()
+
+        do {
+            try await userRepository.updateDisplayName(uid: uid, displayName: name)
+            // Update local state
+            currentUser?.displayName = name
+        } catch {
+            errorMessage = "Failed to save name: \(error.localizedDescription)"
+            print("AppState: Error updating display name - \(error)")
+        }
+    }
+
+    /// Clear all user data (for sign out)
+    func clearUserData() {
+        currentUser = nil
+        partner = nil
+        couple = nil
+        errorMessage = nil
+    }
+}
