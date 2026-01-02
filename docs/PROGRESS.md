@@ -6,9 +6,9 @@
 
 ## Current Focus
 
-**Complete:** Goals Vertical Slice - First complete UI feature built and working
+**Complete:** Tab Bar Navigation - 4-tab layout with Dashboard, Goals, Scenarios, Me
 
-**Next Up:** Partner System, Onboarding UI, or Financial Engine
+**Next Up:** Partner System, Onboarding UI, Dashboard content, or Financial Engine
 
 ---
 
@@ -91,14 +91,17 @@
 ### UI - Main App
 | Feature | Status | Notes |
 |---------|--------|-------|
-| Dashboard | Not Started | |
+| Tab bar navigation | Done | 4 tabs: Dashboard, Goals, Scenarios, Me |
+| Dashboard | Placeholder | DashboardView with "Coming Soon" |
 | Goals list | Done | GoalsListView with empty state |
 | Goal detail | Done | GoalDetailView with edit/delete |
 | Goal creation | Done | GoalCreationView (two-phase flow with suggestions) |
 | Goal edit | Done | GoalEditView (matches Phase 2 of creation) |
+| Scenarios | Placeholder | ScenariosView with "Coming Soon" |
 | Scenario editor (sliders) | Not Started | |
 | Scenario comparison | Not Started | |
-| Settings | Not Started | |
+| Me view | Done | Profile tab with name editing and sign out |
+| Settings | Placeholder | Cogwheel icon in Me view (functionality coming) |
 
 ### Design System
 | Feature | Status | Notes |
@@ -248,10 +251,26 @@
 | **User Data & Onboarding** | |
 | `Core/AppState.swift` | Central state container for user/couple data |
 | `Features/Onboarding/NameInputView.swift` | "What should we call you?" onboarding screen |
+| **Tab Bar Navigation** | |
+| `Features/Dashboard/DashboardView.swift` | Dashboard placeholder (Coming Soon) |
+| `Features/Scenarios/ScenariosView.swift` | Scenarios placeholder (Coming Soon) |
+| `Features/Me/MeView.swift` | Profile tab with name editing and sign out |
+| `Features/Me/EditNameSheet.swift` | Bottom sheet for editing display name |
 
 ---
 
 ## Recent Sessions
+
+### January 2, 2026 (Session 16) - Tab Bar Navigation
+- **Tab Bar Implementation**: Added native iOS 18 TabView with 4 tabs
+- Created `DashboardView` and `ScenariosView` as placeholders with "Coming Soon" message
+- Created `MeView` profile tab with user's first name in toolbar (tappable to edit)
+- Created `EditNameSheet` bottom sheet for editing display name (follows NameInputView pattern)
+- Moved sign out button from ContentView overlay to MeView
+- Settings cogwheel placeholder in MeView toolbar
+- Refactored `ContentView` to use TabView instead of direct GoalsListView
+- Tab order: Dashboard (default), Goals, Scenarios, Me
+- Uses SF Symbols: chart.pie.fill, target, chart.line.uptrend.xyaxis, person.fill
 
 ### January 2, 2026 (Session 15) - Code Audit Medium Priority Fixes
 - **Completed all 9 medium priority issues** from code audit

@@ -9,8 +9,14 @@ import SwiftUI
 
 /// Main content view shown after authentication.
 ///
-/// Currently shows the Goals list. Will eventually be expanded to include
-/// a tab bar with Dashboard, Goals, Scenarios, and Settings.
+/// Displays a tab bar with four sections:
+/// - Dashboard: Financial overview (coming soon)
+/// - Goals: Track savings goals
+/// - Scenarios: What-if projections (coming soon)
+/// - Me: Profile and settings
+///
+/// Uses UIKit's UITabBarController for native appearance with proper
+/// fill/outline icon switching based on selection state.
 struct ContentView: View {
     @Bindable var appState: AppState
     @EnvironmentObject var authService: AuthenticationService
@@ -18,17 +24,12 @@ struct ContentView: View {
     var body: some View {
         Group {
             if let currentUser = appState.currentUser {
-                // Use user's UID as coupleID until partner system is built
-                // This allows each user to have their own goals during development
-                GoalsListView(
-                    coupleID: currentUser.coupleID ?? currentUser.id,
-                    currentUser: currentUser,
-                    partner: appState.partner
+                WinnieTabBarController(
+                    appState: appState,
+                    authService: authService,
+                    currentUser: currentUser
                 )
-                .overlay(alignment: .bottom) {
-                    // Temporary sign out button for testing
-                    signOutButton
-                }
+                .ignoresSafeArea()
             } else {
                 // Fallback if somehow signed in without user data
                 VStack {
@@ -37,23 +38,6 @@ struct ContentView: View {
                 }
             }
         }
-    }
-
-    // MARK: - Temporary Sign Out Button
-
-    private var signOutButton: some View {
-        Button {
-            try? authService.signOut()
-        } label: {
-            Text("Sign Out")
-                .font(WinnieTypography.bodyS())
-                .foregroundColor(.white)
-                .padding(.horizontal, WinnieSpacing.m)
-                .padding(.vertical, WinnieSpacing.xs)
-                .background(Color.red.opacity(0.8))
-                .clipShape(Capsule())
-        }
-        .padding(.bottom, WinnieSpacing.l)
     }
 }
 
