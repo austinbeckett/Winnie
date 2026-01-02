@@ -55,7 +55,7 @@ struct GoalCard: View {
                         Text("Saved")
                             .font(WinnieTypography.caption())
                             .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
-                        Text(formatCurrency(goal.currentAmount))
+                        Text(Formatting.currency(goal.currentAmount))
                             .font(WinnieTypography.financialM())
                             .foregroundColor(WinnieColors.primaryText(for: colorScheme))
                     }
@@ -66,25 +66,13 @@ struct GoalCard: View {
                         Text("Goal")
                             .font(WinnieTypography.caption())
                             .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
-                        Text(formatCurrency(goal.targetAmount))
+                        Text(Formatting.currency(goal.targetAmount))
                             .font(WinnieTypography.financialM())
                             .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
                     }
                 }
             }
         }
-    }
-
-    // MARK: - Currency Formatting
-
-    private func formatCurrency(_ amount: Decimal) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencySymbol = "$"
-        formatter.maximumFractionDigits = 0
-
-        let number = NSDecimalNumber(decimal: amount)
-        return formatter.string(from: number) ?? "$0"
     }
 }
 

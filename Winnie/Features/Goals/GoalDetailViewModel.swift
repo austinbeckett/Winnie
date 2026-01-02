@@ -155,22 +155,11 @@ final class GoalDetailViewModel {
     /// Get initials for a user ID
     func initials(for userId: String) -> String {
         if userId == currentUser.id {
-            return extractInitials(from: currentUser.displayName)
+            return UserInitialsAvatar.extractInitials(from: currentUser.displayName)
         } else if userId == partner?.id {
-            return extractInitials(from: partner?.displayName)
+            return UserInitialsAvatar.extractInitials(from: partner?.displayName)
         }
         return "?"
-    }
-
-    private func extractInitials(from name: String?) -> String {
-        guard let name, !name.isEmpty else { return "?" }
-        let components = name.components(separatedBy: " ")
-        if components.count >= 2 {
-            let first = components[0].prefix(1)
-            let last = components[1].prefix(1)
-            return "\(first)\(last)".uppercased()
-        }
-        return String(name.prefix(2)).uppercased()
     }
 
     // MARK: - Data Loading
@@ -352,7 +341,9 @@ final class GoalDetailViewModel {
     // MARK: - Error Handling
 
     private func handleError(_ error: Error, context: String) {
+        #if DEBUG
         print("GoalDetailViewModel error \(context): \(error.localizedDescription)")
+        #endif
 
         if let firestoreError = error as? FirestoreError {
             errorMessage = firestoreError.localizedDescription

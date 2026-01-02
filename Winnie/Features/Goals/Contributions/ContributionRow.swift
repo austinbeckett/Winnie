@@ -66,23 +66,12 @@ struct ContributionRow: View {
     // MARK: - Computed Properties
 
     private var descriptionText: String {
-        let formattedAmount = formatCurrency(contribution.amount)
+        let formattedAmount = Formatting.currency(contribution.amount)
         return "\(displayName) added \(formattedAmount)"
     }
 
     private var relativeDate: String {
-        let formatter = RelativeDateTimeFormatter()
-        formatter.unitsStyle = .full
-        return formatter.localizedString(for: contribution.date, relativeTo: Date())
-    }
-
-    private func formatCurrency(_ amount: Decimal) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencySymbol = "$"
-        formatter.maximumFractionDigits = 0
-        let number = NSDecimalNumber(decimal: amount)
-        return formatter.string(from: number) ?? "$0"
+        Formatting.relativeDate(contribution.date)
     }
 }
 

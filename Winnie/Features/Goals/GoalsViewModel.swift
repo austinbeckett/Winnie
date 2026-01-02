@@ -78,12 +78,10 @@ final class GoalsViewModel {
         isLoading = true
 
         listenerRegistration = repository.listenToGoals(coupleID: coupleID) { [weak self] goals in
-            // This callback runs on the main thread (Firebase behavior)
-            // But we're @MainActor isolated, so direct assignment is safe
-            Task { @MainActor in
-                self?.goals = goals
-                self?.isLoading = false
-            }
+            // Firebase runs this listener on main thread, and GoalsViewModel is @MainActor,
+            // so we can update state directly without wrapping in Task
+            self?.goals = goals
+            self?.isLoading = false
         }
     }
 
@@ -199,8 +197,9 @@ final class GoalsViewModel {
     // MARK: - Error Handling
 
     private func handleError(_ error: Error, context: String) {
-        // Log for debugging
+        #if DEBUG
         print("GoalsViewModel error \(context): \(error.localizedDescription)")
+        #endif
 
         // Set user-facing error message
         if let firestoreError = error as? FirestoreError {

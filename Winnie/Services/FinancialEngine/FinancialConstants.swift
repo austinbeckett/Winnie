@@ -5,22 +5,22 @@ enum FinancialConstants {
 
     // MARK: - Return Rates (Annual)
 
-    /// High-yield savings account rate
-    static let hysaRate: Decimal = Decimal(string: "0.045")!
+    /// High-yield savings account rate (4.5%)
+    static let hysaRate = Decimal(45) / Decimal(1000)
 
-    /// Stock market real returns (after inflation)
-    static let stockMarketRealReturn: Decimal = Decimal(string: "0.07")!
+    /// Stock market real returns (after inflation) (7%)
+    static let stockMarketRealReturn = Decimal(7) / Decimal(100)
 
-    /// Stock market nominal returns (before inflation)
-    static let stockMarketNominalReturn: Decimal = Decimal(string: "0.10")!
+    /// Stock market nominal returns (before inflation) (10%)
+    static let stockMarketNominalReturn = Decimal(10) / Decimal(100)
 
-    /// Conservative rate for short-term goals
-    static let conservativeRate: Decimal = Decimal(string: "0.04")!
+    /// Conservative rate for short-term goals (4%)
+    static let conservativeRate = Decimal(4) / Decimal(100)
 
     // MARK: - Inflation
 
-    /// Default annual inflation rate
-    static let defaultInflationRate: Decimal = Decimal(string: "0.03")!
+    /// Default annual inflation rate (3%)
+    static let defaultInflationRate = Decimal(3) / Decimal(100)
 
     // MARK: - Time Thresholds
 
@@ -33,7 +33,7 @@ enum FinancialConstants {
     static let maxProjectionMonths: Int = 600
 
     /// Minimum monthly contribution considered meaningful
-    static let minimumContribution: Decimal = Decimal(string: "1.0")!
+    static let minimumContribution = Decimal(1)
 
     // MARK: - Compounding
 

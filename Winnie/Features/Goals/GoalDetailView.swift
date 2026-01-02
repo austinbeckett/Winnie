@@ -159,13 +159,13 @@ struct GoalDetailView: View {
                         .fontWeight(.medium)
                         .foregroundColor(WinnieColors.primaryText(for: colorScheme))
 
-                    Text(formatCurrency(viewModel.goal.currentAmount))
+                    Text(Formatting.currency(viewModel.goal.currentAmount))
                         .font(WinnieTypography.financialXL())
                         .minimumScaleFactor(0.5)
                         .lineLimit(1)
                         .foregroundColor(WinnieColors.primaryText(for: colorScheme))
 
-                    Text(formatCurrency(viewModel.goal.targetAmount) + " goal")
+                    Text(Formatting.currency(viewModel.goal.targetAmount) + " goal")
                         .font(WinnieTypography.bodyS())
                         .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
                 }
@@ -200,7 +200,7 @@ struct GoalDetailView: View {
                             .font(WinnieTypography.bodyM())
                             .foregroundColor(WinnieColors.primaryText(for: colorScheme))
                         Spacer()
-                        Text(formatCurrency(viewModel.currentUserTotal))
+                        Text(Formatting.currency(viewModel.currentUserTotal))
                             .font(WinnieTypography.bodyM())
                             .fontWeight(.semibold)
                             .foregroundColor(WinnieColors.primaryText(for: colorScheme))
@@ -213,7 +213,7 @@ struct GoalDetailView: View {
                             .font(WinnieTypography.bodyM())
                             .foregroundColor(WinnieColors.primaryText(for: colorScheme))
                         Spacer()
-                        Text(formatCurrency(viewModel.partnerTotal))
+                        Text(Formatting.currency(viewModel.partnerTotal))
                             .font(WinnieTypography.bodyM())
                             .fontWeight(.semibold)
                             .foregroundColor(WinnieColors.primaryText(for: colorScheme))
@@ -255,7 +255,7 @@ struct GoalDetailView: View {
                     detailRow(
                         icon: "calendar",
                         label: "Target Date",
-                        value: viewModel.goal.desiredDate.map { formatDate($0) } ?? "Not set"
+                        value: viewModel.goal.desiredDate.map { Formatting.date($0) } ?? "Not set"
                     )
 
                     statusRow
@@ -274,7 +274,7 @@ struct GoalDetailView: View {
                     detailRow(
                         icon: "percent",
                         label: "Interest Rate (APY)",
-                        value: formatPercentage(viewModel.goal.effectiveReturnRate)
+                        value: Formatting.percentage(viewModel.goal.effectiveReturnRate)
                     )
 
                     detailRow(
@@ -298,7 +298,7 @@ struct GoalDetailView: View {
                         .font(.system(size: 12))
                         .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
 
-                    Text("Created \(formatDate(viewModel.goal.createdAt))")
+                    Text("Created \(Formatting.date(viewModel.goal.createdAt))")
                         .font(WinnieTypography.caption())
                         .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
 
@@ -504,34 +504,6 @@ struct GoalDetailView: View {
         }
     }
 
-    // MARK: - Formatting Helpers
-
-    private func formatCurrency(_ amount: Decimal) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencySymbol = "$"
-        formatter.maximumFractionDigits = 0
-        let number = NSDecimalNumber(decimal: amount)
-        return formatter.string(from: number) ?? "$0"
-    }
-
-    private func formatDate(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        return formatter.string(from: date)
-    }
-
-    private func formatPercentage(_ decimal: Decimal) -> String {
-        let percentage = NSDecimalNumber(decimal: decimal * 100).doubleValue
-        return String(format: "%.1f%%", percentage)
-    }
-
-    // MARK: - Partner Helper
-
-    private var partner: User? {
-        // This would come from the ViewModel in a real implementation
-        nil
-    }
 }
 
 // MARK: - Preview

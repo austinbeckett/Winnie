@@ -230,7 +230,8 @@ final class FirestoreWriteBatchWrapper: WriteBatchProviding, @unchecked Sendable
 
     func setData(_ data: [String: Any], forDocument document: DocumentProviding, merge: Bool) {
         guard let wrapper = document as? FirestoreDocumentWrapper else {
-            fatalError("Document must be a FirestoreDocumentWrapper in production")
+            assertionFailure("Document must be a FirestoreDocumentWrapper - this is a programmer error")
+            return
         }
         // Access the underlying reference via a helper
         let ref = wrapper.underlyingReference
@@ -239,7 +240,8 @@ final class FirestoreWriteBatchWrapper: WriteBatchProviding, @unchecked Sendable
 
     func updateData(_ fields: [String: Any], forDocument document: DocumentProviding) {
         guard let wrapper = document as? FirestoreDocumentWrapper else {
-            fatalError("Document must be a FirestoreDocumentWrapper in production")
+            assertionFailure("Document must be a FirestoreDocumentWrapper - this is a programmer error")
+            return
         }
         let ref = wrapper.underlyingReference
         batch.updateData(fields, forDocument: ref)
@@ -247,7 +249,8 @@ final class FirestoreWriteBatchWrapper: WriteBatchProviding, @unchecked Sendable
 
     func deleteDocument(_ document: DocumentProviding) {
         guard let wrapper = document as? FirestoreDocumentWrapper else {
-            fatalError("Document must be a FirestoreDocumentWrapper in production")
+            assertionFailure("Document must be a FirestoreDocumentWrapper - this is a programmer error")
+            return
         }
         let ref = wrapper.underlyingReference
         batch.deleteDocument(ref)
@@ -272,7 +275,8 @@ final class FirestoreTransactionWrapper: TransactionProviding, @unchecked Sendab
 
     func getDocument(_ document: DocumentProviding) throws -> DocumentSnapshotProviding {
         guard let wrapper = document as? FirestoreDocumentWrapper else {
-            fatalError("Document must be a FirestoreDocumentWrapper in production")
+            assertionFailure("Document must be a FirestoreDocumentWrapper - this is a programmer error")
+            throw FirestoreError.invalidData("Invalid document wrapper type")
         }
         let ref = wrapper.underlyingReference
         let snapshot = try transaction.getDocument(ref)
@@ -281,7 +285,8 @@ final class FirestoreTransactionWrapper: TransactionProviding, @unchecked Sendab
 
     func setData(_ data: [String: Any], forDocument document: DocumentProviding, merge: Bool) {
         guard let wrapper = document as? FirestoreDocumentWrapper else {
-            fatalError("Document must be a FirestoreDocumentWrapper in production")
+            assertionFailure("Document must be a FirestoreDocumentWrapper - this is a programmer error")
+            return
         }
         let ref = wrapper.underlyingReference
         transaction.setData(data, forDocument: ref, merge: merge)
@@ -289,7 +294,8 @@ final class FirestoreTransactionWrapper: TransactionProviding, @unchecked Sendab
 
     func updateData(_ fields: [String: Any], forDocument document: DocumentProviding) {
         guard let wrapper = document as? FirestoreDocumentWrapper else {
-            fatalError("Document must be a FirestoreDocumentWrapper in production")
+            assertionFailure("Document must be a FirestoreDocumentWrapper - this is a programmer error")
+            return
         }
         let ref = wrapper.underlyingReference
         transaction.updateData(fields, forDocument: ref)
@@ -297,7 +303,8 @@ final class FirestoreTransactionWrapper: TransactionProviding, @unchecked Sendab
 
     func deleteDocument(_ document: DocumentProviding) {
         guard let wrapper = document as? FirestoreDocumentWrapper else {
-            fatalError("Document must be a FirestoreDocumentWrapper in production")
+            assertionFailure("Document must be a FirestoreDocumentWrapper - this is a programmer error")
+            return
         }
         let ref = wrapper.underlyingReference
         transaction.deleteDocument(ref)

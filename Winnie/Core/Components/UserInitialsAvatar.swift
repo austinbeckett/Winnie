@@ -100,7 +100,10 @@ extension UserInitialsAvatar {
     }
 
     /// Extract initials from a display name.
-    private static func extractInitials(from name: String?) -> String {
+    ///
+    /// - Parameter name: The full name to extract initials from
+    /// - Returns: 1-2 character initials, or "?" if name is nil/empty
+    static func extractInitials(from name: String?) -> String {
         guard let name, !name.isEmpty else { return "?" }
         let components = name.components(separatedBy: " ").filter { !$0.isEmpty }
         if components.count >= 2 {

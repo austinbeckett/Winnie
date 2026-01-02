@@ -183,6 +183,9 @@ struct ContributionEntrySheet: View {
 
     // MARK: - Helpers
 
+    /// Maximum allowed contribution amount ($999,999,999)
+    private static let maxContributionAmount = Decimal(999_999_999)
+
     private func parseAmount() -> Decimal? {
         // Remove any non-numeric characters except decimal point
         let cleaned = amountText.replacingOccurrences(
@@ -190,22 +193,41 @@ struct ContributionEntrySheet: View {
             with: "",
             options: .regularExpression
         )
-        return Decimal(string: cleaned)
+
+        guard let amount = Decimal(string: cleaned) else {
+            return nil
+        }
+
+        // Validate reasonable bounds
+        guard amount >= 0, amount <= Self.maxContributionAmount else {
+            return nil
+        }
+
+        return amount
     }
 
     private func formatDecimalForEditing(_ decimal: Decimal) -> String {
-        let number = NSDecimalNumber(decimal: decimal)
-        // Check if it's a whole number by comparing with truncated value
-        var rounded = decimal
-        var result = Decimal()
-        NSDecimalRound(&result, &rounded, 0, .plain)
-        if decimal == result {
+        // Use NumberFormatter to avoid Double precision loss
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.groupingSeparator = ""
+
+        // Check if it's a whole number
+        var rounded = Decimal()
+        var value = decimal
+        NSDecimalRound(&rounded, &value, 0, .plain)
+
+        if decimal == rounded {
             // Whole number, no decimal places
-            return String(format: "%.0f", number.doubleValue)
+            formatter.maximumFractionDigits = 0
         } else {
-            // Has decimal places
-            return String(format: "%.2f", number.doubleValue)
+            // Has decimal places, show up to 2
+            formatter.minimumFractionDigits = 2
+            formatter.maximumFractionDigits = 2
         }
+
+        let number = NSDecimalNumber(decimal: decimal)
+        return formatter.string(from: number) ?? "0"
     }
 }
 

@@ -52,12 +52,21 @@ final class AppleSignInCoordinator: NSObject, ASAuthorizationControllerDelegate,
     // MARK: - ASAuthorizationControllerPresentationContextProviding
 
     func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
-        // Get the key window for presentation
-        guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let window = scene.windows.first else {
-            fatalError("No window available for Apple Sign In presentation")
+        // Get the first window scene - required for UIWindow in iOS 26+
+        // In a running SwiftUI app, there is always at least one connected scene
+        let scene = UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .first!
+
+        // Return existing key window, or any window, or create a new one
+        if let window = scene.windows.first(where: { $0.isKeyWindow }) ?? scene.windows.first {
+            return window
         }
-        return window
+
+        // Create a new window attached to the scene
+        let fallbackWindow = UIWindow(windowScene: scene)
+        fallbackWindow.makeKeyAndVisible()
+        return fallbackWindow
     }
 }
 
