@@ -164,6 +164,11 @@ struct AuthenticationView: View {
 
     private let appleSignInCoordinator = AppleSignInCoordinator()
 
+    /// Basic email format validation
+    private var isValidEmail: Bool {
+        email.contains("@") && email.contains(".")
+    }
+
     var body: some View {
         NavigationStack {
             VStack(spacing: 32) {
@@ -240,7 +245,7 @@ struct AuthenticationView: View {
                     .background(WinnieColors.amethystSmoke)
                     .foregroundStyle(WinnieColors.contrastText)
                     .clipShape(RoundedRectangle(cornerRadius: 28))
-                    .disabled(authService.isLoading || email.isEmpty || password.isEmpty)
+                    .disabled(authService.isLoading || !isValidEmail || password.isEmpty)
                 }
 
                 // Toggle sign up / sign in

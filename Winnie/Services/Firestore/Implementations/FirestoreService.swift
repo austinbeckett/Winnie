@@ -230,6 +230,9 @@ final class FirestoreWriteBatchWrapper: WriteBatchProviding, @unchecked Sendable
 
     func setData(_ data: [String: Any], forDocument document: DocumentProviding, merge: Bool) {
         guard let wrapper = document as? FirestoreDocumentWrapper else {
+            #if DEBUG
+            print("ERROR: FirestoreWriteBatchWrapper.setData - Document must be a FirestoreDocumentWrapper")
+            #endif
             assertionFailure("Document must be a FirestoreDocumentWrapper - this is a programmer error")
             return
         }
@@ -240,6 +243,9 @@ final class FirestoreWriteBatchWrapper: WriteBatchProviding, @unchecked Sendable
 
     func updateData(_ fields: [String: Any], forDocument document: DocumentProviding) {
         guard let wrapper = document as? FirestoreDocumentWrapper else {
+            #if DEBUG
+            print("ERROR: FirestoreWriteBatchWrapper.updateData - Document must be a FirestoreDocumentWrapper")
+            #endif
             assertionFailure("Document must be a FirestoreDocumentWrapper - this is a programmer error")
             return
         }
@@ -249,6 +255,9 @@ final class FirestoreWriteBatchWrapper: WriteBatchProviding, @unchecked Sendable
 
     func deleteDocument(_ document: DocumentProviding) {
         guard let wrapper = document as? FirestoreDocumentWrapper else {
+            #if DEBUG
+            print("ERROR: FirestoreWriteBatchWrapper.deleteDocument - Document must be a FirestoreDocumentWrapper")
+            #endif
             assertionFailure("Document must be a FirestoreDocumentWrapper - this is a programmer error")
             return
         }
@@ -285,6 +294,9 @@ final class FirestoreTransactionWrapper: TransactionProviding, @unchecked Sendab
 
     func setData(_ data: [String: Any], forDocument document: DocumentProviding, merge: Bool) {
         guard let wrapper = document as? FirestoreDocumentWrapper else {
+            #if DEBUG
+            print("ERROR: FirestoreTransactionWrapper.setData - Document must be a FirestoreDocumentWrapper")
+            #endif
             assertionFailure("Document must be a FirestoreDocumentWrapper - this is a programmer error")
             return
         }
@@ -294,6 +306,9 @@ final class FirestoreTransactionWrapper: TransactionProviding, @unchecked Sendab
 
     func updateData(_ fields: [String: Any], forDocument document: DocumentProviding) {
         guard let wrapper = document as? FirestoreDocumentWrapper else {
+            #if DEBUG
+            print("ERROR: FirestoreTransactionWrapper.updateData - Document must be a FirestoreDocumentWrapper")
+            #endif
             assertionFailure("Document must be a FirestoreDocumentWrapper - this is a programmer error")
             return
         }
@@ -303,6 +318,9 @@ final class FirestoreTransactionWrapper: TransactionProviding, @unchecked Sendab
 
     func deleteDocument(_ document: DocumentProviding) {
         guard let wrapper = document as? FirestoreDocumentWrapper else {
+            #if DEBUG
+            print("ERROR: FirestoreTransactionWrapper.deleteDocument - Document must be a FirestoreDocumentWrapper")
+            #endif
             assertionFailure("Document must be a FirestoreDocumentWrapper - this is a programmer error")
             return
         }

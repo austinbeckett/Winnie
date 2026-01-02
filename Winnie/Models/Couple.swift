@@ -98,7 +98,7 @@ struct Couple: Codable, Identifiable, Equatable {
     /// Generate a random 6-character alphanumeric invite code
     private func generateRandomCode() -> String {
         let characters = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"  // Excludes ambiguous: I, O, 0, 1
-        return String((0..<6).map { _ in characters.randomElement()! })
+        return String((0..<6).compactMap { _ in characters.randomElement() })
     }
 }
 

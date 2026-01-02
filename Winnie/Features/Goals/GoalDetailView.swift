@@ -67,12 +67,14 @@ struct GoalDetailView: View {
                     } label: {
                         Image(systemName: "square.and.pencil")
                     }
+                    .accessibilityLabel("Edit goal")
 
                     Button {
                         showDeleteConfirmation = true
                     } label: {
                         Image(systemName: "trash")
                     }
+                    .accessibilityLabel("Delete goal")
                 }
             }
         }
@@ -355,6 +357,8 @@ struct GoalDetailView: View {
             .padding(.vertical, WinnieSpacing.xs)
             .background(statusBackgroundColor)
             .clipShape(Capsule())
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel("Goal status: \(statusText)")
         }
     }
 

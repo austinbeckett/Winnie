@@ -223,6 +223,12 @@ final class GoalRepository {
         return goalsCollection(coupleID: coupleID)
             .order(by: "priority", descending: false)
             .addSnapshotListener { snapshot, error in
+                if let error {
+                    #if DEBUG
+                    print("GoalRepository.listenToGoals error: \(type(of: error))")
+                    #endif
+                }
+
                 guard let snapshot else {
                     onChange([])
                     return
@@ -246,6 +252,12 @@ final class GoalRepository {
             .whereField("isActive", isEqualTo: true)
             .order(by: "priority", descending: false)
             .addSnapshotListener { snapshot, error in
+                if let error {
+                    #if DEBUG
+                    print("GoalRepository.listenToActiveGoals error: \(type(of: error))")
+                    #endif
+                }
+
                 guard let snapshot else {
                     onChange([])
                     return
@@ -269,6 +281,12 @@ final class GoalRepository {
         return goalsCollection(coupleID: coupleID)
             .document(id)
             .addSnapshotListener { snapshot, error in
+                if let error {
+                    #if DEBUG
+                    print("GoalRepository.listenToGoal error: \(type(of: error))")
+                    #endif
+                }
+
                 guard let snapshot, snapshot.exists else {
                     onChange(nil)
                     return

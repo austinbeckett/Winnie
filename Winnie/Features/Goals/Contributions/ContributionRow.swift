@@ -61,6 +61,8 @@ struct ContributionRow: View {
         }
         .padding(.vertical, WinnieSpacing.xs)
         .contentShape(Rectangle())
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(descriptionText), \(relativeDate)")
     }
 
     // MARK: - Computed Properties

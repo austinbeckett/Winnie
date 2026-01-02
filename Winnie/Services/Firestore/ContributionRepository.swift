@@ -175,6 +175,12 @@ final class ContributionRepository {
         return contributionsCollection(coupleID: coupleID, goalID: goalID)
             .order(by: "date", descending: true)
             .addSnapshotListener { snapshot, error in
+                if let error {
+                    #if DEBUG
+                    print("ContributionRepository.listenToContributions error: \(type(of: error))")
+                    #endif
+                }
+
                 guard let snapshot else {
                     onChange([])
                     return

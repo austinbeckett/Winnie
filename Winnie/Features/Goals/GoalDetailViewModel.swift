@@ -84,11 +84,6 @@ final class GoalDetailViewModel: ErrorHandlingViewModel {
         self.contributionRepository = contributionRepository ?? ContributionRepository()
     }
 
-    /// Clean up resources before deallocation.
-    func cleanup() {
-        // No listener to clean up
-    }
-
     // MARK: - Computed Properties
 
     /// Current user's ID

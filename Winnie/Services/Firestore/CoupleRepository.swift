@@ -254,8 +254,10 @@ final class CoupleRepository {
 
     // MARK: - Real-time Listeners
 
-    /// Listen to couple changes
-    /// Note: Financial profile changes require a separate listener
+    /// Listen to couple changes.
+    ///
+    /// Note: Financial profile is fetched asynchronously when the couple changes.
+    /// For real-time profile updates, use `listenToFinancialProfile` separately.
     func listenToCouple(
         id: String,
         onChange: @escaping (Couple?) -> Void
@@ -263,6 +265,12 @@ final class CoupleRepository {
         return db.collection(collectionPath)
             .document(id)
             .addSnapshotListener { [weak self] snapshot, error in
+                if let error {
+                    #if DEBUG
+                    print("CoupleRepository.listenToCouple error: \(type(of: error))")
+                    #endif
+                }
+
                 guard let self, let snapshot, snapshot.exists else {
                     onChange(nil)
                     return
@@ -291,6 +299,12 @@ final class CoupleRepository {
             .collection("financialProfile")
             .document(profileDocID)
             .addSnapshotListener { snapshot, error in
+                if let error {
+                    #if DEBUG
+                    print("CoupleRepository.listenToFinancialProfile error: \(type(of: error))")
+                    #endif
+                }
+
                 guard let snapshot, snapshot.exists else {
                     onChange(FinancialProfile())
                     return

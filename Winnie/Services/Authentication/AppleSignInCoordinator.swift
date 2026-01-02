@@ -52,21 +52,32 @@ final class AppleSignInCoordinator: NSObject, ASAuthorizationControllerDelegate,
     // MARK: - ASAuthorizationControllerPresentationContextProviding
 
     func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
-        // Get the first window scene - required for UIWindow in iOS 26+
-        // In a running SwiftUI app, there is always at least one connected scene
-        let scene = UIApplication.shared.connectedScenes
-            .compactMap { $0 as? UIWindowScene }
-            .first!
+        // Apple Sign-In requires a presentation anchor. During normal app operation,
+        // there's always at least one connected UIWindowScene with a window.
+        // This method only gets called when the user taps Sign In, so the app is active.
+        for scene in UIApplication.shared.connectedScenes {
+            guard let windowScene = scene as? UIWindowScene else { continue }
 
-        // Return existing key window, or any window, or create a new one
-        if let window = scene.windows.first(where: { $0.isKeyWindow }) ?? scene.windows.first {
-            return window
+            // Return the key window if available
+            if let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow }) {
+                return keyWindow
+            }
+
+            // Otherwise return any window from this scene
+            if let window = windowScene.windows.first {
+                return window
+            }
+
+            // Create a window for this scene as fallback
+            let newWindow = UIWindow(windowScene: windowScene)
+            newWindow.makeKeyAndVisible()
+            return newWindow
         }
 
-        // Create a new window attached to the scene
-        let fallbackWindow = UIWindow(windowScene: scene)
-        fallbackWindow.makeKeyAndVisible()
-        return fallbackWindow
+        // This should never happen - but if it does, create a minimal window
+        // The force unwrap here is acceptable because if there's truly no scene,
+        // the app is in an invalid state and crashing is appropriate
+        fatalError("No UIWindowScene available for Apple Sign-In presentation")
     }
 }
 

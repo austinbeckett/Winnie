@@ -157,6 +157,12 @@ final class UserRepository {
         return db.collection(collectionPath)
             .document(id)
             .addSnapshotListener { snapshot, error in
+                if let error {
+                    #if DEBUG
+                    print("UserRepository.listenToUser error: \(type(of: error))")
+                    #endif
+                }
+
                 guard let snapshot, snapshot.exists else {
                     onChange(nil)
                     return

@@ -126,7 +126,7 @@ struct WinnieTextField: View {
     // MARK: - Border Color
 
     private var borderColor: Color {
-        if error != nil && !error!.isEmpty {
+        if let error, !error.isEmpty {
             return WinnieColors.error(for: colorScheme)
         } else if isFocused {
             return WinnieColors.amethystSmoke
@@ -207,7 +207,7 @@ struct WinnieCurrencyField: View {
     }
 
     private var borderColor: Color {
-        if error != nil && !error!.isEmpty {
+        if let error, !error.isEmpty {
             return WinnieColors.error(for: colorScheme)
         } else if isFocused {
             return WinnieColors.amethystSmoke

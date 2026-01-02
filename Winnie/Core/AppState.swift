@@ -92,7 +92,7 @@ class AppState {
         } catch {
             errorMessage = "Failed to load user: \(error.localizedDescription)"
             #if DEBUG
-            print("AppState: Error loading user - \(error)")
+            print("AppState: Error loading user - \(type(of: error))")
             #endif
         }
     }
@@ -113,7 +113,7 @@ class AppState {
         } catch {
             errorMessage = "Failed to save name: \(error.localizedDescription)"
             #if DEBUG
-            print("AppState: Error updating display name - \(error)")
+            print("AppState: Error updating display name - \(type(of: error))")
             #endif
         }
     }

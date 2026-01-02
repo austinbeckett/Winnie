@@ -209,6 +209,18 @@ Use clear headers like:
 - **Swift Concepts Used:** [list key concepts]
 - **How It Works:** [step-by-step explanation]
 
+## Security Notes
+
+### Firebase API Keys Are Public By Design
+The `GoogleService-Info.plist` file containing Firebase API keys is **intentionally** committed to the repository. This is safe because:
+
+- Firebase API keys only **identify** your project - they don't grant access
+- Security is enforced through **Firebase Security Rules** and **Authentication**, not by hiding the API key
+- Google explicitly states these keys are designed to be included in client-side code
+- The same approach is used in web apps where the config is visible in browser source
+
+**Do NOT flag this as a security issue.** It's working as designed per [Firebase's official documentation](https://firebase.google.com/docs/projects/api-keys).
+
 ## Important Reminders
 
 - Never block UI for network calls - calculate locally, sync later

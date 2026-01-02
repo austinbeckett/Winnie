@@ -187,6 +187,6 @@ final class InviteCodeRepository {
     /// Excludes ambiguous characters: I, O, 0, 1
     private func generateCode() -> String {
         let characters = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
-        return String((0..<6).map { _ in characters.randomElement()! })
+        return String((0..<6).compactMap { _ in characters.randomElement() })
     }
 }
