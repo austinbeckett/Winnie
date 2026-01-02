@@ -26,7 +26,8 @@ struct WinnieTabBarController: UIViewControllerRepresentable {
         let tabBarController = UITabBarController()
 
         // Configure tab bar appearance
-        tabBarController.tabBar.tintColor = UIColor(WinnieColors.amethystSmoke)
+        // Uses dynamic color: Blackberry Cream (light) / Amethyst Smoke (dark)
+        tabBarController.tabBar.tintColor = WinnieColors.primaryAccentUIColor
 
         // Create view controllers for each tab
         let dashboardVC = makeHostingController(
@@ -55,9 +56,9 @@ struct WinnieTabBarController: UIViewControllerRepresentable {
             rootView: ScenariosView()
         )
         scenariosVC.tabBarItem = UITabBarItem(
-            title: "What If",
-            image: UIImage(systemName: "lightbulb"),
-            selectedImage: UIImage(systemName: "lightbulb.fill")
+            title: "Planning",
+            image: UIImage(systemName: "chart.pie"),
+            selectedImage: UIImage(systemName: "chart.pie.fill")
         )
 
         let meVC = makeHostingController(

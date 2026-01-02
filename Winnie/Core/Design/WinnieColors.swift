@@ -285,4 +285,18 @@ extension WinnieColors {
             }
         }
     }
+
+    /// Dynamic UIColor for primary accent - automatically updates with dark/light mode.
+    /// Use this for UIKit components (UITabBar tint, etc.).
+    /// Light: Blackberry Cream | Dark: Amethyst Smoke
+    static var primaryAccentUIColor: UIColor {
+        UIColor { traitCollection in
+            switch traitCollection.userInterfaceStyle {
+            case .dark:
+                return UIColor(amethystSmoke)
+            default:
+                return UIColor(blackberryCream)
+            }
+        }
+    }
 }

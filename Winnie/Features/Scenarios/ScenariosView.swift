@@ -21,12 +21,12 @@ struct ScenariosView: View {
             VStack(spacing: WinnieSpacing.l) {
                 Spacer()
 
-                Image(systemName: "lightbulb")
+                Image(systemName: "chart.pie")
                     .font(.system(size: 64))
                     .foregroundColor(WinnieColors.amethystSmoke)
 
                 VStack(spacing: WinnieSpacing.s) {
-                    Text("What If")
+                    Text("Planning")
                         .font(WinnieTypography.headlineL())
                         .foregroundColor(WinnieColors.primaryText(for: colorScheme))
 
@@ -39,7 +39,7 @@ struct ScenariosView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(WinnieColors.background(for: colorScheme).ignoresSafeArea())
-            .navigationTitle("What If")
+            .navigationTitle("Planning")
             .navigationBarTitleDisplayMode(.large)
         }
     }
