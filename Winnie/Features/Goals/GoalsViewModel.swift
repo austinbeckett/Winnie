@@ -16,7 +16,7 @@ import SwiftUI
 /// ```
 @Observable
 @MainActor
-final class GoalsViewModel {
+final class GoalsViewModel: ErrorHandlingViewModel {
 
     // MARK: - Published State
 
@@ -194,20 +194,4 @@ final class GoalsViewModel {
         goals.first { $0.id == id }
     }
 
-    // MARK: - Error Handling
-
-    private func handleError(_ error: Error, context: String) {
-        #if DEBUG
-        print("GoalsViewModel error \(context): \(error.localizedDescription)")
-        #endif
-
-        // Set user-facing error message
-        if let firestoreError = error as? FirestoreError {
-            errorMessage = firestoreError.userMessage
-        } else {
-            errorMessage = "Something went wrong while \(context). Please try again."
-        }
-
-        showError = true
-    }
 }

@@ -141,7 +141,7 @@ struct GoalDetailView: View {
                         WinnieColors.progressBackground(for: colorScheme),
                         lineWidth: strokeWidth
                     )
-                    .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 4)
+                    .shadow(color: WinnieColors.shadow(for: colorScheme), radius: 8, x: 0, y: 4)
 
                 // Progress arc
                 Circle()
@@ -369,8 +369,8 @@ struct GoalDetailView: View {
 
     private var statusColor: Color {
         switch viewModel.onTrackStatus {
-        case .onTrack: return .green
-        case .behind: return .orange
+        case .onTrack: return WinnieColors.success(for: colorScheme)
+        case .behind: return WinnieColors.warning(for: colorScheme)
         case .completed: return WinnieColors.amethystSmoke
         case .noTarget: return WinnieColors.tertiaryText(for: colorScheme)
         }
@@ -378,8 +378,8 @@ struct GoalDetailView: View {
 
     private var statusTextColor: Color {
         switch viewModel.onTrackStatus {
-        case .onTrack: return .green
-        case .behind: return .orange
+        case .onTrack: return WinnieColors.success(for: colorScheme)
+        case .behind: return WinnieColors.warning(for: colorScheme)
         case .completed: return WinnieColors.amethystSmoke
         case .noTarget: return WinnieColors.secondaryText(for: colorScheme)
         }
@@ -387,8 +387,8 @@ struct GoalDetailView: View {
 
     private var statusBackgroundColor: Color {
         switch viewModel.onTrackStatus {
-        case .onTrack: return .green.opacity(0.12)
-        case .behind: return .orange.opacity(0.12)
+        case .onTrack: return WinnieColors.success(for: colorScheme).opacity(0.12)
+        case .behind: return WinnieColors.warning(for: colorScheme).opacity(0.12)
         case .completed: return WinnieColors.amethystSmoke.opacity(0.15)
         case .noTarget: return WinnieColors.tertiaryText(for: colorScheme).opacity(0.1)
         }

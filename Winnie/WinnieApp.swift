@@ -237,8 +237,8 @@ struct AuthenticationView: View {
                     }
                     .frame(maxWidth: .infinity)
                     .frame(height: 56)
-                    .background(Color.accentColor)
-                    .foregroundStyle(.white)
+                    .background(WinnieColors.amethystSmoke)
+                    .foregroundStyle(WinnieColors.contrastText)
                     .clipShape(RoundedRectangle(cornerRadius: 28))
                     .disabled(authService.isLoading || email.isEmpty || password.isEmpty)
                 }

@@ -201,6 +201,38 @@ extension WinnieColors {
         colorScheme == .dark ? snow.opacity(0.15) : ink.opacity(0.15)
     }
 
+    // MARK: - Semantic Colors
+
+    /// Error color for validation states
+    /// Uses a consistent red that works in both light and dark modes
+    static func error(for colorScheme: ColorScheme) -> Color {
+        Color(hex: "#DC3545")
+    }
+
+    /// Success/on-track status color
+    /// Uses a consistent green that works in both light and dark modes
+    static func success(for colorScheme: ColorScheme) -> Color {
+        Color(hex: "#28A745")
+    }
+
+    /// Warning/behind status color
+    /// Uses a consistent orange that works in both light and dark modes
+    static func warning(for colorScheme: ColorScheme) -> Color {
+        Color(hex: "#F5A623")
+    }
+
+    /// Shadow color for elevated surfaces
+    /// Light: subtle black shadow | Dark: darker shadow
+    static func shadow(for colorScheme: ColorScheme) -> Color {
+        colorScheme == .dark
+            ? Color.black.opacity(0.3)
+            : Color.black.opacity(0.08)
+    }
+
+    /// Contrast text for colored backgrounds (icons, initials on accent backgrounds)
+    /// Always white - used on colored backgrounds where we need maximum contrast
+    static var contrastText: Color { snow }
+
     // MARK: - Accent Colors (same in both modes)
 
     /// Primary accent color (interactive elements, progress indicators)

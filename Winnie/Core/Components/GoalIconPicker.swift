@@ -127,12 +127,12 @@ private struct IconButton: View {
                 VStack(spacing: 2) {
                     Image(systemName: icon)
                         .font(.system(size: 20))
-                        .foregroundStyle(isSelected ? .white : WinnieColors.primaryText(for: colorScheme))
+                        .foregroundStyle(isSelected ? WinnieColors.contrastText : WinnieColors.primaryText(for: colorScheme))
 
                     if isAuto {
                         Text("Auto")
                             .font(.system(size: 8, weight: .medium))
-                            .foregroundStyle(isSelected ? .white.opacity(0.8) : WinnieColors.tertiaryText(for: colorScheme))
+                            .foregroundStyle(isSelected ? WinnieColors.contrastText.opacity(0.8) : WinnieColors.tertiaryText(for: colorScheme))
                     }
                 }
 

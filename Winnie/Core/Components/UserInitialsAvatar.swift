@@ -75,7 +75,7 @@ struct UserInitialsAvatar: View {
 
     private var textColor: Color {
         if isCurrentUser {
-            return .white
+            return WinnieColors.contrastText
         } else {
             return colorScheme == .dark
                 ? WinnieColors.snow

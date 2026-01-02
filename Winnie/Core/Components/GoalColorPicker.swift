@@ -80,7 +80,7 @@ private struct ColorCircle: View {
         // For darker colors, use white checkmark; for lighter colors, use dark
         // Simple heuristic: blackberry and storm are dark enough to need white
         if color == GoalPresetColor.blackberry.color || color == GoalPresetColor.storm.color {
-            return .white
+            return WinnieColors.contrastText
         }
         return WinnieColors.ink
     }

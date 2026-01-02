@@ -25,7 +25,7 @@ enum OnTrackStatus: Equatable {
 /// ```
 @Observable
 @MainActor
-final class GoalDetailViewModel {
+final class GoalDetailViewModel: ErrorHandlingViewModel {
 
     // MARK: - Published State
 
@@ -338,21 +338,6 @@ final class GoalDetailViewModel {
         return goal.currentAmount >= expectedAmount ? .onTrack : .behind
     }
 
-    // MARK: - Error Handling
-
-    private func handleError(_ error: Error, context: String) {
-        #if DEBUG
-        print("GoalDetailViewModel error \(context): \(error.localizedDescription)")
-        #endif
-
-        if let firestoreError = error as? FirestoreError {
-            errorMessage = firestoreError.userMessage
-        } else {
-            errorMessage = "Something went wrong while \(context). Please try again."
-        }
-
-        showError = true
-    }
 }
 
 // MARK: - Preview Helpers

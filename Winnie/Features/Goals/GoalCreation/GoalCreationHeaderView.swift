@@ -116,7 +116,7 @@ struct GoalCreationHeaderView: View {
     private var pencilBadge: some View {
         Image(systemName: "pencil")
             .font(.system(size: 10, weight: .bold))
-            .foregroundColor(.white)
+            .foregroundColor(WinnieColors.contrastText)
             .frame(width: 22, height: 22)
             .background(WinnieColors.ink.opacity(0.7))
             .clipShape(Circle())

@@ -83,7 +83,7 @@ struct WinnieTextField: View {
             if let error, !error.isEmpty {
                 Text(error)
                     .font(WinnieTypography.caption())
-                    .foregroundColor(.red)
+                    .foregroundColor(WinnieColors.error(for: colorScheme))
             }
         }
     }
@@ -127,7 +127,7 @@ struct WinnieTextField: View {
 
     private var borderColor: Color {
         if error != nil && !error!.isEmpty {
-            return .red
+            return WinnieColors.error(for: colorScheme)
         } else if isFocused {
             return WinnieColors.amethystSmoke
         } else {
@@ -201,14 +201,14 @@ struct WinnieCurrencyField: View {
             if let error, !error.isEmpty {
                 Text(error)
                     .font(WinnieTypography.caption())
-                    .foregroundColor(.red)
+                    .foregroundColor(WinnieColors.error(for: colorScheme))
             }
         }
     }
 
     private var borderColor: Color {
         if error != nil && !error!.isEmpty {
-            return .red
+            return WinnieColors.error(for: colorScheme)
         } else if isFocused {
             return WinnieColors.amethystSmoke
         } else {

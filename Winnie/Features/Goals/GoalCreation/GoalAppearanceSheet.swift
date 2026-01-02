@@ -104,7 +104,7 @@ private struct ColorSwatch: View {
 
                     Image(systemName: "checkmark")
                         .font(.system(size: 16, weight: .bold))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(WinnieColors.contrastText)
                 }
             }
         }
