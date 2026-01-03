@@ -1,11 +1,7 @@
 import SwiftUI
 
 /// Value proposition carousel shown during onboarding.
-///
-/// Displays 3 slides highlighting key features:
-/// - "Your future, built together" - Goal alignment
-/// - "Play with Scenarios" - What-if planning
-/// - "Stay on Track" - Monthly check-ins
+
 struct OnboardingCarouselView: View {
 
     let onContinue: () -> Void
@@ -16,12 +12,12 @@ struct OnboardingCarouselView: View {
     private let slides: [(title: String, subtitle: String, icon: String)] = [
         (
             "Your future, built together",
-            "Align your goals without the arguments.",
+            "Financial goals aligned with your partner.",
             "heart.fill"
         ),
         (
-            "Play with Scenarios",
-            "See how the cost of your wedding impacts your timeline to buy a house.",
+            "Scenario planning",
+            "Find the optimal savings path to acheive all of your goals.",
             "slider.horizontal.3"
         ),
         (
