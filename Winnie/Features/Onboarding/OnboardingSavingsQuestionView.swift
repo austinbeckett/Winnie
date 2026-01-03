@@ -22,12 +22,12 @@ struct OnboardingSavingsQuestionView: View {
                     .font(.system(size: 60))
                     .foregroundColor(WinnieColors.accent)
 
-                Text("Do you know how much money you save each month?")
+                Text("Do you know how much you currently save each month?")
                     .font(WinnieTypography.headlineL())
                     .foregroundColor(WinnieColors.primaryText(for: colorScheme))
                     .multilineTextAlignment(.center)
 
-                Text("This will help us determine how much money we can allocate to your goals every month!")
+                Text("This will help us determine how much money we can allocate to your goals.")
                     .font(WinnieTypography.bodyL())
                     .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
                     .multilineTextAlignment(.center)

@@ -1,14 +1,14 @@
 # Winnie App - Development Progress
 
-**Last Updated:** January 2, 2026
+**Last Updated:** January 3, 2026 @ 1:01 PM EST
 
 ---
 
 ## Current Focus
 
-**Complete:** Tab Bar Navigation - 4-tab layout with Dashboard, Goals, Scenarios, Me
+**In Progress:** Onboarding Flow - Complete redesign with branching paths and improved UX
 
-**Next Up:** Partner System, Onboarding UI, Dashboard content, or Financial Engine
+**Next Up:** Partner System, Dashboard content, Planning and scenario creation, or Financial Engine
 
 ---
 
@@ -80,13 +80,22 @@
 ### UI - Onboarding
 | Feature | Status | Notes |
 |---------|--------|-------|
-| Welcome screen | Not Started | |
+| Splash screen | Done | Logo + tagline animation |
+| Value proposition carousel | Done | 3 slides with Next/Continue pattern |
+| Goal picker | Done | Select primary goal type |
+| Income input | Done | Monthly income with WinnieCurrencyInput |
+| Savings question (branching) | Done | Yes/No choice determines flow path |
+| Budgeting explainer | Done | Explains Needs/Wants/Savings philosophy |
+| Needs input | Done | Fixed monthly expenses |
+| Wants input | Done | Discretionary spending |
+| Savings pool reveal | Done | Shows calculated or direct savings |
+| Nest egg input | Done | Current savings balance |
+| Goal detail | Done | Target amount + date |
+| Projection | Placeholder | Need Financial Engine |
+| Tune-up | Placeholder | Allocation adjustments |
+| Partner invite/skip | Placeholder | Partner system not started |
 | Name input | Done | "What should we call you?" screen |
-| Avatar creation | Not Started | Allow user to customize their illustrated avatar |
-| Partner invite/skip | Not Started | |
-| Financial baseline input | Not Started | |
-| First goal creation | Not Started | |
-| Timeline reveal | Not Started | |
+| Avatar creation | Not Started | Future: customize illustrated avatar |
 
 ### UI - Main App
 | Feature | Status | Notes |
@@ -112,6 +121,7 @@
 | WinnieButton | Done | Primary/secondary/text variants |
 | WinnieCard | Done | Accent border support |
 | WinnieTextField | Done | Text input with label/validation |
+| WinnieCurrencyInput | Done | Contained card style currency field |
 | WinnieProgressBar | Done | Goal progress indicator |
 | GoalCard | Done | Specialized goal summary card |
 | WinnieSlider | Not Started | For allocation controls (future) |
@@ -260,6 +270,35 @@
 ---
 
 ## Recent Sessions
+
+### January 3, 2026 (Session 17) - Onboarding Flow Redesign
+- **Branching Flow After Income**: Added decision point for users who know vs don't know their monthly savings
+  - Created `OnboardingSavingsQuestionView` with two choice buttons
+  - "Yes" path skips Needs/Wants, goes directly to Savings Pool with editable input
+  - "No" path goes through Budgeting Explainer → Needs → Wants → Savings Pool (calculated)
+- **Budgeting Explainer Screen**: New screen explaining Needs/Wants/Savings philosophy
+  - Created `OnboardingBudgetingExplainerView` with category breakdown
+  - Shown only on "No, help me figure it out" path before expense collection
+- **Currency Input Redesign (Style A: Contained Card)**:
+  - Created reusable `WinnieCurrencyInput` component in Core/Components
+  - Card container with proper $, number, suffix alignment
+  - Focus states with accent border, subtle shadow
+  - Updated 4 views: Income, Savings Pool, Nest Egg, Goal Detail
+- **OnboardingCarouselView Enhancement**: Next/Continue button pattern
+  - "Next" on slides 1-2 (animates to next slide)
+  - "Continue" on slide 3 (proceeds to Goal Picker)
+- **OnboardingState Updates**:
+  - Added `knowsSavingsAmount: Bool` and `directSavingsPool: Decimal`
+  - Updated `savingsPool` computed property for conditional calculation
+- **OnboardingCoordinator Updates**:
+  - Added `.savingsQuestion` and `.budgetingExplainer` steps to enum
+  - Implemented branching navigation logic
+- **Text/UI Fixes**:
+  - Fixed text truncation with `.fixedSize(horizontal: false, vertical: true)`
+  - Fixed text centering when keyboard opens
+  - Removed redundant body text from savings question screen
+- **New files**: OnboardingSavingsQuestionView.swift, OnboardingBudgetingExplainerView.swift, WinnieCurrencyInput.swift
+- **Modified files**: OnboardingCoordinator.swift, OnboardingState.swift, OnboardingCarouselView.swift, OnboardingIncomeView.swift, OnboardingSavingsPoolView.swift, OnboardingNestEggView.swift, OnboardingGoalDetailView.swift
 
 ### January 2, 2026 (Session 16) - Tab Bar Navigation
 - **Tab Bar Implementation**: Added native iOS 18 TabView with 4 tabs

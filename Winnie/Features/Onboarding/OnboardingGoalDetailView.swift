@@ -101,9 +101,6 @@ struct OnboardingGoalDetailView: View {
             }
             onboardingState.goalDesiredDate = selectedDate
         }
-        .onTapGesture {
-            isAmountFocused = false
-        }
     }
 
     // MARK: - Dynamic Content

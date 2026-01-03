@@ -2,9 +2,8 @@ import SwiftUI
 
 /// Goal selection screen for onboarding.
 ///
-/// Presents a grid of goal type options for the user to select their primary focus.
-/// This personalizes the onboarding experience and determines which goal detail
-/// questions to ask later.
+/// Presents a vertical scrolling list of illustrated goal cards.
+/// Users select their primary focus to personalize the onboarding experience.
 struct OnboardingGoalPickerView: View {
 
     @Bindable var onboardingState: OnboardingState
@@ -12,59 +11,63 @@ struct OnboardingGoalPickerView: View {
 
     @Environment(\.colorScheme) private var colorScheme
 
-    /// Goal types shown during onboarding (subset of all types)
+    /// Goal types shown during onboarding (curated subset)
     private let onboardingGoalTypes: [GoalType] = [
         .house,
         .babyFamily,
         .retirement,
-        .emergencyFund
+        .emergencyFund,
+        .vacation,
+        .car,
+        .debt,
+        .custom
     ]
 
     var body: some View {
-        VStack(spacing: WinnieSpacing.xl) {
-            Spacer()
-
+        VStack(spacing: 0) {
             // Header
             VStack(spacing: WinnieSpacing.s) {
-                Text("What's your focus?")
+                Text("Let's set up your first financial goal.")
                     .font(WinnieTypography.headlineL())
                     .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+                    .multilineTextAlignment(.center)
 
-                Text("We know you likely have a lot of financial goals, but lets focus on one for now.\n\nWhat is your biggest financial priority at this stage of your life?")
+                Text("You can always add more goals later but let's start with one!")
                     .font(WinnieTypography.bodyL())
                     .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
                     .multilineTextAlignment(.center)
-                    .padding(.horizontal, WinnieSpacing.m)
-            }
-
-            // Goal grid
-            LazyVGrid(columns: [
-                GridItem(.flexible()),
-                GridItem(.flexible())
-            ], spacing: WinnieSpacing.m) {
-                ForEach(onboardingGoalTypes) { goalType in
-                    goalOptionCard(for: goalType)
-                }
             }
             .padding(.horizontal, WinnieSpacing.screenMarginMobile)
+            .padding(.top, WinnieSpacing.l)
+            .padding(.bottom, WinnieSpacing.m)
 
-            Spacer()
-
-            // Continue button
+            // Goal cards (vertical scroll)
+            ScrollView {
+                VStack(spacing: WinnieSpacing.m) {
+                    ForEach(onboardingGoalTypes) { goalType in
+                        goalCard(for: goalType)
+                    }
+                }
+                .padding(.horizontal, WinnieSpacing.screenMarginMobile)
+                .padding(.bottom, WinnieSpacing.xl)
+            }
+        }
+        .safeAreaInset(edge: .bottom) {
             WinnieButton("Continue", style: .primary) {
                 onContinue()
             }
             .disabled(onboardingState.selectedGoalType == nil)
             .padding(.horizontal, WinnieSpacing.screenMarginMobile)
-            .padding(.bottom, WinnieSpacing.xl)
+            .padding(.vertical, WinnieSpacing.m)
+            .background(WinnieColors.background(for: colorScheme))
         }
         .background(WinnieColors.background(for: colorScheme).ignoresSafeArea())
     }
 
-    // MARK: - Goal Option Card
+    // MARK: - Goal Card
 
     @ViewBuilder
-    private func goalOptionCard(for goalType: GoalType) -> some View {
+    private func goalCard(for goalType: GoalType) -> some View {
         let isSelected = onboardingState.selectedGoalType == goalType
 
         Button {
@@ -72,32 +75,100 @@ struct OnboardingGoalPickerView: View {
                 onboardingState.selectedGoalType = goalType
             }
         } label: {
-            VStack(spacing: WinnieSpacing.s) {
-                Image(systemName: goalType.iconName)
-                    .font(.system(size: 32))
-                    .foregroundColor(isSelected ? WinnieColors.contrastText : WinnieColors.accent)
+            VStack(spacing: 0) {
+                // Illustration area (SF Symbol placeholder)
+                ZStack {
+                    Rectangle()
+                        .fill(illustrationBackground(for: goalType))
+                        .frame(height: 100)
 
-                Text(goalType.displayName)
-                    .font(WinnieTypography.bodyM())
-                    .fontWeight(.medium)
-                    .foregroundColor(isSelected
-                                     ? WinnieColors.contrastText
-                                     : WinnieColors.primaryText(for: colorScheme))
+                    Image(systemName: iconName(for: goalType))
+                        .font(.system(size: 40))
+                        .foregroundColor(isSelected ? .white : WinnieColors.accent)
+                }
+
+                // Text area
+                VStack(alignment: .leading, spacing: WinnieSpacing.xxs) {
+                    Text(title(for: goalType))
+                        .font(WinnieTypography.bodyL().weight(.semibold))
+                        .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+
+                    Text(subtitle(for: goalType))
+                        .font(WinnieTypography.bodyS())
+                        .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(WinnieSpacing.m)
+                .background(WinnieColors.cardBackground(for: colorScheme))
             }
-            .frame(maxWidth: .infinity)
-            .frame(height: 120)
-            .background(isSelected
-                        ? WinnieColors.accent
-                        : WinnieColors.cardBackground(for: colorScheme))
             .clipShape(RoundedRectangle(cornerRadius: WinnieSpacing.cardCornerRadius))
             .overlay(
                 RoundedRectangle(cornerRadius: WinnieSpacing.cardCornerRadius)
                     .stroke(isSelected ? WinnieColors.accent : WinnieColors.border(for: colorScheme),
                             lineWidth: isSelected ? 2 : 1)
             )
+            .shadow(
+                color: WinnieColors.cardShadow(for: colorScheme),
+                radius: isSelected ? 8 : 4,
+                x: 0,
+                y: 2
+            )
             .scaleEffect(isSelected ? 1.02 : 1.0)
         }
         .buttonStyle(.plain)
+    }
+
+    // MARK: - Card Content
+
+    private func iconName(for goalType: GoalType) -> String {
+        switch goalType {
+        case .house: return "house.fill"
+        case .babyFamily: return "figure.2.and.child.holdinghands"
+        case .retirement: return "beach.umbrella.fill"
+        case .emergencyFund: return "shield.fill"
+        case .vacation: return "airplane"
+        case .car: return "car.fill"
+        case .debt: return "creditcard.fill"
+        case .custom: return "sparkles"
+        default: return goalType.iconName
+        }
+    }
+
+    private func title(for goalType: GoalType) -> String {
+        switch goalType {
+        case .house: return "Buy a Home"
+        case .babyFamily: return "Start a Family"
+        case .retirement: return "Retire Comfortably"
+        case .emergencyFund: return "Emergency Fund"
+        case .vacation: return "Dream Vacation"
+        case .car: return "New Vehicle"
+        case .debt: return "Pay Off Debt"
+        case .custom: return "Something Else"
+        default: return goalType.displayName
+        }
+    }
+
+    private func subtitle(for goalType: GoalType) -> String {
+        switch goalType {
+        case .house: return "Save for your down payment"
+        case .babyFamily: return "Prepare for your growing family"
+        case .retirement: return "Build your retirement nest egg"
+        case .emergencyFund: return "Create your financial safety net"
+        case .vacation: return "Plan your next big adventure"
+        case .car: return "Save for your next car"
+        case .debt: return "Become debt-free faster"
+        case .custom: return "Create a custom goal"
+        default: return "Set your target and timeline"
+        }
+    }
+
+    private func illustrationBackground(for goalType: GoalType) -> Color {
+        let isSelected = onboardingState.selectedGoalType == goalType
+        if isSelected {
+            return WinnieColors.accent
+        }
+        // Subtle tint based on goal type
+        return WinnieColors.cardBackground(for: colorScheme)
     }
 }
 
