@@ -139,8 +139,13 @@ struct RootView: View {
                         lastLoadedUID = uid
                     }
                 }
+        } else if appState.currentUser?.hasCompletedOnboarding != true {
+            // User hasn't completed onboarding - show full onboarding flow
+            OnboardingCoordinator(appState: appState) {
+                // Onboarding complete, view will update automatically
+            }
         } else if appState.currentUser?.displayName == nil {
-            // User hasn't completed onboarding - show name input
+            // Edge case: completed onboarding but no name (shouldn't happen normally)
             NameInputView(appState: appState) {
                 // Name saved, view will update automatically
             }

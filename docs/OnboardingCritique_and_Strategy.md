@@ -28,6 +28,7 @@ We will shift to a **"Goal-First, Progressive Disclosure"** model.
 
 ### Phase 1: The Emotional Hook (Before Sign Up)
 *   **0. Splash Screen:** High-quality motion graphic (e.g., two paths merging into one).
+    *   *Tagline:* "Financial planning is complex. Your financial planning app shouldn't be."
 *   **0.1 Value Carousel:** Three quick slides:
     *   *Your future, built together:* "Align your goals without the arguments."
     *   *Play with Scenarios:* "See how a the cost of your wedding impacts your timeline to buy a house."
@@ -71,7 +72,20 @@ Instead of one big form, use a **Wizard** (one question per screen, big number p
 *   **8. The "Couple" Hook:**
     *   "Financial planning only works when you're in it together." -> **Invite Partner** (Now they have a chart to show off).
 
-## Summary of Changes
-1.  **Moved "Partner Invite" to the end:** Let the user build something worth sharing first.
-2.  **Broken down "Financial Baseline":** Split into 3 distinct, simple calculation steps with immediate feedback.
-3.  **Added "Goal Selection" to the start:** Use it as the hook to drive the data entry.
+## 4. Paywall Strategy & Brainstorming
+
+The goal is to balance "Time-to-Value" with monetization. We do not want to block the user before they see the "Winnie Projection" (The Magic Moment).
+
+### Option A: The "Focused" Model (Freemium) - **SELECTED STRATEGY**
+*Free Tier:* **Joint Mode included.** Users can invite a partner and track **1 Active Goal** (e.g., House).
+*Pro Tier ("Winnie Premium"):* **Unlimited Goals & Scenarios.**
+* **Paywall Location:** Triggered when the user tries to add a **2nd Goal** or create a new "What-If" Scenario.
+* **Onboarding Integrations:** None. The onboarding leads to the first free goal.
+* **Pros:** Users get the full "Couple" experience (the core value) immediately. They pay when their financial life gets complex (which is a good problem to have).
+* **Cons:** Some users might be content with just one goal for a long time.
+
+### Recommendation
+**Go with Option A (The "Focused" Model).**
+This aligns perfectly with our brand promise of "building together." We don't want to tax the relationship. We tax *complexity*.
+*   **Free:** 1 Goal, 2 Users.
+*   **Paid:** Unlimited Goals, Unlimited Scenarios.

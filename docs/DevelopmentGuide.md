@@ -28,12 +28,26 @@ The app is organized around four primary navigational pillars (Tabs):
     *   **Subscription:** Manage Winnie Premium.
 
 ### 1.2 User Flow Mapping
-**Flow A: Onboarding (First Run)**
-1.  **Welcome Screen:** Value prop + Sign Up / Sign In.
-2.  **Partner Setup:** "Invite Partner" or "Skip for Now".
-3.  **Financial Baseline:** Input Income, Fixed Expenses, Assets, Savings Pool.
-4.  **First Goal:** "What is your #1 priority?" (e.g., House).
-5.  **The Reveal:** Show the first calculated timeline.
+**Flow A: Onboarding (Goal-First & Progressive)**
+*Philosophy: "Value First, Data Second."*
+
+1.  **Splash Screen:**
+    *   Motion graphic: Two paths merging into one.
+    *   *Tagline:* "Financial planning is complex. Your financial planning app shouldn't be."
+2.  **The Hook (Carousel):** "Align goals", "Play with Scenarios", "Simple Check-ins".
+3.  **The 'Why' (Micro-choice):** User picks 1st focus (House, Wedding, Retirement, etc.).
+4.  **Financial Baseline Wizard (The "Roughly Right" Inputs):**
+    *   *Step 1:* **Income** (Just yours for now).
+    *   *Step 2:* **Needs** (Fixed bills - Rent, Loans). Visual: List with sliders.
+    *   *Step 3:* **Wants** (Entertainment, Dining). Visual: List with sliders.
+    *   *Step 4:* **Savings Pool** (The leftovers). Visual: Two line art people relaxing in a pool.
+    *   *Step 5:* **Nest Egg** (Current Cash/Investments).
+5.  **Define the Dream:** Input detail for the chosen Goal (e.g., "Down payment amount" + "Date").
+6.  **The Reveal (Magic Moment):** Show the calculated "Winnie Projection" date.
+7.  **The Tune-Up:** User drags slider to speed up the date.
+8.  **The Ask (Freemium Gate):**
+    *   *Action:* **Invite Partner** (included in Free Tier) to share the plan.
+    *   *Gate:* Adding a **2nd Goal** or **New Scenario** triggers the "Winnie Premium" paywall.
 
 **Flow B: The "What-If" Session (Core Loop)**
 1.  **Trigger:** User wants to see impact of saving more for a house.
@@ -52,6 +66,7 @@ Focus on layout and hierarchy before colors.
 *   **The Allocation Slider:** Needs to be large and thumb-friendly. As it moves, numbers above it should tick up/down instantly.
 *   **Timeline Visualization:** A horizontal bar chart is often clearer than a line graph for "Completion Dates".
 *   **Input Forms:** Use clear, big number pads. Avoid standard iOS pickers for money; custom keypads are faster.
+*   **Wizard UI:** Use a "One Thing Per Page" approach for the financial baseline to reduce cognitive load.
 
 ### 2.2 Visual Design
 *   **Aesthetic:** "Trustworthy, Warm, Modern." Avoid cold "bank blue" or "spreadsheet green."
@@ -158,7 +173,7 @@ Build from the bottom up.
 
 ### 6.2 Subscription Setup
 *   **RevenueCat:** Easiest implementation for iOS Subscriptions.
-*   **Entitlements:** Define "Free Tier" (1 scenario) vs "Pro Tier" (Unlimited).
+*   **Entitlements:** Define "Free Tier" (1 Goal + Partner Access) vs "Pro Tier" (Unlimited Goals/Scenarios).
 
 ### 6.3 Back-end Deployment
 *   **Security Rules:** strict Firestore rules (users can only read their own/partner's data).

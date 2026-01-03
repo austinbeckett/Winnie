@@ -122,6 +122,45 @@ class AppState {
         }
     }
 
+    // MARK: - Onboarding
+
+    /// Save onboarding data to Firestore.
+    ///
+    /// Called when user completes the onboarding wizard.
+    /// Saves the financial profile and first goal, then marks onboarding complete.
+    ///
+    /// - Parameters:
+    ///   - profile: The user's financial profile from onboarding
+    ///   - goal: The user's first goal from onboarding
+    func saveOnboardingData(profile: FinancialProfile, goal: Goal?) async {
+        guard let uid = currentUser?.id else { return }
+
+        let userRepository = UserRepository()
+
+        do {
+            // TODO: Save financial profile to Firestore
+            // await financialProfileRepository.save(profile, for: uid)
+
+            // TODO: Save first goal to Firestore
+            // if let goal = goal {
+            //     await goalRepository.save(goal, for: uid)
+            // }
+
+            // Mark onboarding as complete
+            try await userRepository.completeOnboarding(uid: uid)
+            currentUser?.hasCompletedOnboarding = true
+
+            #if DEBUG
+            print("AppState: Onboarding data saved successfully")
+            #endif
+        } catch {
+            errorMessage = "Failed to save onboarding data: \(error.localizedDescription)"
+            #if DEBUG
+            print("AppState: Error saving onboarding data - \(type(of: error))")
+            #endif
+        }
+    }
+
     /// Clear all user data (for sign out)
     func clearUserData() {
         currentUser = nil

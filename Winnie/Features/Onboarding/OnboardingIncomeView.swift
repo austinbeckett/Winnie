@@ -1,0 +1,128 @@
+import SwiftUI
+
+/// Income input screen for onboarding wizard.
+///
+/// Step 2 of the wizard: Asks user for their monthly take-home pay.
+/// Uses a large currency input with helper text.
+struct OnboardingIncomeView: View {
+
+    @Bindable var onboardingState: OnboardingState
+    let onContinue: () -> Void
+
+    @Environment(\.colorScheme) private var colorScheme
+    @FocusState private var isInputFocused: Bool
+
+    /// Local string for text field binding
+    @State private var incomeText: String = ""
+
+    var body: some View {
+        VStack(spacing: WinnieSpacing.xl) {
+            Spacer()
+
+            // Header
+            VStack(spacing: WinnieSpacing.s) {
+                Text("What's your income?")
+                    .font(WinnieTypography.headlineL())
+                    .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+
+                Text("What is your monthly take-home pay? Only enter yours, we will add your partner's later.")
+                    .font(WinnieTypography.bodyL())
+                    .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, WinnieSpacing.m)
+            }
+
+            // Currency input
+            VStack(spacing: WinnieSpacing.xs) {
+                HStack(alignment: .center, spacing: WinnieSpacing.xxs) {
+                    Text("$")
+                        .font(WinnieTypography.financialL())
+                        .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
+
+                    TextField("0", text: $incomeText)
+                        .font(WinnieTypography.financialL())
+                        .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+                        .keyboardType(.numberPad)
+                        .multilineTextAlignment(.leading)
+                        .focused($isInputFocused)
+                        .onChange(of: incomeText) { _, newValue in
+                            // Filter to digits only
+                            let filtered = newValue.filter { $0.isNumber }
+                            if filtered != newValue {
+                                incomeText = filtered
+                            }
+                            // Update state
+                            if let value = Decimal(string: filtered) {
+                                onboardingState.monthlyIncome = value
+                            } else {
+                                onboardingState.monthlyIncome = 0
+                            }
+                        }
+
+                    Text("/mo")
+                        .font(WinnieTypography.bodyL())
+                        .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
+                }
+                .padding(.horizontal, WinnieSpacing.l)
+
+                // Underline
+                Rectangle()
+                    .fill(isInputFocused ? WinnieColors.accent : WinnieColors.tertiaryText(for: colorScheme))
+                    .frame(height: 2)
+                    .padding(.horizontal, WinnieSpacing.xxxl)
+
+                // Helper text
+                Text("It's okay to guess but try to be as close as possible.")
+                    .font(WinnieTypography.bodyS())
+                    .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
+                    .padding(.top, WinnieSpacing.s)
+            }
+
+            Spacer()
+            Spacer()
+
+            // Continue button
+            WinnieButton("Continue", style: .primary) {
+                isInputFocused = false
+                onContinue()
+            }
+            .disabled(!onboardingState.isIncomeValid)
+            .padding(.horizontal, WinnieSpacing.screenMarginMobile)
+            .padding(.bottom, WinnieSpacing.xl)
+        }
+        .background(WinnieColors.background(for: colorScheme).ignoresSafeArea())
+        .onAppear {
+            // Pre-fill if already set
+            if onboardingState.monthlyIncome > 0 {
+                incomeText = "\(NSDecimalNumber(decimal: onboardingState.monthlyIncome).intValue)"
+            }
+            isInputFocused = true
+        }
+        .onTapGesture {
+            isInputFocused = false
+        }
+    }
+}
+
+// MARK: - Previews
+
+#Preview("Light Mode") {
+    OnboardingIncomeView(onboardingState: OnboardingState()) {
+        print("Continue tapped")
+    }
+}
+
+#Preview("Dark Mode") {
+    OnboardingIncomeView(onboardingState: OnboardingState()) {
+        print("Continue tapped")
+    }
+    .preferredColorScheme(.dark)
+}
+
+#Preview("With Value") {
+    let state = OnboardingState()
+    state.monthlyIncome = 7500
+    return OnboardingIncomeView(onboardingState: state) {
+        print("Continue tapped")
+    }
+}
