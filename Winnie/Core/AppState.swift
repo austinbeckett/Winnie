@@ -161,6 +161,30 @@ class AppState {
         }
     }
 
+    /// Reset onboarding status for testing.
+    ///
+    /// Called from developer settings to re-test the onboarding flow.
+    /// Does not delete user data, just resets the onboarding flag.
+    func resetOnboarding() async {
+        guard let uid = currentUser?.id else { return }
+
+        let userRepository = UserRepository()
+
+        do {
+            try await userRepository.resetOnboarding(uid: uid)
+            currentUser?.hasCompletedOnboarding = false
+
+            #if DEBUG
+            print("AppState: Onboarding reset successfully")
+            #endif
+        } catch {
+            errorMessage = "Failed to reset onboarding: \(error.localizedDescription)"
+            #if DEBUG
+            print("AppState: Error resetting onboarding - \(type(of: error))")
+            #endif
+        }
+    }
+
     /// Clear all user data (for sign out)
     func clearUserData() {
         currentUser = nil

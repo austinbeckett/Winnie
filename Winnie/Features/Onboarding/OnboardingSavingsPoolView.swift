@@ -30,7 +30,7 @@ struct OnboardingSavingsPoolView: View {
             }
 
             // Illustration
-            Image("a-couple--a-man-and-a-woman-sitting-in-a-pool")
+            Image("SavingsPoolIllustration")
                 .resizable()
                 .scaledToFit()
                 .frame(height: 180)

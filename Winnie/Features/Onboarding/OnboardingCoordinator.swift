@@ -2,7 +2,7 @@ import SwiftUI
 
 /// Coordinator for the onboarding wizard flow.
 ///
-/// Manages navigation between onboarding steps and persists partial progress.
+/// Uses NavigationStack with path-based navigation for smooth, native push/pop transitions.
 /// Controls the complete onboarding sequence from splash to partner invite.
 struct OnboardingCoordinator: View {
 
@@ -11,93 +11,103 @@ struct OnboardingCoordinator: View {
 
     @Environment(\.colorScheme) private var colorScheme
 
-    /// Current step in the onboarding flow
-    @State private var currentStep: OnboardingStep = .splash
+    /// Navigation path for the onboarding flow
+    @State private var navigationPath: [OnboardingStep] = []
 
     /// Shared onboarding state across all wizard screens
     @State private var onboardingState = OnboardingState()
 
     var body: some View {
-        ZStack {
-            // Background
-            WinnieColors.background(for: colorScheme)
-                .ignoresSafeArea()
-
-            // Current step view
-            stepView
-                .transition(.asymmetric(
-                    insertion: .move(edge: .trailing).combined(with: .opacity),
-                    removal: .move(edge: .leading).combined(with: .opacity)
-                ))
-                .id(currentStep)
+        NavigationStack(path: $navigationPath) {
+            // Root view: Splash
+            OnboardingSplashView {
+                navigateTo(.carousel)
+            }
+            .navigationBarBackButtonHidden(true)
+            .navigationDestination(for: OnboardingStep.self) { step in
+                destinationView(for: step)
+                    .navigationBarBackButtonHidden(true)
+                    .toolbar {
+                        // Back button (except for first step after splash)
+                        if step != .carousel {
+                            ToolbarItem(placement: .topBarLeading) {
+                                Button {
+                                    goBack()
+                                } label: {
+                                    Image(systemName: "chevron.left")
+                                        .font(.system(size: 16, weight: .semibold))
+                                        .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+                                }
+                            }
+                        }
+                    }
+            }
         }
-        .animation(.easeInOut(duration: 0.3), value: currentStep)
+        .tint(WinnieColors.accent)
     }
 
-    // MARK: - Step View Builder
+    // MARK: - Destination Views
 
     @ViewBuilder
-    private var stepView: some View {
-        switch currentStep {
+    private func destinationView(for step: OnboardingStep) -> some View {
+        switch step {
         case .splash:
-            OnboardingSplashView {
-                advanceTo(.carousel)
-            }
+            // Should never navigate here, it's the root
+            EmptyView()
 
         case .carousel:
             OnboardingCarouselView {
-                advanceTo(.goalPicker)
+                navigateTo(.goalPicker)
             }
 
         case .goalPicker:
             OnboardingGoalPickerView(onboardingState: onboardingState) {
-                advanceTo(.income)
+                navigateTo(.income)
             }
 
         case .income:
             OnboardingIncomeView(onboardingState: onboardingState) {
-                advanceTo(.needs)
+                navigateTo(.needs)
             }
 
         case .needs:
             OnboardingNeedsView(onboardingState: onboardingState) {
-                advanceTo(.wants)
+                navigateTo(.wants)
             }
 
         case .wants:
             OnboardingWantsView(onboardingState: onboardingState) {
-                advanceTo(.savingsPool)
+                navigateTo(.savingsPool)
             }
 
         case .savingsPool:
             OnboardingSavingsPoolView(onboardingState: onboardingState) {
-                advanceTo(.nestEgg)
+                navigateTo(.nestEgg)
             }
 
         case .nestEgg:
             OnboardingNestEggView(onboardingState: onboardingState) {
-                advanceTo(.goalDetail)
+                navigateTo(.goalDetail)
             }
 
         case .goalDetail:
             OnboardingGoalDetailView(onboardingState: onboardingState) {
-                advanceTo(.projection)
+                navigateTo(.projection)
             }
 
         case .projection:
             OnboardingProjectionView(onboardingState: onboardingState) {
-                advanceTo(.tuneUp)
+                navigateTo(.tuneUp)
             }
 
         case .tuneUp:
             OnboardingTuneUpView(onboardingState: onboardingState) {
-                advanceTo(.partnerInvite)
+                navigateTo(.partnerInvite)
             }
 
         case .partnerInvite:
             OnboardingPartnerInviteView(
                 onInvite: {
-                    // TODO: Implement partner invite flow
                     completeOnboarding()
                 },
                 onSkip: {
@@ -109,9 +119,13 @@ struct OnboardingCoordinator: View {
 
     // MARK: - Navigation
 
-    private func advanceTo(_ step: OnboardingStep) {
-        withAnimation {
-            currentStep = step
+    private func navigateTo(_ step: OnboardingStep) {
+        navigationPath.append(step)
+    }
+
+    private func goBack() {
+        if !navigationPath.isEmpty {
+            navigationPath.removeLast()
         }
     }
 
@@ -125,13 +139,8 @@ struct OnboardingCoordinator: View {
     // MARK: - Persistence
 
     private func saveOnboardingData() async {
-        // Create financial profile from onboarding state
         let profile = onboardingState.toFinancialProfile()
-
-        // Create first goal from onboarding state
         let goal = onboardingState.toGoal()
-
-        // Save to AppState (which persists to Firestore)
         await appState.saveOnboardingData(profile: profile, goal: goal)
     }
 }
@@ -139,7 +148,7 @@ struct OnboardingCoordinator: View {
 // MARK: - Onboarding Step Enum
 
 /// All steps in the onboarding wizard
-enum OnboardingStep: Int, CaseIterable {
+enum OnboardingStep: Int, CaseIterable, Hashable {
     case splash
     case carousel
     case goalPicker

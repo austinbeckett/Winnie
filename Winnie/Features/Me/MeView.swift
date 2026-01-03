@@ -17,6 +17,7 @@ struct MeView: View {
     @EnvironmentObject var authService: AuthenticationService
 
     @State private var showEditNameSheet = false
+    @State private var showSettingsSheet = false
 
     @Environment(\.colorScheme) private var colorScheme
 
@@ -60,6 +61,9 @@ struct MeView: View {
             .sheet(isPresented: $showEditNameSheet) {
                 EditNameSheet(appState: appState)
             }
+            .sheet(isPresented: $showSettingsSheet) {
+                SettingsSheet(appState: appState)
+            }
         }
     }
 
@@ -77,7 +81,7 @@ struct MeView: View {
 
     private var settingsButton: some View {
         Button {
-            // Placeholder - settings functionality coming later
+            showSettingsSheet = true
         } label: {
             Image(systemName: "gearshape")
                 .font(.system(size: 18))
@@ -90,6 +94,63 @@ struct MeView: View {
     private var signOutButton: some View {
         WinnieButton("Sign Out", style: .secondary) {
             try? authService.signOut()
+        }
+    }
+}
+
+// MARK: - Settings Sheet
+
+/// Settings sheet with developer options.
+struct SettingsSheet: View {
+    @Bindable var appState: AppState
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme
+
+    @State private var showResetConfirmation = false
+
+    var body: some View {
+        NavigationStack {
+            List {
+                // Developer Tools Section
+                Section {
+                    Button(role: .destructive) {
+                        showResetConfirmation = true
+                    } label: {
+                        HStack {
+                            Image(systemName: "arrow.counterclockwise")
+                            Text("Reset Onboarding")
+                        }
+                    }
+                } header: {
+                    Text("Developer Tools")
+                } footer: {
+                    Text("Resets your onboarding status so you can test the onboarding flow again.")
+                }
+            }
+            .navigationTitle("Settings")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Done") {
+                        dismiss()
+                    }
+                }
+            }
+            .confirmationDialog(
+                "Reset Onboarding?",
+                isPresented: $showResetConfirmation,
+                titleVisibility: .visible
+            ) {
+                Button("Reset", role: .destructive) {
+                    Task {
+                        await appState.resetOnboarding()
+                    }
+                    dismiss()
+                }
+                Button("Cancel", role: .cancel) { }
+            } message: {
+                Text("This will take you back to the onboarding flow. Your data will not be deleted.")
+            }
         }
     }
 }
@@ -109,4 +170,10 @@ struct MeView: View {
     return MeView(appState: appState)
         .environmentObject(AuthenticationService())
         .preferredColorScheme(.dark)
+}
+
+#Preview("Settings Sheet") {
+    let appState = AppState()
+    appState.currentUser = .sample
+    return SettingsSheet(appState: appState)
 }

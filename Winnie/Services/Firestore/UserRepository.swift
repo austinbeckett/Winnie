@@ -113,6 +113,16 @@ final class UserRepository {
             ])
     }
 
+    /// Reset onboarding for testing (developer use only)
+    func resetOnboarding(uid: String) async throws {
+        try await db.collection(collectionPath)
+            .document(uid)
+            .updateData([
+                "hasCompletedOnboarding": false,
+                "lastSyncedAt": Timestamp(date: Date())
+            ])
+    }
+
     /// Update user's couple association
     func updateCoupleAssociation(uid: String, coupleID: String, partnerID: String?) async throws {
         var data: [String: Any] = [
