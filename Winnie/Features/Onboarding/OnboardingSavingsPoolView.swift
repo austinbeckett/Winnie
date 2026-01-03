@@ -2,8 +2,9 @@ import SwiftUI
 
 /// Savings Pool reveal screen for onboarding wizard.
 ///
-/// Step 5 of the wizard: Shows the calculated "Savings Pool" after
-/// deducting needs and wants from income. Includes the pool illustration.
+/// Shows either:
+/// - An editable input (when user knows their savings amount)
+/// - A calculated display with breakdown (when calculated from expenses)
 struct OnboardingSavingsPoolView: View {
 
     @Bindable var onboardingState: OnboardingState
@@ -11,6 +12,10 @@ struct OnboardingSavingsPoolView: View {
 
     @Environment(\.colorScheme) private var colorScheme
     @State private var hasAnimated = false
+    @FocusState private var isInputFocused: Bool
+
+    /// Local string for text field binding (only used in editable mode)
+    @State private var savingsText: String = ""
 
     var body: some View {
         VStack(spacing: WinnieSpacing.xl) {
@@ -22,7 +27,9 @@ struct OnboardingSavingsPoolView: View {
                     .font(WinnieTypography.headlineL())
                     .foregroundColor(WinnieColors.primaryText(for: colorScheme))
 
-                Text("This is what you have left each month to put toward your goals.")
+                Text(onboardingState.knowsSavingsAmount
+                     ? "Enter how much you save each month."
+                     : "This is what you have left each month to put toward your goals.")
                     .font(WinnieTypography.bodyL())
                     .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
                     .multilineTextAlignment(.center)
@@ -37,31 +44,21 @@ struct OnboardingSavingsPoolView: View {
                 .opacity(hasAnimated ? 1 : 0)
                 .scaleEffect(hasAnimated ? 1 : 0.8)
 
-            // Amount display
-            VStack(spacing: WinnieSpacing.xs) {
-                Text("$\(NSDecimalNumber(decimal: onboardingState.savingsPool).intValue)")
-                    .font(WinnieTypography.financialXL())
-                    .foregroundColor(WinnieColors.accent)
-                    .contentTransition(.numericText())
-                    .scaleEffect(hasAnimated ? 1 : 0.5)
-                    .opacity(hasAnimated ? 1 : 0)
-
-                Text("per month")
-                    .font(WinnieTypography.bodyL())
-                    .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
+            // Amount display (editable or calculated)
+            if onboardingState.knowsSavingsAmount {
+                editableAmountView
+            } else {
+                calculatedAmountView
             }
-
-            // Breakdown
-            breakdownView
-                .padding(.horizontal, WinnieSpacing.screenMarginMobile)
-                .opacity(hasAnimated ? 1 : 0)
 
             Spacer()
 
             // Continue button
             WinnieButton("Continue", style: .primary) {
+                isInputFocused = false
                 onContinue()
             }
+            .disabled(onboardingState.knowsSavingsAmount && onboardingState.directSavingsPool <= 0)
             .padding(.horizontal, WinnieSpacing.screenMarginMobile)
             .padding(.bottom, WinnieSpacing.xl)
         }
@@ -70,6 +67,90 @@ struct OnboardingSavingsPoolView: View {
             withAnimation(.spring(response: 0.6, dampingFraction: 0.7).delay(0.2)) {
                 hasAnimated = true
             }
+            // Pre-fill if already set
+            if onboardingState.directSavingsPool > 0 {
+                savingsText = "\(NSDecimalNumber(decimal: onboardingState.directSavingsPool).intValue)"
+            }
+            if onboardingState.knowsSavingsAmount {
+                isInputFocused = true
+            }
+        }
+        .onTapGesture {
+            isInputFocused = false
+        }
+    }
+
+    // MARK: - Editable Amount View
+
+    private var editableAmountView: some View {
+        VStack(spacing: WinnieSpacing.xs) {
+            HStack(alignment: .center, spacing: WinnieSpacing.xxs) {
+                Text("$")
+                    .font(WinnieTypography.financialL())
+                    .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
+
+                TextField("0", text: $savingsText)
+                    .font(WinnieTypography.financialL())
+                    .foregroundColor(WinnieColors.accent)
+                    .keyboardType(.numberPad)
+                    .multilineTextAlignment(.leading)
+                    .focused($isInputFocused)
+                    .onChange(of: savingsText) { _, newValue in
+                        // Filter to digits only
+                        let filtered = newValue.filter { $0.isNumber }
+                        if filtered != newValue {
+                            savingsText = filtered
+                        }
+                        // Update state
+                        if let value = Decimal(string: filtered) {
+                            onboardingState.directSavingsPool = value
+                        } else {
+                            onboardingState.directSavingsPool = 0
+                        }
+                    }
+
+                Text("/mo")
+                    .font(WinnieTypography.bodyL())
+                    .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
+            }
+            .padding(.horizontal, WinnieSpacing.l)
+
+            // Underline
+            Rectangle()
+                .fill(isInputFocused ? WinnieColors.accent : WinnieColors.tertiaryText(for: colorScheme))
+                .frame(height: 2)
+                .padding(.horizontal, WinnieSpacing.xxxl)
+
+            // Helper text
+            Text("This is the amount you can put toward your goals each month.")
+                .font(WinnieTypography.bodyS())
+                .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
+                .multilineTextAlignment(.center)
+                .padding(.top, WinnieSpacing.s)
+                .padding(.horizontal, WinnieSpacing.m)
+        }
+    }
+
+    // MARK: - Calculated Amount View
+
+    private var calculatedAmountView: some View {
+        VStack(spacing: WinnieSpacing.xs) {
+            Text("$\(NSDecimalNumber(decimal: onboardingState.savingsPool).intValue)")
+                .font(WinnieTypography.financialXL())
+                .foregroundColor(WinnieColors.accent)
+                .contentTransition(.numericText())
+                .scaleEffect(hasAnimated ? 1 : 0.5)
+                .opacity(hasAnimated ? 1 : 0)
+
+            Text("per month")
+                .font(WinnieTypography.bodyL())
+                .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
+
+            // Breakdown card
+            breakdownView
+                .padding(.horizontal, WinnieSpacing.screenMarginMobile)
+                .padding(.top, WinnieSpacing.m)
+                .opacity(hasAnimated ? 1 : 0)
         }
     }
 
@@ -132,11 +213,21 @@ struct OnboardingSavingsPoolView: View {
 
 // MARK: - Previews
 
-#Preview("Light Mode") {
+#Preview("Editable Mode") {
+    let state = OnboardingState()
+    state.monthlyIncome = 7500
+    state.knowsSavingsAmount = true
+    return OnboardingSavingsPoolView(onboardingState: state) {
+        print("Continue tapped")
+    }
+}
+
+#Preview("Calculated Mode") {
     let state = OnboardingState()
     state.monthlyIncome = 7500
     state.monthlyNeeds = 3000
     state.monthlyWants = 1000
+    state.knowsSavingsAmount = false
     return OnboardingSavingsPoolView(onboardingState: state) {
         print("Continue tapped")
     }

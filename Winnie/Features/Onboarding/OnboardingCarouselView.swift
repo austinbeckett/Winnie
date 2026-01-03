@@ -55,9 +55,15 @@ struct OnboardingCarouselView: View {
 
             Spacer()
 
-            // Continue button
-            WinnieButton("Continue", style: .primary) {
-                onContinue()
+            // Navigation button
+            WinnieButton(currentPage < slides.count - 1 ? "Next" : "Continue", style: .primary) {
+                if currentPage < slides.count - 1 {
+                    withAnimation {
+                        currentPage += 1
+                    }
+                } else {
+                    onContinue()
+                }
             }
             .padding(.horizontal, WinnieSpacing.screenMarginMobile)
             .padding(.bottom, WinnieSpacing.xl)

@@ -67,6 +67,23 @@ struct OnboardingCoordinator: View {
 
         case .income:
             OnboardingIncomeView(onboardingState: onboardingState) {
+                navigateTo(.savingsQuestion)
+            }
+
+        case .savingsQuestion:
+            OnboardingSavingsQuestionView(
+                onKnowsSavings: {
+                    onboardingState.knowsSavingsAmount = true
+                    navigateTo(.savingsPool)
+                },
+                onNeedHelp: {
+                    onboardingState.knowsSavingsAmount = false
+                    navigateTo(.budgetingExplainer)
+                }
+            )
+
+        case .budgetingExplainer:
+            OnboardingBudgetingExplainerView {
                 navigateTo(.needs)
             }
 
@@ -153,6 +170,8 @@ enum OnboardingStep: Int, CaseIterable, Hashable {
     case carousel
     case goalPicker
     case income
+    case savingsQuestion
+    case budgetingExplainer
     case needs
     case wants
     case savingsPool
@@ -169,6 +188,8 @@ enum OnboardingStep: Int, CaseIterable, Hashable {
         case .carousel: return "Carousel"
         case .goalPicker: return "Goal Picker"
         case .income: return "Income"
+        case .savingsQuestion: return "Savings Question"
+        case .budgetingExplainer: return "Budgeting Explainer"
         case .needs: return "Needs"
         case .wants: return "Wants"
         case .savingsPool: return "Savings Pool"

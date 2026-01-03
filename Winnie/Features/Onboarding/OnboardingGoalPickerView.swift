@@ -30,7 +30,7 @@ struct OnboardingGoalPickerView: View {
                     .font(WinnieTypography.headlineL())
                     .foregroundColor(WinnieColors.primaryText(for: colorScheme))
 
-                Text("Let's pick your first goal. What is your top financial priority at this stage of your life?")
+                Text("We know you likely have a lot of financial goals, but lets focus on one for now.\n\nWhat is your biggest financial priority at this stage of your life?")
                     .font(WinnieTypography.bodyL())
                     .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
                     .multilineTextAlignment(.center)

@@ -25,11 +25,11 @@ struct OnboardingNeedsView: View {
             VStack(spacing: WinnieSpacing.xl) {
                 // Header
                 VStack(spacing: WinnieSpacing.s) {
-                    Text("Your fixed bills")
+                    Text("Your *NEEDS*")
                         .font(WinnieTypography.headlineL())
                         .foregroundColor(WinnieColors.primaryText(for: colorScheme))
 
-                    Text("How much goes to fixed bills that you need to survive/pay off debts?")
+                    Text("How much money goes to fixed bills or minimum debt payments each month?")
                         .font(WinnieTypography.bodyL())
                         .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
                         .multilineTextAlignment(.center)

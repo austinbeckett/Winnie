@@ -25,11 +25,11 @@ struct OnboardingWantsView: View {
             VStack(spacing: WinnieSpacing.xl) {
                 // Header
                 VStack(spacing: WinnieSpacing.s) {
-                    Text("Your wants")
+                    Text("Your *WANTS*")
                         .font(WinnieTypography.headlineL())
                         .foregroundColor(WinnieColors.primaryText(for: colorScheme))
 
-                    Text("How much goes to wants like entertainment, subscriptions, and going out to eat?")
+                    Text("How much goes to *wants* like entertainment, subscriptions, and going out to eat?")
                         .font(WinnieTypography.bodyL())
                         .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
                         .multilineTextAlignment(.center)

@@ -29,6 +29,14 @@ final class OnboardingState {
     /// Monthly discretionary spending (entertainment, dining, etc.)
     var monthlyWants: Decimal = 0
 
+    // MARK: - Step 5: Savings Question
+
+    /// Whether the user knows their monthly savings amount (true = skip Needs/Wants)
+    var knowsSavingsAmount: Bool = false
+
+    /// Direct savings pool input (used when knowsSavingsAmount is true)
+    var directSavingsPool: Decimal = 0
+
     // MARK: - Step 6: Nest Egg
 
     /// Current liquid savings balance
@@ -49,7 +57,10 @@ final class OnboardingState {
 
     /// The "Savings Pool" - monthly amount available for goals
     var savingsPool: Decimal {
-        max(monthlyIncome - monthlyNeeds - monthlyWants, 0)
+        if knowsSavingsAmount {
+            return directSavingsPool
+        }
+        return max(monthlyIncome - monthlyNeeds - monthlyWants, 0)
     }
 
     /// Whether the user has positive savings pool
