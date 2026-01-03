@@ -31,7 +31,7 @@ The app is organized around four primary navigational pillars (Tabs):
 **Flow A: Onboarding (First Run)**
 1.  **Welcome Screen:** Value prop + Sign Up / Sign In.
 2.  **Partner Setup:** "Invite Partner" or "Skip for Now".
-3.  **Financial Baseline:** Input Income, Fixed Expenses, Assets.
+3.  **Financial Baseline:** Input Income, Fixed Expenses, Assets, Savings Pool.
 4.  **First Goal:** "What is your #1 priority?" (e.g., House).
 5.  **The Reveal:** Show the first calculated timeline.
 
