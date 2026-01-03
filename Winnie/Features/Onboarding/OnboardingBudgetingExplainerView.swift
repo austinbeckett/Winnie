@@ -72,7 +72,8 @@ struct OnboardingBudgetingExplainerView: View {
                     .font(WinnieTypography.bodyS())
                     .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
                     .multilineTextAlignment(.center)
-                    .padding(.horizontal, WinnieSpacing.screenMarginMobile)
+                    .padding(.horizontal, WinnieSpacing.m)
+                    .fixedSize(horizontal: false, vertical: true)
                     .padding(.top, WinnieSpacing.s)
 
                 Spacer(minLength: WinnieSpacing.xxxl)

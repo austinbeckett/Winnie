@@ -49,34 +49,9 @@ struct OnboardingGoalDetailView: View {
                         .textCase(.uppercase)
                         .tracking(0.5)
 
-                    HStack {
-                        Text("$")
-                            .font(WinnieTypography.financialM())
-                            .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
-
-                        TextField("0", text: $amountText)
-                            .font(WinnieTypography.financialM())
-                            .foregroundColor(WinnieColors.primaryText(for: colorScheme))
-                            .keyboardType(.numberPad)
-                            .focused($isAmountFocused)
-                            .onChange(of: amountText) { _, newValue in
-                                let filtered = newValue.filter { $0.isNumber }
-                                if filtered != newValue {
-                                    amountText = filtered
-                                }
-                                if let value = Decimal(string: filtered) {
-                                    onboardingState.goalTargetAmount = value
-                                } else {
-                                    onboardingState.goalTargetAmount = 0
-                                }
-                            }
-                    }
-                    .padding(WinnieSpacing.m)
-                    .background(WinnieColors.cardBackground(for: colorScheme))
-                    .clipShape(RoundedRectangle(cornerRadius: WinnieSpacing.inputCornerRadius))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: WinnieSpacing.inputCornerRadius)
-                            .stroke(isAmountFocused ? WinnieColors.accent : WinnieColors.border(for: colorScheme), lineWidth: 1)
+                    WinnieCurrencyInput(
+                        value: $onboardingState.goalTargetAmount,
+                        text: $amountText
                     )
                 }
                 .padding(.horizontal, WinnieSpacing.screenMarginMobile)

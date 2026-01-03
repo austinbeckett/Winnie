@@ -34,6 +34,7 @@ struct OnboardingSavingsPoolView: View {
                     .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, WinnieSpacing.m)
+                    .fixedSize(horizontal: false, vertical: true)
             }
 
             // Illustration
@@ -83,50 +84,20 @@ struct OnboardingSavingsPoolView: View {
     // MARK: - Editable Amount View
 
     private var editableAmountView: some View {
-        VStack(spacing: WinnieSpacing.xs) {
-            HStack(alignment: .center, spacing: WinnieSpacing.xxs) {
-                Text("$")
-                    .font(WinnieTypography.financialL())
-                    .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
-
-                TextField("0", text: $savingsText)
-                    .font(WinnieTypography.financialL())
-                    .foregroundColor(WinnieColors.accent)
-                    .keyboardType(.numberPad)
-                    .multilineTextAlignment(.leading)
-                    .focused($isInputFocused)
-                    .onChange(of: savingsText) { _, newValue in
-                        // Filter to digits only
-                        let filtered = newValue.filter { $0.isNumber }
-                        if filtered != newValue {
-                            savingsText = filtered
-                        }
-                        // Update state
-                        if let value = Decimal(string: filtered) {
-                            onboardingState.directSavingsPool = value
-                        } else {
-                            onboardingState.directSavingsPool = 0
-                        }
-                    }
-
-                Text("/mo")
-                    .font(WinnieTypography.bodyL())
-                    .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
-            }
-            .padding(.horizontal, WinnieSpacing.l)
-
-            // Underline
-            Rectangle()
-                .fill(isInputFocused ? WinnieColors.accent : WinnieColors.tertiaryText(for: colorScheme))
-                .frame(height: 2)
-                .padding(.horizontal, WinnieSpacing.xxxl)
+        VStack(spacing: WinnieSpacing.s) {
+            WinnieCurrencyInput(
+                value: $onboardingState.directSavingsPool,
+                text: $savingsText,
+                suffix: "/mo",
+                accentValue: true
+            )
+            .padding(.horizontal, WinnieSpacing.screenMarginMobile)
 
             // Helper text
             Text("This is the amount you can put toward your goals each month.")
                 .font(WinnieTypography.bodyS())
                 .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
                 .multilineTextAlignment(.center)
-                .padding(.top, WinnieSpacing.s)
                 .padding(.horizontal, WinnieSpacing.m)
         }
     }

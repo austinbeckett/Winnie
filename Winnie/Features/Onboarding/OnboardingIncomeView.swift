@@ -10,7 +10,6 @@ struct OnboardingIncomeView: View {
     let onContinue: () -> Void
 
     @Environment(\.colorScheme) private var colorScheme
-    @FocusState private var isInputFocused: Bool
 
     /// Local string for text field binding
     @State private var incomeText: String = ""
@@ -33,49 +32,18 @@ struct OnboardingIncomeView: View {
             }
 
             // Currency input
-            VStack(spacing: WinnieSpacing.xs) {
-                HStack(alignment: .center, spacing: WinnieSpacing.xxs) {
-                    Text("$")
-                        .font(WinnieTypography.financialL())
-                        .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
-
-                    TextField("0", text: $incomeText)
-                        .font(WinnieTypography.financialL())
-                        .foregroundColor(WinnieColors.primaryText(for: colorScheme))
-                        .keyboardType(.numberPad)
-                        .multilineTextAlignment(.leading)
-                        .focused($isInputFocused)
-                        .onChange(of: incomeText) { _, newValue in
-                            // Filter to digits only
-                            let filtered = newValue.filter { $0.isNumber }
-                            if filtered != newValue {
-                                incomeText = filtered
-                            }
-                            // Update state
-                            if let value = Decimal(string: filtered) {
-                                onboardingState.monthlyIncome = value
-                            } else {
-                                onboardingState.monthlyIncome = 0
-                            }
-                        }
-
-                    Text("/mo")
-                        .font(WinnieTypography.bodyL())
-                        .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
-                }
-                .padding(.horizontal, WinnieSpacing.l)
-
-                // Underline
-                Rectangle()
-                    .fill(isInputFocused ? WinnieColors.accent : WinnieColors.tertiaryText(for: colorScheme))
-                    .frame(height: 2)
-                    .padding(.horizontal, WinnieSpacing.xxxl)
+            VStack(spacing: WinnieSpacing.s) {
+                WinnieCurrencyInput(
+                    value: $onboardingState.monthlyIncome,
+                    text: $incomeText,
+                    suffix: "/mo"
+                )
+                .padding(.horizontal, WinnieSpacing.screenMarginMobile)
 
                 // Helper text
                 Text("It's okay to guess but try to be as close as possible.")
                     .font(WinnieTypography.bodyS())
                     .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
-                    .padding(.top, WinnieSpacing.s)
             }
 
             Spacer()
@@ -83,7 +51,6 @@ struct OnboardingIncomeView: View {
 
             // Continue button
             WinnieButton("Continue", style: .primary) {
-                isInputFocused = false
                 onContinue()
             }
             .disabled(!onboardingState.isIncomeValid)
@@ -96,10 +63,6 @@ struct OnboardingIncomeView: View {
             if onboardingState.monthlyIncome > 0 {
                 incomeText = "\(NSDecimalNumber(decimal: onboardingState.monthlyIncome).intValue)"
             }
-            isInputFocused = true
-        }
-        .onTapGesture {
-            isInputFocused = false
         }
     }
 }

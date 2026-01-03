@@ -32,6 +32,7 @@ struct OnboardingSavingsQuestionView: View {
                     .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, WinnieSpacing.m)
+                    .fixedSize(horizontal: false, vertical: true)
             }
             .padding(.horizontal, WinnieSpacing.screenMarginMobile)
 

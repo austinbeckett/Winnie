@@ -22,7 +22,7 @@ struct OnboardingSplashView: View {
 
                 // Tagline
                 VStack(spacing: WinnieSpacing.xs) {
-                    Text("Financial planning is complex.")
+                    Text("Financial planning can be complex.")
                         .font(WinnieTypography.bodyL())
                         .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
 

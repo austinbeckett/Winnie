@@ -9,7 +9,6 @@ struct OnboardingNestEggView: View {
     let onContinue: () -> Void
 
     @Environment(\.colorScheme) private var colorScheme
-    @FocusState private var isInputFocused: Bool
 
     /// Local string for text field binding
     @State private var nestEggText: String = ""
@@ -32,45 +31,17 @@ struct OnboardingNestEggView: View {
             }
 
             // Currency input
-            VStack(spacing: WinnieSpacing.xs) {
-                HStack(alignment: .center, spacing: WinnieSpacing.xxs) {
-                    Text("$")
-                        .font(WinnieTypography.financialL())
-                        .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
-
-                    TextField("0", text: $nestEggText)
-                        .font(WinnieTypography.financialL())
-                        .foregroundColor(WinnieColors.primaryText(for: colorScheme))
-                        .keyboardType(.numberPad)
-                        .multilineTextAlignment(.leading)
-                        .focused($isInputFocused)
-                        .onChange(of: nestEggText) { _, newValue in
-                            // Filter to digits only
-                            let filtered = newValue.filter { $0.isNumber }
-                            if filtered != newValue {
-                                nestEggText = filtered
-                            }
-                            // Update state
-                            if let value = Decimal(string: filtered) {
-                                onboardingState.nestEgg = value
-                            } else {
-                                onboardingState.nestEgg = 0
-                            }
-                        }
-                }
-                .padding(.horizontal, WinnieSpacing.l)
-
-                // Underline
-                Rectangle()
-                    .fill(isInputFocused ? WinnieColors.accent : WinnieColors.tertiaryText(for: colorScheme))
-                    .frame(height: 2)
-                    .padding(.horizontal, WinnieSpacing.xxxl)
+            VStack(spacing: WinnieSpacing.s) {
+                WinnieCurrencyInput(
+                    value: $onboardingState.nestEgg,
+                    text: $nestEggText
+                )
+                .padding(.horizontal, WinnieSpacing.screenMarginMobile)
 
                 // Helper text
                 Text("Include savings and investment accounts you can access.")
                     .font(WinnieTypography.bodyS())
                     .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
-                    .padding(.top, WinnieSpacing.s)
             }
 
             Spacer()
@@ -78,7 +49,6 @@ struct OnboardingNestEggView: View {
 
             // Continue button
             WinnieButton("Continue", style: .primary) {
-                isInputFocused = false
                 onContinue()
             }
             .padding(.horizontal, WinnieSpacing.screenMarginMobile)
@@ -90,10 +60,6 @@ struct OnboardingNestEggView: View {
             if onboardingState.nestEgg > 0 {
                 nestEggText = "\(NSDecimalNumber(decimal: onboardingState.nestEgg).intValue)"
             }
-            isInputFocused = true
-        }
-        .onTapGesture {
-            isInputFocused = false
         }
     }
 }
