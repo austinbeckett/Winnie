@@ -48,17 +48,20 @@ Instead of one big form, use a **Wizard** (one question per screen, big number p
     *   *UI:* Big currency text. "It’s okay to guess but try to be as close as possible."
 *   **3. The 'Needs':** "How much goes to fixed bills that you need to survive/pay off debts (Rent, Loans, Utilities, Internet, Phone, etc.)?"
     *   *UI:* Shows a list of common fixed expenses with a slider next to each one and a text field for entering the amount directly.
-*   **4. The 'Wants':** "How much goes to wants (Entertainment, Subscriptions, etc.)?"
+*   **4. The 'Wants':** "How much goes to wants (Entertainment, Subscriptions, Going out to eat, etc.)?"
     *   *UI:* Shows a list of common wants with a slider next to each one and a text field for entering the amount directly.
     **5. The 'Savings Pool':** "This leaves you with a $X "Savings Pool" that you can use to save for your goals."
     *   *UI:* *Visual:* Animated image of two line art people sitting inside a pool enjoying a drink. Represents the savings pool.
 *   **6. The 'Nest Egg':** "How much cash do you have saved up right now?"
+    *   *UI:* "Is this money you can use to save for your goals?"
     
 
 ### Phase 4: The Goal (The "What")
 *   **6. Define the Dream:** (Uses the choice from step 0.2).
     *   *If "Buying a Home":* "How much do you need for a down payment?" + "When do you want it?"
-    *   *Visual:* As they type the amount, show a progress bar filling up based on their "Leftover" money calculated in Step 3.
+    *   *If "Getting Married":* "What is your wedding budget?" + "When is your wedding date?"
+    *   *If "Freedom/Retirement":* "How much of your income do you want to replace when you retire? The common rule of thumb is that your savings should replace 70% of your income." + "When do you want to retire?"
+    *   *If "Just Starting":* "That's great! You're on your way to financial independence."
 
 ### Phase 5: The Reveal & The Ask
 *   **6. The "Winnie Projection":**
@@ -66,7 +69,7 @@ Instead of one big form, use a **Wizard** (one question per screen, big number p
 *   **7. The Tune-Up:**
     *   "Want to speed that up?" -> Drag a slider.
 *   **8. The "Couple" Hook:**
-    *   "Finances are faster with two." -> **Invite Partner** (Now they have a chart to show off).
+    *   "Financial planning only works when you're in it together." -> **Invite Partner** (Now they have a chart to show off).
 
 ## Summary of Changes
 1.  **Moved "Partner Invite" to the end:** Let the user build something worth sharing first.
