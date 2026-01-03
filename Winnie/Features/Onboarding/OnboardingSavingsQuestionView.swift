@@ -22,17 +22,15 @@ struct OnboardingSavingsQuestionView: View {
                     .font(.system(size: 60))
                     .foregroundColor(WinnieColors.accent)
 
-                Text("Do you know your monthly savings?")
+                Text("Do you know how much money you save each month?")
                     .font(WinnieTypography.headlineL())
                     .foregroundColor(WinnieColors.primaryText(for: colorScheme))
                     .multilineTextAlignment(.center)
 
-                Text("If you have a good sense of how much you save each month, we can skip the next few questions and get you to the planning engine faster.\n\nIf you arent sure, don't worry, we will help you calculate it based on your expenses!")
+                Text("This will help us determine how much money we can allocate to your goals every month!")
                     .font(WinnieTypography.bodyL())
                     .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
                     .multilineTextAlignment(.center)
-                    .padding(.horizontal, WinnieSpacing.m)
-                    .fixedSize(horizontal: false, vertical: true)
             }
             .padding(.horizontal, WinnieSpacing.screenMarginMobile)
 
@@ -47,7 +45,7 @@ struct OnboardingSavingsQuestionView: View {
                 )
 
                 optionButton(
-                    title: "No, help me figure it out",
+                    title: "No, please help me figure it out",
                     subtitle: "I'll enter my expenses to calculate savings",
                     action: onNeedHelp
                 )

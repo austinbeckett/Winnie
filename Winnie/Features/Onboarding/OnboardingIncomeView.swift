@@ -20,16 +20,19 @@ struct OnboardingIncomeView: View {
 
             // Header
             VStack(spacing: WinnieSpacing.s) {
-                Text("What's your income?")
+                Text("What is your monthly income?")
                     .font(WinnieTypography.headlineL())
                     .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
 
-                Text("What is your monthly take-home pay? Only enter yours, we will add your partner's later.")
+                Text("Only enter yours, we will add your partner's later.")
                     .font(WinnieTypography.bodyL())
                     .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
                     .multilineTextAlignment(.center)
-                    .padding(.horizontal, WinnieSpacing.m)
+                    .fixedSize(horizontal: false, vertical: true)
             }
+            .padding(.horizontal, WinnieSpacing.screenMarginMobile)
 
             // Currency input
             VStack(spacing: WinnieSpacing.s) {
