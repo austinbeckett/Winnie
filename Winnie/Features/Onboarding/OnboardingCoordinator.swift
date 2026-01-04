@@ -62,12 +62,12 @@ struct OnboardingCoordinator: View {
 
         case .goalPicker:
             OnboardingGoalPickerView(onboardingState: onboardingState) {
-                navigateTo(.income)
+                navigateTo(.savingsQuestion)
             }
 
         case .income:
             OnboardingIncomeView(onboardingState: onboardingState) {
-                navigateTo(.savingsQuestion)
+                navigateTo(.needs)
             }
 
         case .savingsQuestion:
@@ -84,7 +84,7 @@ struct OnboardingCoordinator: View {
 
         case .budgetingExplainer:
             OnboardingBudgetingExplainerView {
-                navigateTo(.needs)
+                navigateTo(.income)
             }
 
         case .needs:
@@ -114,11 +114,6 @@ struct OnboardingCoordinator: View {
 
         case .projection:
             OnboardingProjectionView(onboardingState: onboardingState) {
-                navigateTo(.tuneUp)
-            }
-
-        case .tuneUp:
-            OnboardingTuneUpView(onboardingState: onboardingState) {
                 navigateTo(.partnerInvite)
             }
 
@@ -178,7 +173,6 @@ enum OnboardingStep: Int, CaseIterable, Hashable {
     case nestEgg
     case goalDetail
     case projection
-    case tuneUp
     case partnerInvite
 
     /// Human-readable step name for debugging
@@ -196,7 +190,6 @@ enum OnboardingStep: Int, CaseIterable, Hashable {
         case .nestEgg: return "Nest Egg"
         case .goalDetail: return "Goal Detail"
         case .projection: return "Projection"
-        case .tuneUp: return "Tune Up"
         case .partnerInvite: return "Partner Invite"
         }
     }
