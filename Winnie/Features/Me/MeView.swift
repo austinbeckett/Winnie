@@ -98,8 +98,6 @@ struct MeView: View {
     }
 }
 
-// MARK: - Settings Sheet
-
 /// Settings sheet with developer options.
 struct SettingsSheet: View {
     @Bindable var appState: AppState
@@ -107,12 +105,29 @@ struct SettingsSheet: View {
     @Environment(\.colorScheme) private var colorScheme
 
     @State private var showResetConfirmation = false
+    @State private var showOnboardingGallery = false
 
     var body: some View {
         NavigationStack {
             List {
                 // Developer Tools Section
                 Section {
+                    // Onboarding Gallery
+                    Button {
+                        showOnboardingGallery = true
+                    } label: {
+                        HStack {
+                            Image(systemName: "rectangle.grid.2x2")
+                            Text("Onboarding Gallery")
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 12, weight: .semibold))
+                                .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
+                        }
+                        .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+                    }
+
+                    // Reset Onboarding
                     Button(role: .destructive) {
                         showResetConfirmation = true
                     } label: {
@@ -124,7 +139,7 @@ struct SettingsSheet: View {
                 } header: {
                     Text("Developer Tools")
                 } footer: {
-                    Text("Resets your onboarding status so you can test the onboarding flow again.")
+                    Text("Use the gallery to preview onboarding screens. Reset to test the full flow.")
                 }
             }
             .navigationTitle("Settings")
@@ -150,6 +165,9 @@ struct SettingsSheet: View {
                 Button("Cancel", role: .cancel) { }
             } message: {
                 Text("This will take you back to the onboarding flow. Your data will not be deleted.")
+            }
+            .fullScreenCover(isPresented: $showOnboardingGallery) {
+                OnboardingGalleryView()
             }
         }
     }
