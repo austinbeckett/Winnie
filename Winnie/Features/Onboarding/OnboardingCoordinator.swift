@@ -17,6 +17,37 @@ struct OnboardingCoordinator: View {
     /// Shared onboarding state across all wizard screens
     @State private var onboardingState = OnboardingState()
 
+    // MARK: - Progress Tracking
+
+    /// Steps that are always shown (the "main path")
+    /// Excludes splash which is the root, and conditional budgeting steps
+    private var progressSteps: [OnboardingStep] {
+        if onboardingState.knowsSavingsAmount {
+            // Direct path: user knows their savings amount
+            return [.carousel, .goalPicker, .savingsQuestion, .savingsPool, .nestEgg, .goalDetail, .projection, .partnerInvite]
+        } else {
+            // Extended path: user needs help calculating savings
+            return [.carousel, .goalPicker, .savingsQuestion, .budgetingExplainer, .income, .needs, .wants, .savingsPool, .nestEgg, .goalDetail, .projection, .partnerInvite]
+        }
+    }
+
+    /// Current step number for progress display (1-based)
+    private func currentStepNumber(for step: OnboardingStep) -> Int {
+        guard let index = progressSteps.firstIndex(of: step) else { return 0 }
+        return index + 1
+    }
+
+    /// Total steps for progress display
+    private var totalSteps: Int {
+        progressSteps.count
+    }
+
+    /// Whether to show progress bar for this step
+    private func shouldShowProgress(for step: OnboardingStep) -> Bool {
+        // Hide progress on splash and carousel - these are introductory screens
+        step != .splash && step != .carousel
+    }
+
     var body: some View {
         NavigationStack(path: $navigationPath) {
             // Root view: Splash
@@ -27,6 +58,19 @@ struct OnboardingCoordinator: View {
             .navigationDestination(for: OnboardingStep.self) { step in
                 destinationView(for: step)
                     .navigationBarBackButtonHidden(true)
+                    .safeAreaInset(edge: .top, spacing: 0) {
+                        // Progress bar (only for main content steps)
+                        if shouldShowProgress(for: step) {
+                            OnboardingProgressBar(
+                                currentStep: currentStepNumber(for: step),
+                                totalSteps: totalSteps
+                            )
+                            .padding(.horizontal, WinnieSpacing.screenMarginMobile)
+                            .padding(.top, WinnieSpacing.xs)
+                            .padding(.bottom, WinnieSpacing.s)
+                            .background(WinnieColors.background(for: colorScheme))
+                        }
+                    }
                     .toolbar {
                         // Back button (except for first step after splash)
                         if step != .carousel {
