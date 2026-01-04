@@ -125,8 +125,8 @@ struct OnboardingGalleryView: View {
                 case .splash:
                     OnboardingSplashView { }
 
-                case .carousel:
-                    OnboardingCarouselView { }
+                case .valueProp:
+                    OnboardingValuePropView { }
 
                 case .goalPicker:
                     OnboardingGoalPickerView(onboardingState: sampleState) { }
@@ -220,7 +220,7 @@ struct OnboardingGalleryView: View {
     private func iconName(for step: OnboardingStep) -> String {
         switch step {
         case .splash: return "sparkle"
-        case .carousel: return "square.stack.3d.up"
+        case .valueProp: return "square.stack.3d.up"
         case .goalPicker: return "flag.fill"
         case .income: return "dollarsign.circle.fill"
         case .savingsQuestion: return "questionmark.circle.fill"

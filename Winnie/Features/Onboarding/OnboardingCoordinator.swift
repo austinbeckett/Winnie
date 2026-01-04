@@ -24,10 +24,10 @@ struct OnboardingCoordinator: View {
     private var progressSteps: [OnboardingStep] {
         if onboardingState.knowsSavingsAmount {
             // Direct path: user knows their savings amount
-            return [.carousel, .goalPicker, .savingsQuestion, .savingsPool, .nestEgg, .goalDetail, .projection, .partnerInvite]
+            return [.valueProp, .goalPicker, .savingsQuestion, .savingsPool, .nestEgg, .goalDetail, .projection, .partnerInvite]
         } else {
             // Extended path: user needs help calculating savings
-            return [.carousel, .goalPicker, .savingsQuestion, .budgetingExplainer, .income, .needs, .wants, .savingsPool, .nestEgg, .goalDetail, .projection, .partnerInvite]
+            return [.valueProp, .goalPicker, .savingsQuestion, .budgetingExplainer, .income, .needs, .wants, .savingsPool, .nestEgg, .goalDetail, .projection, .partnerInvite]
         }
     }
 
@@ -44,15 +44,15 @@ struct OnboardingCoordinator: View {
 
     /// Whether to show progress bar for this step
     private func shouldShowProgress(for step: OnboardingStep) -> Bool {
-        // Hide progress on splash and carousel - these are introductory screens
-        step != .splash && step != .carousel
+        // Hide progress on splash and valueProp - these are introductory screens
+        step != .splash && step != .valueProp
     }
 
     var body: some View {
         NavigationStack(path: $navigationPath) {
             // Root view: Splash
             OnboardingSplashView {
-                navigateTo(.carousel)
+                navigateTo(.valueProp)
             }
             .navigationBarBackButtonHidden(true)
             .navigationDestination(for: OnboardingStep.self) { step in
@@ -73,7 +73,7 @@ struct OnboardingCoordinator: View {
                     }
                     .toolbar {
                         // Back button (except for first step after splash)
-                        if step != .carousel {
+                        if step != .valueProp {
                             ToolbarItem(placement: .topBarLeading) {
                                 Button {
                                     goBack()
@@ -99,8 +99,8 @@ struct OnboardingCoordinator: View {
             // Should never navigate here, it's the root
             EmptyView()
 
-        case .carousel:
-            OnboardingCarouselView {
+        case .valueProp:
+            OnboardingValuePropView {
                 navigateTo(.goalPicker)
             }
 
@@ -206,7 +206,7 @@ struct OnboardingCoordinator: View {
 /// All steps in the onboarding wizard
 enum OnboardingStep: Int, CaseIterable, Hashable {
     case splash
-    case carousel
+    case valueProp
     case goalPicker
     case income
     case savingsQuestion
@@ -223,7 +223,7 @@ enum OnboardingStep: Int, CaseIterable, Hashable {
     var name: String {
         switch self {
         case .splash: return "Splash"
-        case .carousel: return "Carousel"
+        case .valueProp: return "Value Proposition"
         case .goalPicker: return "Goal Picker"
         case .income: return "Income"
         case .savingsQuestion: return "Savings Question"
