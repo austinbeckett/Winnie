@@ -152,8 +152,8 @@ struct OnboardingGalleryView: View {
                 case .savingsPool:
                     OnboardingSavingsPoolView(onboardingState: sampleState) { }
 
-                case .nestEgg:
-                    OnboardingNestEggView(onboardingState: sampleState) { }
+                case .startingBalance:
+                    OnboardingStartingBalanceView(onboardingState: sampleState) { }
 
                 case .goalDetail:
                     OnboardingGoalDetailView(onboardingState: sampleState) { }
@@ -228,7 +228,7 @@ struct OnboardingGalleryView: View {
         case .needs: return "house.fill"
         case .wants: return "cart.fill"
         case .savingsPool: return "banknote.fill"
-        case .nestEgg: return "leaf.fill"
+        case .startingBalance: return "leaf.fill"
         case .goalDetail: return "target"
         case .projection: return "chart.line.uptrend.xyaxis"
         case .partnerInvite: return "person.2.fill"
@@ -244,7 +244,7 @@ struct OnboardingGalleryView: View {
         state.monthlyWants = 1800
         state.directSavingsPool = 2000
         state.knowsSavingsAmount = false
-        state.nestEgg = 25000
+        state.startingBalance = 25000
         state.goalTargetAmount = 100000
         state.goalDesiredDate = Calendar.current.date(byAdding: .year, value: 3, to: Date())
         state.goalName = "Dream Home Down Payment"

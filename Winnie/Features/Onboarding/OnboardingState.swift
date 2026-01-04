@@ -37,10 +37,10 @@ final class OnboardingState {
     /// Direct savings pool input (used when knowsSavingsAmount is true)
     var directSavingsPool: Decimal = 0
 
-    // MARK: - Step 6: Nest Egg
+    // MARK: - Step 6: Starting Balance
 
     /// Current liquid savings balance
-    var nestEgg: Decimal = 0
+    var startingBalance: Decimal = 0
 
     // MARK: - Step 5/6: Goal Details
 
@@ -70,9 +70,9 @@ final class OnboardingState {
 
     /// Projected months to reach the goal (simple linear projection)
     var projectedMonthsToGoal: Int? {
-        guard savingsPool > 0, goalTargetAmount > nestEgg else { return nil }
+        guard savingsPool > 0, goalTargetAmount > startingBalance else { return nil }
 
-        let remaining = goalTargetAmount - nestEgg
+        let remaining = goalTargetAmount - startingBalance
         let months = remaining / savingsPool
 
         // Round up to nearest month
@@ -80,14 +80,14 @@ final class OnboardingState {
     }
 
     /// Projected completion date based on current savings rate
-    var projectedCompletionDate: Date? {
+    var projectedDate: Date? {
         guard let months = projectedMonthsToGoal else { return nil }
         return Calendar.current.date(byAdding: .month, value: months, to: Date())
     }
 
     /// Formatted projected date string (e.g., "March 2026")
     var projectedDateFormatted: String? {
-        guard let date = projectedCompletionDate else { return nil }
+        guard let date = projectedDate else { return nil }
         let formatter = DateFormatter()
         formatter.dateFormat = "MMMM yyyy"
         return formatter.string(from: date)
@@ -148,7 +148,7 @@ final class OnboardingState {
             monthlyIncome: monthlyIncome,
             monthlyNeeds: monthlyNeeds,
             monthlyWants: monthlyWants,
-            currentSavings: nestEgg
+            currentSavings: startingBalance
         )
     }
 

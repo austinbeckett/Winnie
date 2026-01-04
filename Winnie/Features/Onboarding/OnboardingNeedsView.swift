@@ -2,8 +2,8 @@ import SwiftUI
 
 /// Fixed expenses (Needs) input screen for onboarding wizard.
 ///
-/// Step 3 of the wizard: Asks user for their monthly fixed bills.
-/// Shows a list of common expense categories with sliders.
+/// Asks user for their monthly fixed bills with a single input,
+/// with an optional breakdown by category for more precision.
 struct OnboardingNeedsView: View {
 
     @Bindable var onboardingState: OnboardingState
@@ -11,13 +11,27 @@ struct OnboardingNeedsView: View {
 
     @Environment(\.colorScheme) private var colorScheme
 
-    /// Common fixed expense categories
-    @State private var expenseCategories: [(name: String, icon: String, amount: Decimal)] = [
-        ("Rent / Mortgage", "house.fill", 0),
-        ("Utilities", "bolt.fill", 0),
-        ("Loans / Debt", "creditcard.fill", 0),
-        ("Insurance", "shield.fill", 0),
-        ("Phone / Internet", "wifi", 0)
+    /// Local string for text field binding
+    @State private var needsText: String = ""
+
+    /// Whether to show the category breakdown
+    @State private var showBreakdown = false
+
+    /// Category breakdown amounts (only used when expanded)
+    @State private var categoryAmounts: [String: Decimal] = [
+        "Rent / Mortgage": 0,
+        "Utilities": 0,
+        "Loans / Debt": 0,
+        "Insurance": 0,
+        "Phone / Internet": 0
+    ]
+
+    private let categories: [(name: String, icon: String)] = [
+        ("Rent / Mortgage", "house.fill"),
+        ("Utilities", "bolt.fill"),
+        ("Loans / Debt", "creditcard.fill"),
+        ("Insurance", "shield.fill"),
+        ("Phone / Internet", "wifi")
     ]
 
     var body: some View {
@@ -25,11 +39,11 @@ struct OnboardingNeedsView: View {
             VStack(spacing: WinnieSpacing.xl) {
                 // Header
                 VStack(spacing: WinnieSpacing.s) {
-                    Text("Your *NEEDS*")
+                    Text("Your fixed expenses")
                         .font(WinnieTypography.headlineL())
                         .foregroundColor(WinnieColors.primaryText(for: colorScheme))
 
-                    Text("How much money goes to fixed bills or minimum debt payments each month?")
+                    Text("About how much goes to bills and essentials each month?")
                         .font(WinnieTypography.bodyL())
                         .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
                         .multilineTextAlignment(.center)
@@ -37,22 +51,55 @@ struct OnboardingNeedsView: View {
                 }
                 .padding(.top, WinnieSpacing.xl)
 
-                // Total display
-                totalDisplay
+                // Main currency input
+                VStack(spacing: WinnieSpacing.s) {
+                    WinnieCurrencyInput(
+                        value: $onboardingState.monthlyNeeds,
+                        text: $needsText,
+                        suffix: "/mo"
+                    )
+                    .padding(.horizontal, WinnieSpacing.screenMarginMobile)
+                    .disabled(showBreakdown)
+                    .opacity(showBreakdown ? 0.5 : 1)
 
-                // Expense category list
-                VStack(spacing: WinnieSpacing.m) {
-                    ForEach(0..<expenseCategories.count, id: \.self) { index in
-                        expenseRow(at: index)
-                    }
+                    // Helper text
+                    Text("Rent, utilities, insurance, loans, subscriptions—the essentials.")
+                        .font(WinnieTypography.bodyS())
+                        .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
+                        .multilineTextAlignment(.center)
                 }
-                .padding(.horizontal, WinnieSpacing.screenMarginMobile)
+
+                // Optional breakdown toggle
+                Button {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        showBreakdown.toggle()
+                        if !showBreakdown {
+                            // When collapsing, sync total from categories
+                            syncTotalFromCategories()
+                        }
+                    }
+                } label: {
+                    HStack(spacing: WinnieSpacing.xs) {
+                        Image(systemName: showBreakdown ? "chevron.up" : "chevron.down")
+                            .font(.system(size: 12, weight: .semibold))
+                        Text(showBreakdown ? "Hide breakdown" : "Break it down by category")
+                            .font(WinnieTypography.bodyS().weight(.medium))
+                    }
+                    .foregroundColor(WinnieColors.accent)
+                }
+                .padding(.top, WinnieSpacing.xs)
+
+                // Expandable category breakdown
+                if showBreakdown {
+                    categoryBreakdown
+                        .transition(.opacity.combined(with: .move(edge: .top)))
+                }
 
                 Spacer(minLength: WinnieSpacing.xxxl)
             }
         }
+        .scrollDismissesKeyboard(.interactively)
         .safeAreaInset(edge: .bottom) {
-            // Continue button
             WinnieButton("Continue", style: .primary) {
                 onContinue()
             }
@@ -61,84 +108,80 @@ struct OnboardingNeedsView: View {
             .background(WinnieColors.background(for: colorScheme))
         }
         .background(WinnieColors.background(for: colorScheme).ignoresSafeArea())
-    }
-
-    // MARK: - Total Display
-
-    private var totalDisplay: some View {
-        VStack(spacing: WinnieSpacing.xxs) {
-            Text("Total Needs")
-                .font(WinnieTypography.caption())
-                .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
-                .textCase(.uppercase)
-                .tracking(0.5)
-
-            Text("$\(NSDecimalNumber(decimal: onboardingState.monthlyNeeds).intValue)")
-                .font(WinnieTypography.financialL())
-                .foregroundColor(WinnieColors.primaryText(for: colorScheme))
-                .contentTransition(.numericText())
-
-            Text("/month")
-                .font(WinnieTypography.bodyS())
-                .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
+        .onAppear {
+            if onboardingState.monthlyNeeds > 0 {
+                needsText = "\(NSDecimalNumber(decimal: onboardingState.monthlyNeeds).intValue)"
+            }
         }
-        .padding(.vertical, WinnieSpacing.m)
     }
 
-    // MARK: - Expense Row
+    // MARK: - Category Breakdown
 
-    @ViewBuilder
-    private func expenseRow(at index: Int) -> some View {
-        let category = expenseCategories[index]
-
+    private var categoryBreakdown: some View {
         VStack(spacing: WinnieSpacing.s) {
-            HStack {
-                // Icon and name
-                HStack(spacing: WinnieSpacing.s) {
-                    Image(systemName: category.icon)
-                        .font(.system(size: 18))
-                        .foregroundColor(WinnieColors.accent)
-                        .frame(width: 24)
-
-                    Text(category.name)
-                        .font(WinnieTypography.bodyM())
-                        .foregroundColor(WinnieColors.primaryText(for: colorScheme))
-                }
-
-                Spacer()
-
-                // Amount
-                Text("$\(NSDecimalNumber(decimal: category.amount).intValue)")
-                    .font(WinnieTypography.bodyM())
-                    .fontWeight(.semibold)
-                    .foregroundColor(WinnieColors.primaryText(for: colorScheme))
-                    .contentTransition(.numericText())
+            ForEach(categories, id: \.name) { category in
+                categoryRow(name: category.name, icon: category.icon)
             }
 
-            // Slider
-            Slider(
-                value: Binding(
-                    get: { Double(truncating: NSDecimalNumber(decimal: category.amount)) },
-                    set: { newValue in
-                        expenseCategories[index].amount = Decimal(Int(newValue))
-                        updateTotal()
-                    }
-                ),
-                in: 0...5000,
-                step: 50
-            )
-            .tint(WinnieColors.accent)
+            // Total from breakdown
+            HStack {
+                Text("Total")
+                    .font(WinnieTypography.bodyM().weight(.semibold))
+                    .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+                Spacer()
+                Text("$\(breakdownTotal)")
+                    .font(WinnieTypography.bodyM().weight(.semibold))
+                    .foregroundColor(WinnieColors.accent)
+            }
+            .padding(.top, WinnieSpacing.xs)
         }
         .padding(WinnieSpacing.m)
         .background(WinnieColors.cardBackground(for: colorScheme))
-        .clipShape(RoundedRectangle(cornerRadius: WinnieSpacing.inputCornerRadius))
+        .clipShape(RoundedRectangle(cornerRadius: WinnieSpacing.cardCornerRadius))
+        .padding(.horizontal, WinnieSpacing.screenMarginMobile)
+    }
+
+    @ViewBuilder
+    private func categoryRow(name: String, icon: String) -> some View {
+        HStack(spacing: WinnieSpacing.s) {
+            Image(systemName: icon)
+                .font(.system(size: 16))
+                .foregroundColor(WinnieColors.accent)
+                .frame(width: 24)
+
+            Text(name)
+                .font(WinnieTypography.bodyS())
+                .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+
+            Spacer()
+
+            // Small text field for amount
+            TextField("$0", value: Binding(
+                get: { categoryAmounts[name] ?? 0 },
+                set: { newValue in
+                    categoryAmounts[name] = newValue
+                    syncTotalFromCategories()
+                }
+            ), format: .currency(code: "USD").precision(.fractionLength(0)))
+            .font(WinnieTypography.bodyS())
+            .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+            .keyboardType(.numberPad)
+            .multilineTextAlignment(.trailing)
+            .frame(width: 80)
+        }
     }
 
     // MARK: - Helpers
 
-    private func updateTotal() {
-        let total = expenseCategories.reduce(Decimal(0)) { $0 + $1.amount }
+    private var breakdownTotal: Int {
+        let total = categoryAmounts.values.reduce(Decimal(0), +)
+        return NSDecimalNumber(decimal: total).intValue
+    }
+
+    private func syncTotalFromCategories() {
+        let total = categoryAmounts.values.reduce(Decimal(0), +)
         onboardingState.monthlyNeeds = total
+        needsText = "\(NSDecimalNumber(decimal: total).intValue)"
     }
 }
 
@@ -155,4 +198,10 @@ struct OnboardingNeedsView: View {
         print("Continue tapped")
     }
     .preferredColorScheme(.dark)
+}
+
+#Preview("With Breakdown") {
+    OnboardingNeedsView(onboardingState: OnboardingState()) {
+        print("Continue tapped")
+    }
 }

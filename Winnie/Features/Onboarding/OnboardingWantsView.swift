@@ -2,8 +2,8 @@ import SwiftUI
 
 /// Discretionary spending (Wants) input screen for onboarding wizard.
 ///
-/// Step 4 of the wizard: Asks user for their monthly wants/discretionary spending.
-/// Shows a list of common discretionary categories with sliders.
+/// Asks user for their monthly discretionary spending with a single input,
+/// with an optional breakdown by category for more precision.
 struct OnboardingWantsView: View {
 
     @Bindable var onboardingState: OnboardingState
@@ -11,13 +11,27 @@ struct OnboardingWantsView: View {
 
     @Environment(\.colorScheme) private var colorScheme
 
-    /// Common discretionary expense categories
-    @State private var wantCategories: [(name: String, icon: String, amount: Decimal)] = [
-        ("Dining Out", "fork.knife", 0),
-        ("Entertainment", "tv.fill", 0),
-        ("Subscriptions", "play.rectangle.fill", 0),
-        ("Shopping", "bag.fill", 0),
-        ("Hobbies", "gamecontroller.fill", 0)
+    /// Local string for text field binding
+    @State private var wantsText: String = ""
+
+    /// Whether to show the category breakdown
+    @State private var showBreakdown = false
+
+    /// Category breakdown amounts (only used when expanded)
+    @State private var categoryAmounts: [String: Decimal] = [
+        "Dining Out": 0,
+        "Entertainment": 0,
+        "Subscriptions": 0,
+        "Shopping": 0,
+        "Hobbies": 0
+    ]
+
+    private let categories: [(name: String, icon: String)] = [
+        ("Dining Out", "fork.knife"),
+        ("Entertainment", "tv.fill"),
+        ("Subscriptions", "play.rectangle.fill"),
+        ("Shopping", "bag.fill"),
+        ("Hobbies", "gamecontroller.fill")
     ]
 
     var body: some View {
@@ -25,11 +39,11 @@ struct OnboardingWantsView: View {
             VStack(spacing: WinnieSpacing.xl) {
                 // Header
                 VStack(spacing: WinnieSpacing.s) {
-                    Text("Your *WANTS*")
+                    Text("Your discretionary spending")
                         .font(WinnieTypography.headlineL())
                         .foregroundColor(WinnieColors.primaryText(for: colorScheme))
 
-                    Text("How much goes to *wants* like entertainment, subscriptions, and going out to eat?")
+                    Text("About how much goes to wants and fun each month?")
                         .font(WinnieTypography.bodyL())
                         .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
                         .multilineTextAlignment(.center)
@@ -37,22 +51,54 @@ struct OnboardingWantsView: View {
                 }
                 .padding(.top, WinnieSpacing.xl)
 
-                // Total display
-                totalDisplay
+                // Main currency input
+                VStack(spacing: WinnieSpacing.s) {
+                    WinnieCurrencyInput(
+                        value: $onboardingState.monthlyWants,
+                        text: $wantsText,
+                        suffix: "/mo"
+                    )
+                    .padding(.horizontal, WinnieSpacing.screenMarginMobile)
+                    .disabled(showBreakdown)
+                    .opacity(showBreakdown ? 0.5 : 1)
 
-                // Want category list
-                VStack(spacing: WinnieSpacing.m) {
-                    ForEach(0..<wantCategories.count, id: \.self) { index in
-                        wantRow(at: index)
-                    }
+                    // Helper text
+                    Text("Dining out, entertainment, shopping, hobbies—the fun stuff.")
+                        .font(WinnieTypography.bodyS())
+                        .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
+                        .multilineTextAlignment(.center)
                 }
-                .padding(.horizontal, WinnieSpacing.screenMarginMobile)
+
+                // Optional breakdown toggle
+                Button {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        showBreakdown.toggle()
+                        if !showBreakdown {
+                            syncTotalFromCategories()
+                        }
+                    }
+                } label: {
+                    HStack(spacing: WinnieSpacing.xs) {
+                        Image(systemName: showBreakdown ? "chevron.up" : "chevron.down")
+                            .font(.system(size: 12, weight: .semibold))
+                        Text(showBreakdown ? "Hide breakdown" : "Break it down by category")
+                            .font(WinnieTypography.bodyS().weight(.medium))
+                    }
+                    .foregroundColor(WinnieColors.accent)
+                }
+                .padding(.top, WinnieSpacing.xs)
+
+                // Expandable category breakdown
+                if showBreakdown {
+                    categoryBreakdown
+                        .transition(.opacity.combined(with: .move(edge: .top)))
+                }
 
                 Spacer(minLength: WinnieSpacing.xxxl)
             }
         }
+        .scrollDismissesKeyboard(.interactively)
         .safeAreaInset(edge: .bottom) {
-            // Continue button
             WinnieButton("Continue", style: .primary) {
                 onContinue()
             }
@@ -61,84 +107,80 @@ struct OnboardingWantsView: View {
             .background(WinnieColors.background(for: colorScheme))
         }
         .background(WinnieColors.background(for: colorScheme).ignoresSafeArea())
-    }
-
-    // MARK: - Total Display
-
-    private var totalDisplay: some View {
-        VStack(spacing: WinnieSpacing.xxs) {
-            Text("Total Wants")
-                .font(WinnieTypography.caption())
-                .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
-                .textCase(.uppercase)
-                .tracking(0.5)
-
-            Text("$\(NSDecimalNumber(decimal: onboardingState.monthlyWants).intValue)")
-                .font(WinnieTypography.financialL())
-                .foregroundColor(WinnieColors.primaryText(for: colorScheme))
-                .contentTransition(.numericText())
-
-            Text("/month")
-                .font(WinnieTypography.bodyS())
-                .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
+        .onAppear {
+            if onboardingState.monthlyWants > 0 {
+                wantsText = "\(NSDecimalNumber(decimal: onboardingState.monthlyWants).intValue)"
+            }
         }
-        .padding(.vertical, WinnieSpacing.m)
     }
 
-    // MARK: - Want Row
+    // MARK: - Category Breakdown
 
-    @ViewBuilder
-    private func wantRow(at index: Int) -> some View {
-        let category = wantCategories[index]
-
+    private var categoryBreakdown: some View {
         VStack(spacing: WinnieSpacing.s) {
-            HStack {
-                // Icon and name
-                HStack(spacing: WinnieSpacing.s) {
-                    Image(systemName: category.icon)
-                        .font(.system(size: 18))
-                        .foregroundColor(WinnieColors.accent)
-                        .frame(width: 24)
-
-                    Text(category.name)
-                        .font(WinnieTypography.bodyM())
-                        .foregroundColor(WinnieColors.primaryText(for: colorScheme))
-                }
-
-                Spacer()
-
-                // Amount
-                Text("$\(NSDecimalNumber(decimal: category.amount).intValue)")
-                    .font(WinnieTypography.bodyM())
-                    .fontWeight(.semibold)
-                    .foregroundColor(WinnieColors.primaryText(for: colorScheme))
-                    .contentTransition(.numericText())
+            ForEach(categories, id: \.name) { category in
+                categoryRow(name: category.name, icon: category.icon)
             }
 
-            // Slider
-            Slider(
-                value: Binding(
-                    get: { Double(truncating: NSDecimalNumber(decimal: category.amount)) },
-                    set: { newValue in
-                        wantCategories[index].amount = Decimal(Int(newValue))
-                        updateTotal()
-                    }
-                ),
-                in: 0...2000,
-                step: 25
-            )
-            .tint(WinnieColors.accent)
+            // Total from breakdown
+            HStack {
+                Text("Total")
+                    .font(WinnieTypography.bodyM().weight(.semibold))
+                    .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+                Spacer()
+                Text("$\(breakdownTotal)")
+                    .font(WinnieTypography.bodyM().weight(.semibold))
+                    .foregroundColor(WinnieColors.accent)
+            }
+            .padding(.top, WinnieSpacing.xs)
         }
         .padding(WinnieSpacing.m)
         .background(WinnieColors.cardBackground(for: colorScheme))
-        .clipShape(RoundedRectangle(cornerRadius: WinnieSpacing.inputCornerRadius))
+        .clipShape(RoundedRectangle(cornerRadius: WinnieSpacing.cardCornerRadius))
+        .padding(.horizontal, WinnieSpacing.screenMarginMobile)
+    }
+
+    @ViewBuilder
+    private func categoryRow(name: String, icon: String) -> some View {
+        HStack(spacing: WinnieSpacing.s) {
+            Image(systemName: icon)
+                .font(.system(size: 16))
+                .foregroundColor(WinnieColors.accent)
+                .frame(width: 24)
+
+            Text(name)
+                .font(WinnieTypography.bodyS())
+                .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+
+            Spacer()
+
+            // Small text field for amount
+            TextField("$0", value: Binding(
+                get: { categoryAmounts[name] ?? 0 },
+                set: { newValue in
+                    categoryAmounts[name] = newValue
+                    syncTotalFromCategories()
+                }
+            ), format: .currency(code: "USD").precision(.fractionLength(0)))
+            .font(WinnieTypography.bodyS())
+            .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+            .keyboardType(.numberPad)
+            .multilineTextAlignment(.trailing)
+            .frame(width: 80)
+        }
     }
 
     // MARK: - Helpers
 
-    private func updateTotal() {
-        let total = wantCategories.reduce(Decimal(0)) { $0 + $1.amount }
+    private var breakdownTotal: Int {
+        let total = categoryAmounts.values.reduce(Decimal(0), +)
+        return NSDecimalNumber(decimal: total).intValue
+    }
+
+    private func syncTotalFromCategories() {
+        let total = categoryAmounts.values.reduce(Decimal(0), +)
         onboardingState.monthlyWants = total
+        wantsText = "\(NSDecimalNumber(decimal: total).intValue)"
     }
 }
 

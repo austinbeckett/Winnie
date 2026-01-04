@@ -24,10 +24,10 @@ struct OnboardingCoordinator: View {
     private var progressSteps: [OnboardingStep] {
         if onboardingState.knowsSavingsAmount {
             // Direct path: user knows their savings amount
-            return [.valueProp, .goalPicker, .savingsQuestion, .savingsPool, .nestEgg, .goalDetail, .projection, .partnerInvite]
+            return [.valueProp, .goalPicker, .savingsQuestion, .savingsPool, .startingBalance, .goalDetail, .projection, .partnerInvite]
         } else {
             // Extended path: user needs help calculating savings
-            return [.valueProp, .goalPicker, .savingsQuestion, .budgetingExplainer, .income, .needs, .wants, .savingsPool, .nestEgg, .goalDetail, .projection, .partnerInvite]
+            return [.valueProp, .goalPicker, .savingsQuestion, .budgetingExplainer, .income, .needs, .wants, .savingsPool, .startingBalance, .goalDetail, .projection, .partnerInvite]
         }
     }
 
@@ -143,11 +143,11 @@ struct OnboardingCoordinator: View {
 
         case .savingsPool:
             OnboardingSavingsPoolView(onboardingState: onboardingState) {
-                navigateTo(.nestEgg)
+                navigateTo(.startingBalance)
             }
 
-        case .nestEgg:
-            OnboardingNestEggView(onboardingState: onboardingState) {
+        case .startingBalance:
+            OnboardingStartingBalanceView(onboardingState: onboardingState) {
                 navigateTo(.goalDetail)
             }
 
@@ -214,7 +214,7 @@ enum OnboardingStep: Int, CaseIterable, Hashable {
     case needs
     case wants
     case savingsPool
-    case nestEgg
+    case startingBalance
     case goalDetail
     case projection
     case partnerInvite
@@ -231,7 +231,7 @@ enum OnboardingStep: Int, CaseIterable, Hashable {
         case .needs: return "Needs"
         case .wants: return "Wants"
         case .savingsPool: return "Savings Pool"
-        case .nestEgg: return "Nest Egg"
+        case .startingBalance: return "Starting Balance"
         case .goalDetail: return "Goal Detail"
         case .projection: return "Projection"
         case .partnerInvite: return "Partner Invite"

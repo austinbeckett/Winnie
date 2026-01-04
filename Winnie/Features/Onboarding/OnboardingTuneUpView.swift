@@ -19,9 +19,9 @@ struct OnboardingTuneUpView: View {
     }
 
     private var adjustedMonthsToGoal: Int? {
-        guard adjustedSavingsPool > 0, onboardingState.goalTargetAmount > onboardingState.nestEgg else { return nil }
+        guard adjustedSavingsPool > 0, onboardingState.goalTargetAmount > onboardingState.startingBalance else { return nil }
 
-        let remaining = onboardingState.goalTargetAmount - onboardingState.nestEgg
+        let remaining = onboardingState.goalTargetAmount - onboardingState.startingBalance
         let months = remaining / adjustedSavingsPool
 
         return Int(NSDecimalNumber(decimal: months).doubleValue.rounded(.up))
@@ -138,7 +138,7 @@ struct OnboardingTuneUpView: View {
     state.monthlyIncome = 7500
     state.monthlyNeeds = 3000
     state.monthlyWants = 1000
-    state.nestEgg = 10000
+    state.startingBalance = 10000
     state.goalTargetAmount = 60000
     return OnboardingTuneUpView(onboardingState: state) {
         print("Continue tapped")
@@ -151,7 +151,7 @@ struct OnboardingTuneUpView: View {
     state.monthlyIncome = 7500
     state.monthlyNeeds = 3000
     state.monthlyWants = 1000
-    state.nestEgg = 10000
+    state.startingBalance = 10000
     state.goalTargetAmount = 60000
     return OnboardingTuneUpView(onboardingState: state) {
         print("Continue tapped")

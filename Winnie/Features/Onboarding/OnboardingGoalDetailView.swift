@@ -1,9 +1,9 @@
 import SwiftUI
 
-/// Goal details input screen for onboarding wizard.
+/// Goal amount input screen for onboarding wizard.
 ///
-/// Step 5 of the wizard: Asks for target amount and desired date for the selected goal.
-/// The form adapts based on the selected goal type.
+/// Asks for target amount for the selected goal. Date selection happens
+/// after viewing the projection, allowing users to see feasibility first.
 struct OnboardingGoalDetailView: View {
 
     @Bindable var onboardingState: OnboardingState
@@ -14,7 +14,6 @@ struct OnboardingGoalDetailView: View {
 
     /// Local string for text field binding
     @State private var amountText: String = ""
-    @State private var selectedDate: Date = Calendar.current.date(byAdding: .year, value: 2, to: Date()) ?? Date()
 
     private var goalType: GoalType {
         onboardingState.selectedGoalType ?? .house
@@ -23,6 +22,8 @@ struct OnboardingGoalDetailView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: WinnieSpacing.xl) {
+                Spacer(minLength: WinnieSpacing.xl)
+
                 // Header
                 VStack(spacing: WinnieSpacing.s) {
                     Image(systemName: goalType.iconName)
@@ -39,54 +40,32 @@ struct OnboardingGoalDetailView: View {
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, WinnieSpacing.m)
                 }
-                .padding(.top, WinnieSpacing.xl)
 
                 // Target amount input
-                VStack(alignment: .leading, spacing: WinnieSpacing.xs) {
-                    Text(amountLabel)
-                        .font(WinnieTypography.caption())
-                        .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
-                        .textCase(.uppercase)
-                        .tracking(0.5)
-
+                VStack(spacing: WinnieSpacing.s) {
                     WinnieCurrencyInput(
                         value: $onboardingState.goalTargetAmount,
                         text: $amountText
                     )
-                }
-                .padding(.horizontal, WinnieSpacing.screenMarginMobile)
+                    .padding(.horizontal, WinnieSpacing.screenMarginMobile)
 
-                // Date picker
-                VStack(alignment: .leading, spacing: WinnieSpacing.xs) {
-                    Text(dateLabel)
-                        .font(WinnieTypography.caption())
+                    Text("We'll show you when you can reach this based on your savings.")
+                        .font(WinnieTypography.bodyS())
                         .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
-                        .textCase(.uppercase)
-                        .tracking(0.5)
-
-                    DatePicker(
-                        "",
-                        selection: $selectedDate,
-                        in: Date()...,
-                        displayedComponents: .date
-                    )
-                    .datePickerStyle(.graphical)
-                    .tint(WinnieColors.accent)
-                    .onChange(of: selectedDate) { _, newDate in
-                        onboardingState.goalDesiredDate = newDate
-                    }
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, WinnieSpacing.screenMarginMobile) // Fixed padding
                 }
-                .padding(.horizontal, WinnieSpacing.screenMarginMobile)
 
                 Spacer(minLength: WinnieSpacing.xxxl)
             }
         }
+        .scrollDismissesKeyboard(.interactively) // Enable keyboard dismissal
         .safeAreaInset(edge: .bottom) {
-            WinnieButton("Continue", style: .primary) {
+            WinnieButton("See my projection", style: .primary) {
                 isAmountFocused = false
                 onContinue()
             }
-            .disabled(!onboardingState.isGoalValid)
+            .disabled(onboardingState.goalTargetAmount <= 0)
             .padding(.horizontal, WinnieSpacing.screenMarginMobile)
             .padding(.vertical, WinnieSpacing.m)
             .background(WinnieColors.background(for: colorScheme))
@@ -96,10 +75,6 @@ struct OnboardingGoalDetailView: View {
             if onboardingState.goalTargetAmount > 0 {
                 amountText = "\(NSDecimalNumber(decimal: onboardingState.goalTargetAmount).intValue)"
             }
-            if let date = onboardingState.goalDesiredDate {
-                selectedDate = date
-            }
-            onboardingState.goalDesiredDate = selectedDate
         }
     }
 
@@ -119,29 +94,9 @@ struct OnboardingGoalDetailView: View {
         switch goalType {
         case .house: return "How much do you need for a down payment?"
         case .babyFamily: return "What's your budget for baby expenses?"
-        case .retirement: return "How much do you want to have saved for retirement?"
+        case .retirement: return "How much do you want to have saved?"
         case .emergencyFund: return "How much would you like in your emergency fund?"
         default: return "What's your target for this goal?"
-        }
-    }
-
-    private var amountLabel: String {
-        switch goalType {
-        case .house: return "Down payment amount"
-        case .babyFamily: return "Baby fund target"
-        case .retirement: return "Retirement target"
-        case .emergencyFund: return "Emergency fund target"
-        default: return "Target amount"
-        }
-    }
-
-    private var dateLabel: String {
-        switch goalType {
-        case .house: return "When do you want to buy?"
-        case .babyFamily: return "Target timeline"
-        case .retirement: return "When do you want to retire?"
-        case .emergencyFund: return "When do you want this funded?"
-        default: return "Target date"
         }
     }
 }
@@ -151,14 +106,6 @@ struct OnboardingGoalDetailView: View {
 #Preview("House Goal") {
     let state = OnboardingState()
     state.selectedGoalType = .house
-    return OnboardingGoalDetailView(onboardingState: state) {
-        print("Continue tapped")
-    }
-}
-
-#Preview("Retirement Goal") {
-    let state = OnboardingState()
-    state.selectedGoalType = .retirement
     return OnboardingGoalDetailView(onboardingState: state) {
         print("Continue tapped")
     }

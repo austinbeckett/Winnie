@@ -18,16 +18,16 @@ struct OnboardingSavingsQuestionView: View {
 
             // Header
             VStack(spacing: WinnieSpacing.s) {
-                Image(systemName: "questionmark.circle.fill")
+                Image(systemName: "dollarsign.arrow.circlepath")
                     .font(.system(size: 60))
                     .foregroundColor(WinnieColors.accent)
 
-                Text("Do you know how much you currently save each month?")
+                Text("How would you like to set up your savings?")
                     .font(WinnieTypography.headlineL())
                     .foregroundColor(WinnieColors.primaryText(for: colorScheme))
                     .multilineTextAlignment(.center)
 
-                Text("This will help us determine how much money we can allocate to your goals.")
+                Text("This helps us understand how much you can put toward your goals each month.")
                     .font(WinnieTypography.bodyL())
                     .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
                     .multilineTextAlignment(.center)
@@ -39,14 +39,14 @@ struct OnboardingSavingsQuestionView: View {
             // Option buttons
             VStack(spacing: WinnieSpacing.m) {
                 optionButton(
-                    title: "Yes, I know how much I save",
-                    subtitle: "I'll enter my monthly savings directly",
+                    title: "I'll enter my monthly savings",
+                    subtitle: "Quick setup",
                     action: onKnowsSavings
                 )
 
                 optionButton(
-                    title: "No, please help me figure it out",
-                    subtitle: "I'll enter my expenses to calculate savings",
+                    title: "Help me calculate from my budget",
+                    subtitle: "Guided setup",
                     action: onNeedHelp
                 )
             }
