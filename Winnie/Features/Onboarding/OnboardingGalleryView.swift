@@ -125,6 +125,12 @@ struct OnboardingGalleryView: View {
                 case .splash:
                     OnboardingSplashView { }
 
+                case .nameInput:
+                    NameInputView(appState: AppState()) { }
+
+                case .welcome:
+                    OnboardingWelcomeView(userName: "Austin") { }
+
                 case .valueProp:
                     OnboardingValuePropView { }
 
@@ -220,6 +226,8 @@ struct OnboardingGalleryView: View {
     private func iconName(for step: OnboardingStep) -> String {
         switch step {
         case .splash: return "sparkle"
+        case .nameInput: return "person.fill"
+        case .welcome: return "hand.wave.fill"
         case .valueProp: return "square.stack.3d.up"
         case .goalPicker: return "flag.fill"
         case .income: return "dollarsign.circle.fill"

@@ -44,15 +44,15 @@ struct OnboardingCoordinator: View {
 
     /// Whether to show progress bar for this step
     private func shouldShowProgress(for step: OnboardingStep) -> Bool {
-        // Hide progress on splash and valueProp - these are introductory screens
-        step != .splash && step != .valueProp
+        // Hide progress on splash, nameInput, welcome, and valueProp - these are introductory screens
+        step != .splash && step != .nameInput && step != .welcome && step != .valueProp
     }
 
     var body: some View {
         NavigationStack(path: $navigationPath) {
             // Root view: Splash
             OnboardingSplashView {
-                navigateTo(.valueProp)
+                navigateTo(.nameInput)
             }
             .navigationBarBackButtonHidden(true)
             .navigationDestination(for: OnboardingStep.self) { step in
@@ -102,6 +102,16 @@ struct OnboardingCoordinator: View {
         case .valueProp:
             OnboardingValuePropView {
                 navigateTo(.goalPicker)
+            }
+
+        case .nameInput:
+            NameInputView(appState: appState) {
+                navigateTo(.welcome)
+            }
+
+        case .welcome:
+            OnboardingWelcomeView(userName: appState.currentUser?.displayName ?? "there") {
+                navigateTo(.valueProp)
             }
 
         case .goalPicker:
@@ -206,6 +216,8 @@ struct OnboardingCoordinator: View {
 /// All steps in the onboarding wizard
 enum OnboardingStep: Int, CaseIterable, Hashable {
     case splash
+    case nameInput
+    case welcome
     case valueProp
     case goalPicker
     case income
@@ -223,6 +235,8 @@ enum OnboardingStep: Int, CaseIterable, Hashable {
     var name: String {
         switch self {
         case .splash: return "Splash"
+        case .nameInput: return "Name Input"
+        case .welcome: return "Welcome"
         case .valueProp: return "Value Proposition"
         case .goalPicker: return "Goal Picker"
         case .income: return "Income"
