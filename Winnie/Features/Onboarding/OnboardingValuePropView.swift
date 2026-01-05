@@ -29,13 +29,17 @@ struct OnboardingValuePropView: View {
         )
     ]
 
-    private let quotes: [String] = [
-        "If we go all in saving for a house, when can we afford to travel?",
-        "If we cut back on our wedding budget, how much longer can we extend our honeymoon?",
-        "How much of my monthly savings should go to my credit card debt vs. investing for retirement?",
-        "If we save $1,000 a month for a new car, how long does that delay us getting our first home?",
-        "We'll have a newborn in 9 months—should we increase our emergency fund? How would that affect the timelines of our other goals?",
-        "Are we saving enough for retirement if we do all of this?"
+    /// The iMessage-style conversation messages for Panel 2
+    private let conversationMessages: [ChatMessage] = [
+        ChatMessage(text: "I think we should go all-in on saving for our house", isFromMe: true),
+        ChatMessage(text: "But what about traveling? We said we'd go to Italy before we turn 30", isFromMe: false),
+        ChatMessage(text: "I know, maybe we can push that back a year or two", isFromMe: true),
+        ChatMessage(text: "And what about the wedding? We haven't even started saving for that yet", isFromMe: false),
+        ChatMessage(text: "Ugh, you're right. And if we have kids soon after", isFromMe: true),
+        ChatMessage(text: "Our little civic won't have enough room for a baby and the dog", isFromMe: false),
+        ChatMessage(text: "Are we even saving enough for retirement through all of this?", isFromMe: false),
+        ChatMessage(text: "I honestly have no idea", isFromMe: true),
+        ChatMessage(text: "Me neither", isFromMe: false)
     ]
 
     var body: some View {
@@ -109,22 +113,20 @@ struct OnboardingValuePropView: View {
         }
     }
 
-    // MARK: - Panel 2: The Questions
+    // MARK: - Panel 2: The Questions (iMessage Conversation)
 
     private var panel2: some View {
         VStack(spacing: WinnieSpacing.l) {
             Spacer()
 
-            // Scrolling quotes
-            ScrollView {
-                VStack(spacing: WinnieSpacing.m) {
-                    ForEach(quotes, id: \.self) { quote in
-                        quoteCard(quote)
-                    }
-                }
-                .padding(.horizontal, WinnieSpacing.screenMarginMobile)
-            }
-            .frame(maxHeight: 400)
+            // iMessage-style conversation
+            iMessageConversationView(
+                messages: conversationMessages,
+                contactName: "Alex",
+                contactEmoji: "💜"
+            )
+            .frame(maxHeight: 380)
+            .padding(.horizontal, WinnieSpacing.screenMarginMobile)
 
             // Headlines
             VStack(spacing: WinnieSpacing.m) {
@@ -143,18 +145,6 @@ struct OnboardingValuePropView: View {
 
             Spacer()
         }
-    }
-
-    @ViewBuilder
-    private func quoteCard(_ text: String) -> some View {
-        Text("\"\(text)\"")
-            .font(WinnieTypography.bodyM())
-            .foregroundColor(WinnieColors.primaryText(for: colorScheme))
-            .multilineTextAlignment(.leading)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(WinnieSpacing.m)
-            .background(WinnieColors.cardBackground(for: colorScheme))
-            .clipShape(RoundedRectangle(cornerRadius: WinnieSpacing.cardCornerRadius))
     }
 
     // MARK: - Panel 3: The Answer
@@ -203,8 +193,71 @@ struct OnboardingValuePropView: View {
     .preferredColorScheme(.dark)
 }
 
-#Preview("Panel 2 - Questions") {
+#Preview("Panel 2 - Conversation") {
     OnboardingValuePropView {
         print("Continue tapped")
     }
 }
+
+// MARK: - Legacy Quotes (Preserved for Reference)
+
+/*
+ Original quote cards implementation - kept for reference if needed:
+
+ private let quotes: [String] = [
+     "If we go all in saving for a house, when can we afford to travel?",
+     "If we cut back on our wedding budget, how much longer can we extend our honeymoon?",
+     "How much of my monthly savings should go to my credit card debt vs. investing for retirement?",
+     "If we save $1,000 a month for a new car, how long does that delay us getting our first home?",
+     "We'll have a newborn in 9 months—should we increase our emergency fund? How would that affect the timelines of our other goals?",
+     "Are we saving enough for retirement if we do all of this?"
+ ]
+
+ @ViewBuilder
+ private func quoteCard(_ text: String) -> some View {
+     Text("\"\(text)\"")
+         .font(WinnieTypography.bodyM())
+         .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+         .multilineTextAlignment(.leading)
+         .frame(maxWidth: .infinity, alignment: .leading)
+         .padding(WinnieSpacing.m)
+         .background(WinnieColors.cardBackground(for: colorScheme))
+         .clipShape(RoundedRectangle(cornerRadius: WinnieSpacing.cardCornerRadius))
+ }
+
+ // Original panel2 with quote cards:
+ private var panel2: some View {
+     VStack(spacing: WinnieSpacing.l) {
+         Spacer()
+
+         // Scrolling quotes
+         ScrollView {
+             VStack(spacing: WinnieSpacing.m) {
+                 ForEach(quotes, id: \.self) { quote in
+                     quoteCard(quote)
+                 }
+             }
+             .padding(.horizontal, WinnieSpacing.screenMarginMobile)
+         }
+         .frame(maxHeight: 400)
+
+         // Headlines
+         VStack(spacing: WinnieSpacing.m) {
+             Text(panels[1].headline)
+                 .font(WinnieTypography.headlineL())
+                 .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+                 .multilineTextAlignment(.center)
+
+             Text(panels[1].subhead)
+                 .font(WinnieTypography.bodyL())
+                 .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
+                 .multilineTextAlignment(.center)
+         }
+         .padding(.horizontal, WinnieSpacing.screenMarginMobile)
+         .padding(.top, WinnieSpacing.s)
+
+         Spacer()
+     }
+ }
+ */
+
