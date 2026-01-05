@@ -23,7 +23,6 @@ struct OnboardingSplashView: View {
                 // Tagline
                 Text("Save smarter, together.")
                     .font(WinnieTypography.bodyL())
-                    .fontWeight(.semibold)
                     .foregroundColor(WinnieColors.primaryText(for: colorScheme))
             }
             .multilineTextAlignment(.center)

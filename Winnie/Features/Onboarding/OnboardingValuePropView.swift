@@ -14,7 +14,7 @@ struct OnboardingValuePropView: View {
     private let panels: [(headline: String, subhead: String, icon: String)] = [
         (
             "You have goals. Plural.",
-            "Whether it's your first home, a dream wedding, or a secure retirement, your financial goals represent the life you're building.",
+            "Your first home, a dream wedding, and a secure retirement, your financial goals represent the life you're building.",
             "sparkles"
         ),
         (

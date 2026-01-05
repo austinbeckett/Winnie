@@ -17,6 +17,7 @@ struct NameInputView: View {
 
     @State private var name = ""
     @State private var isSaving = false
+    @FocusState private var isNameFieldFocused: Bool
 
     @Environment(\.colorScheme) private var colorScheme
 
@@ -55,6 +56,7 @@ struct NameInputView: View {
                     )
                     .textContentType(.givenName)
                     .autocorrectionDisabled()
+                    .focused($isNameFieldFocused)
             }
             .padding(.horizontal, WinnieSpacing.l)
 
@@ -69,6 +71,9 @@ struct NameInputView: View {
             .padding(.bottom, WinnieSpacing.l)
         }
         .background(WinnieColors.background(for: colorScheme).ignoresSafeArea(edges: .all))
+        .onAppear {
+            isNameFieldFocused = true
+        }
     }
 
     // MARK: - Helpers
