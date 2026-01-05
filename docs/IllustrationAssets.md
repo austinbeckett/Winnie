@@ -96,7 +96,7 @@ A curated list of 50 illustration assets for the Winnie couples financial planni
 
 > [!TIP]
 > **Illustration Style Guidelines**
-> - **Style:** Modern flat with subtle gradients, warm and approachable
+> - **Style:** Modern flat illustration, warm and approachable
 > - **People:** Diverse, abstract/simplified faces (inclusive representation)
 > - **Color palette:** Primary use of Amethyst Smoke & Blackberry Cream with complementary warm neutrals
 > - **Mood:** Optimistic, collaborative, empowering (not stressed about money)
@@ -123,3 +123,70 @@ A curated list of 50 illustration assets for the Winnie couples financial planni
 | **SVG** | Vector | In-app, scalable |
 | **PNG** | 3x (@1x, @2x, @3x) | iOS assets |
 | **PDF** | Vector | Asset catalog backup |
+
+---
+
+## Midjourney Prompt Template
+
+Use this base prompt and replace `[SUBJECT]` with the specific illustration from the asset list above:
+
+> **Prompt:**
+> 
+> `[SUBJECT]`, modern flat illustration style, warm and approachable design for a couples financial planning app, optimistic and empowering mood, collaborative feeling, purple color palette featuring amethyst smoke (#A393BF) and deep blackberry cream (#5B325D) as primary colors with warm neutral accents, diverse simplified abstract people with inclusive representation, clean composition with generous whitespace, no anxiety-inducing imagery, premium but not corporate, metaphorical and friendly approach to finance, vector-style artwork --ar 1:1 --style raw
+
+### Ready-to-Use Prompts
+
+**Onboarding & Welcome**
+
+> **#1 Couple Planning Together**
+> Two diverse people sitting close together looking at a tablet screen, collaborative planning moment, modern flat illustration style, warm and approachable, purple color palette with amethyst smoke (#A393BF) and blackberry cream (#5B325D), simplified abstract faces, clean whitespace, optimistic empowering mood, premium but not corporate --ar 1:1 --style raw
+
+> **#4 Income Stream**
+> Money flowing like water into a decorative pool or container, abstract financial concept, modern flat illustration, purple color palette with amethyst smoke (#A393BF) and blackberry cream (#5B325D), clean minimal composition, warm approachable feeling, metaphorical finance imagery --ar 1:1 --style raw
+
+> **#8 Partner Invitation**
+> Two hands reaching toward each other with glowing connection between them, partnership and togetherness, modern flat illustration style, purple color palette featuring amethyst smoke (#A393BF) and blackberry cream (#5B325D), warm and inviting, clean whitespace --ar 1:1 --style raw
+
+---
+
+**Goal Types**
+
+> **#9 Dream House**
+> Cozy stylized home with warm glowing windows and a heart element, keys floating nearby, aspirational home ownership, modern flat illustration, purple color palette with amethyst smoke (#A393BF) and blackberry cream (#5B325D), optimistic warm mood, clean composition --ar 1:1 --style raw
+
+> **#11 Tropical Vacation**
+> Palm trees on a beach with stylized suitcase and small airplane, vacation dreams, modern flat illustration, purple color palette with amethyst smoke (#A393BF) and blackberry cream (#5B325D) plus warm sandy neutrals, relaxed joyful mood, clean whitespace --ar 1:1 --style raw
+
+> **#14 Debt Freedom**
+> Hands breaking chains or cutting up a credit card with confetti, liberation and relief, modern flat illustration, purple color palette with amethyst smoke (#A393BF) and blackberry cream (#5B325D), empowering celebratory mood, clean composition --ar 1:1 --style raw
+
+---
+
+**Financial Concepts**
+
+> **#24 Savings Pool**
+> Decorative pool or container steadily filling with water representing money, progress and growth metaphor, modern flat illustration, purple color palette with amethyst smoke (#A393BF) and blackberry cream (#5B325D), calm optimistic mood, clean minimal design --ar 1:1 --style raw
+
+> **#27 Compound Interest**
+> Snowball rolling downhill growing larger with each roll, momentum and growth, modern flat illustration, purple color palette with amethyst smoke (#A393BF) and blackberry cream (#5B325D), playful educational feeling, clean whitespace --ar 1:1 --style raw
+
+---
+
+**Emotional States**
+
+> **#47 On Track**
+> Happy diverse couple giving each other a high-five, celebration and teamwork, modern flat illustration, purple color palette with amethyst smoke (#A393BF) and blackberry cream (#5B325D), simplified abstract faces, joyful optimistic mood, clean composition --ar 1:1 --style raw
+
+> **#50 Success Celebration**
+> Couple celebrating together with confetti and sparkles, major milestone achievement, modern flat illustration, purple color palette with amethyst smoke (#A393BF) and blackberry cream (#5B325D), diverse simplified people, euphoric empowering mood, clean whitespace --ar 1:1 --style raw
+
+---
+
+### Aspect Ratio Guide
+
+| Ratio | Flag | Best For |
+|-------|------|----------|
+| Square | `--ar 1:1` | App icons, centered illustrations |
+| Portrait | `--ar 2:3` | Onboarding screens, vertical cards |
+| Landscape | `--ar 3:2` | Header banners, wide cards |
+| Tall | `--ar 9:16` | Full-screen mobile illustrations |

@@ -13,25 +13,25 @@ struct OnboardingValuePropView: View {
 
     private let panels: [(headline: String, subhead: String, icon: String)] = [
         (
-            "House. Wedding. Travel.\nRetirement. Baby.",
-            "You're not dreaming small.",
+            "You have goals. Plural.",
+            "Whether it's your first home, a dream wedding, or a secure retirement, your financial goals represent the life you're building.",
             "sparkles"
         ),
         (
-            "", // Panel 2 uses quotes instead
-            "Sound familiar?",
-            ""
+            "Saving for everything at once is hard.",
+            "It feels impossible to know which choice is 'right' when everything feels important.",
+            "questionmark.circle"
         ),
         (
-            "Winnie builds a plan that fits all your goals—",
-            "and shows exactly how each one affects the others.",
-            "checkmark.circle.fill"
+            "We've got you.",
+            "Winnie shows you exactly how every goal and decision fits into the bigger picture, giving you the confidence to save and plan for the future.",
+            "sun.max.fill"
         )
     ]
 
     private let quotes: [String] = [
-        "If we save for the house, when can we actually travel?",
-        "Can we afford the wedding we want and the honeymoon?",
+        "If we go all in saving for a house, when can we afford to travel?",
+        "If we cut back on our wedding budget, how much longer can we extend our honeymoon?",
         "How much of my monthly savings should go to my credit card debt vs. investing for retirement?",
         "If we save $1,000 a month for a new car, how long does that delay us getting our first home?",
         "We'll have a newborn in 9 months—should we increase our emergency fund? How would that affect the timelines of our other goals?",
@@ -92,14 +92,15 @@ struct OnboardingValuePropView: View {
 
             // Headlines
             VStack(spacing: WinnieSpacing.m) {
-                Text("House. Wedding. Travel.\nRetirement. Baby.")
+                Text(panels[0].headline)
                     .font(WinnieTypography.headlineL())
                     .foregroundColor(WinnieColors.primaryText(for: colorScheme))
                     .multilineTextAlignment(.center)
 
-                Text("You're not dreaming small.")
+                Text(panels[0].subhead)
                     .font(WinnieTypography.bodyL())
                     .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
+                    .multilineTextAlignment(.center)
             }
             .padding(.horizontal, WinnieSpacing.screenMarginMobile)
 
@@ -125,11 +126,20 @@ struct OnboardingValuePropView: View {
             }
             .frame(maxHeight: 400)
 
-            // Subhead
-            Text("Sound familiar?")
-                .font(WinnieTypography.bodyL())
-                .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
-                .padding(.top, WinnieSpacing.s)
+            // Headlines
+            VStack(spacing: WinnieSpacing.m) {
+                Text(panels[1].headline)
+                    .font(WinnieTypography.headlineL())
+                    .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+                    .multilineTextAlignment(.center)
+
+                Text(panels[1].subhead)
+                    .font(WinnieTypography.bodyL())
+                    .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
+                    .multilineTextAlignment(.center)
+            }
+            .padding(.horizontal, WinnieSpacing.screenMarginMobile)
+            .padding(.top, WinnieSpacing.s)
 
             Spacer()
         }
@@ -154,18 +164,18 @@ struct OnboardingValuePropView: View {
             Spacer()
 
             // Icon placeholder for illustration
-            Image(systemName: "checkmark.circle.fill")
+            Image(systemName: "sun.max.fill")
                 .font(.system(size: 56))
                 .foregroundColor(WinnieColors.accent)
 
             // Headlines
             VStack(spacing: WinnieSpacing.m) {
-                Text("Winnie builds a plan that fits all your goals—")
+                Text(panels[2].headline)
                     .font(WinnieTypography.headlineL())
                     .foregroundColor(WinnieColors.primaryText(for: colorScheme))
                     .multilineTextAlignment(.center)
 
-                Text("and shows exactly how each one affects the others.")
+                Text(panels[2].subhead)
                     .font(WinnieTypography.bodyL())
                     .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
                     .multilineTextAlignment(.center)

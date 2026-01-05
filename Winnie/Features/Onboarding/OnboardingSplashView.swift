@@ -21,16 +21,10 @@ struct OnboardingSplashView: View {
                     .foregroundColor(WinnieColors.primaryText(for: colorScheme))
 
                 // Tagline
-                VStack(spacing: WinnieSpacing.xs) {
-                    Text("Financial planning can be complex.")
-                        .font(WinnieTypography.bodyL())
-                        .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
-
-                    Text("Your financial planning app shouldn't be.")
-                        .font(WinnieTypography.bodyL())
-                        .fontWeight(.semibold)
-                        .foregroundColor(WinnieColors.primaryText(for: colorScheme))
-                }
+                Text("Save smarter, together.")
+                    .font(WinnieTypography.bodyL())
+                    .fontWeight(.semibold)
+                    .foregroundColor(WinnieColors.primaryText(for: colorScheme))
             }
             .multilineTextAlignment(.center)
 
