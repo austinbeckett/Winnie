@@ -62,7 +62,7 @@ struct WinnieTextField: View {
                 .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
 
             // Text field
-            TextField("", text: $text, prompt: Text(placeholder).foregroundColor(WinnieColors.cardText.opacity(0.5)))
+            TextField("", text: $text, prompt: Text(placeholder).foregroundColor(WinnieColors.cardText.opacity(WinnieColors.Opacity.tertiary)))
                 .font(WinnieTypography.bodyM())
                 .foregroundColor(WinnieColors.cardText)
                 .keyboardType(keyboardType)
@@ -182,7 +182,7 @@ struct WinnieCurrencyField: View {
                     .font(WinnieTypography.financialM())
                     .foregroundColor(WinnieColors.cardText)
 
-                TextField("", text: $text, prompt: Text("0").foregroundColor(WinnieColors.cardText.opacity(0.5)))
+                TextField("", text: $text, prompt: Text("0").foregroundColor(WinnieColors.cardText.opacity(WinnieColors.Opacity.tertiary)))
                     .font(WinnieTypography.financialM())
                     .foregroundColor(WinnieColors.cardText)
                     .keyboardType(.numberPad)

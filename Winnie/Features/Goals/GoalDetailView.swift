@@ -250,7 +250,7 @@ struct GoalDetailView: View {
                 VStack(alignment: .leading, spacing: WinnieSpacing.s) {
                     Text("Timeline")
                         .font(WinnieTypography.caption())
-                        .foregroundColor(WinnieColors.cardText.opacity(0.5))
+                        .contextTertiaryText()
                         .textCase(.uppercase)
                         .tracking(0.5)
 
@@ -269,7 +269,7 @@ struct GoalDetailView: View {
                 VStack(alignment: .leading, spacing: WinnieSpacing.s) {
                     Text("Growth")
                         .font(WinnieTypography.caption())
-                        .foregroundColor(WinnieColors.cardText.opacity(0.5))
+                        .contextTertiaryText()
                         .textCase(.uppercase)
                         .tracking(0.5)
 
@@ -298,11 +298,11 @@ struct GoalDetailView: View {
                 HStack(spacing: WinnieSpacing.xs) {
                     Image(systemName: "clock")
                         .font(.system(size: 12))
-                        .foregroundColor(WinnieColors.cardText.opacity(0.5))
+                        .contextTertiaryText()
 
                     Text("Created \(Formatting.date(viewModel.goal.createdAt))")
                         .font(WinnieTypography.caption())
-                        .foregroundColor(WinnieColors.cardText.opacity(0.5))
+                        .contextTertiaryText()
 
                     Spacer()
                 }
@@ -319,7 +319,7 @@ struct GoalDetailView: View {
 
             Text(label)
                 .font(WinnieTypography.bodyM())
-                .foregroundColor(WinnieColors.cardText.opacity(0.8))
+                .foregroundColor(WinnieColors.cardText.opacity(WinnieColors.Opacity.secondary))
 
             Spacer()
 
@@ -338,7 +338,7 @@ struct GoalDetailView: View {
 
             Text("Status")
                 .font(WinnieTypography.bodyM())
-                .foregroundColor(WinnieColors.cardText.opacity(0.8))
+                .foregroundColor(WinnieColors.cardText.opacity(WinnieColors.Opacity.secondary))
 
             Spacer()
 
@@ -459,15 +459,15 @@ struct GoalDetailView: View {
             VStack(spacing: WinnieSpacing.s) {
                 Image(systemName: "chart.line.uptrend.xyaxis")
                     .font(.system(size: 32))
-                    .foregroundColor(WinnieColors.cardText.opacity(0.5))
+                    .contextTertiaryText()
 
                 Text("No contributions yet")
                     .font(WinnieTypography.bodyM())
-                    .foregroundColor(WinnieColors.cardText.opacity(0.8))
+                    .contextSecondaryText()
 
                 Text("Tap \"Log Contribution\" to record your first contribution")
                     .font(WinnieTypography.caption())
-                    .foregroundColor(WinnieColors.cardText.opacity(0.5))
+                    .contextTertiaryText()
                     .multilineTextAlignment(.center)
             }
             .frame(maxWidth: .infinity)

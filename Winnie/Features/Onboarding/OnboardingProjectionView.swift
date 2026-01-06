@@ -173,7 +173,7 @@ struct OnboardingProjectionView: View {
                 VStack(spacing: WinnieSpacing.s) {
                     Text("Set a target date")
                         .font(WinnieTypography.caption())
-                        .foregroundColor(WinnieColors.cardText.opacity(0.5))
+                        .contextTertiaryText()
                         .textCase(.uppercase)
 
                     DatePicker(
@@ -188,6 +188,7 @@ struct OnboardingProjectionView: View {
                         onboardingState.goalDesiredDate = newDate
                     }
                 }
+                .cardContext(.pineTeal)
                 .padding(WinnieSpacing.m)
                 .background(WinnieColors.cardBackground(for: colorScheme))
                 .clipShape(RoundedRectangle(cornerRadius: WinnieSpacing.cardCornerRadius))
@@ -223,6 +224,7 @@ struct OnboardingProjectionView: View {
                 )
             }
         }
+        .cardContext(.pineTeal)
         .padding(WinnieSpacing.l)
         .background(WinnieColors.cardBackground(for: colorScheme))
         .clipShape(RoundedRectangle(cornerRadius: WinnieSpacing.cardCornerRadius))
@@ -233,13 +235,13 @@ struct OnboardingProjectionView: View {
         VStack(spacing: WinnieSpacing.xxs) {
             Text(value)
                 .font(WinnieTypography.financialM())
-                .foregroundColor(WinnieColors.cardText)
+                .contextPrimaryText()
                 .lineLimit(1)
                 .minimumScaleFactor(0.6)
 
             Text(label)
                 .font(WinnieTypography.caption())
-                .foregroundColor(WinnieColors.cardText.opacity(0.5))
+                .contextTertiaryText()
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity)

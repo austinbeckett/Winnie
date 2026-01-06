@@ -132,7 +132,7 @@ struct ContributionEntrySheet: View {
                 .fontWeight(.medium)
                 .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
 
-            TextField("", text: $notes, prompt: Text("e.g., Birthday money, Tax refund").foregroundColor(WinnieColors.cardText.opacity(0.5)), axis: .vertical)
+            TextField("", text: $notes, prompt: Text("e.g., Birthday money, Tax refund").foregroundColor(WinnieColors.cardText.opacity(WinnieColors.Opacity.tertiary)), axis: .vertical)
                 .font(WinnieTypography.bodyM())
                 .foregroundColor(WinnieColors.cardText)
                 .lineLimit(2...4)

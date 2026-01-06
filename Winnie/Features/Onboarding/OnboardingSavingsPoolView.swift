@@ -136,13 +136,13 @@ struct OnboardingSavingsPoolView: View {
             breakdownRow(
                 label: "Needs",
                 amount: -onboardingState.monthlyNeeds,
-                color: WinnieColors.cardText.opacity(0.5)
+                color: WinnieColors.cardText.opacity(WinnieColors.Opacity.tertiary)
             )
 
             breakdownRow(
                 label: "Wants",
                 amount: -onboardingState.monthlyWants,
-                color: WinnieColors.cardText.opacity(0.5)
+                color: WinnieColors.cardText.opacity(WinnieColors.Opacity.tertiary)
             )
 
             Divider()
@@ -154,6 +154,7 @@ struct OnboardingSavingsPoolView: View {
                 isBold: true
             )
         }
+        .cardContext(.pineTeal)
         .padding(WinnieSpacing.m)
         .background(WinnieColors.cardBackground(for: colorScheme))
         .clipShape(RoundedRectangle(cornerRadius: WinnieSpacing.cardCornerRadius))

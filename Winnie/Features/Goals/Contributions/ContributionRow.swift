@@ -54,7 +54,7 @@ struct ContributionRow: View {
 
                 Text(relativeDate)
                     .font(WinnieTypography.caption())
-                    .foregroundColor(WinnieColors.cardText.opacity(0.5))
+                    .contextTertiaryText()
             }
 
             Spacer()

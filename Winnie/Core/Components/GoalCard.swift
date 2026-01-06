@@ -44,7 +44,7 @@ struct GoalCard: View {
                     Text("\(goal.progressPercentageInt)%")
                         .font(WinnieTypography.bodyS())
                         .fontWeight(.medium)
-                        .foregroundColor(WinnieColors.cardText.opacity(0.7))
+                        .foregroundColor(WinnieColors.cardText.opacity(WinnieColors.Opacity.secondary))
                 }
 
                 // Progress bar
@@ -55,7 +55,7 @@ struct GoalCard: View {
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Saved")
                             .font(WinnieTypography.caption())
-                            .foregroundColor(WinnieColors.cardText.opacity(0.6))
+                            .foregroundColor(WinnieColors.cardText.opacity(WinnieColors.Opacity.label))
                         Text(Formatting.currency(goal.currentAmount))
                             .font(WinnieTypography.financialM())
                             .foregroundColor(WinnieColors.cardText)
@@ -68,10 +68,10 @@ struct GoalCard: View {
                     VStack(alignment: .trailing, spacing: 2) {
                         Text("Goal")
                             .font(WinnieTypography.caption())
-                            .foregroundColor(WinnieColors.cardText.opacity(0.6))
+                            .foregroundColor(WinnieColors.cardText.opacity(WinnieColors.Opacity.label))
                         Text(Formatting.currency(goal.targetAmount))
                             .font(WinnieTypography.financialM())
-                            .foregroundColor(WinnieColors.cardText.opacity(0.8))
+                            .foregroundColor(WinnieColors.cardText.opacity(WinnieColors.Opacity.secondary))
                             .lineLimit(1)
                             .minimumScaleFactor(0.6)
                     }
@@ -115,7 +115,7 @@ struct GoalCardCompact: View {
                 Text("\(goal.progressPercentageInt)%")
                     .font(WinnieTypography.bodyS())
                     .fontWeight(.medium)
-                    .foregroundColor(WinnieColors.cardText.opacity(0.7))
+                    .foregroundColor(WinnieColors.cardText.opacity(WinnieColors.Opacity.secondary))
                     .frame(width: 40, alignment: .trailing)
             }
         }

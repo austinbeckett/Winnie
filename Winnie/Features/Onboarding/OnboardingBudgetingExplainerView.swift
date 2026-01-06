@@ -62,6 +62,7 @@ struct OnboardingBudgetingExplainerView: View {
                         color: WinnieColors.accent
                     )
                 }
+                .cardContext(.pineTeal)
                 .padding(WinnieSpacing.m)
                 .background(WinnieColors.cardBackground(for: colorScheme))
                 .clipShape(RoundedRectangle(cornerRadius: WinnieSpacing.cardCornerRadius))
@@ -107,7 +108,7 @@ struct OnboardingBudgetingExplainerView: View {
 
                 Text(description)
                     .font(WinnieTypography.bodyS())
-                    .foregroundColor(WinnieColors.cardText.opacity(0.8))
+                    .contextSecondaryText()
             }
 
             Spacer()
