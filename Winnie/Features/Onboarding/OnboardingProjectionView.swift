@@ -233,11 +233,11 @@ struct OnboardingProjectionView: View {
         VStack(spacing: WinnieSpacing.xxs) {
             Text(value)
                 .font(WinnieTypography.financialM())
-                .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+                .foregroundColor(WinnieColors.cardText)
 
             Text(label)
                 .font(WinnieTypography.caption())
-                .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
+                .foregroundColor(WinnieColors.cardText.opacity(0.5))
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity)

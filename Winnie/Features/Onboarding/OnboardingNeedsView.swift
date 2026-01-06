@@ -127,7 +127,7 @@ struct OnboardingNeedsView: View {
             HStack {
                 Text("Total")
                     .font(WinnieTypography.bodyM().weight(.semibold))
-                    .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+                    .foregroundColor(WinnieColors.cardText)
                 Spacer()
                 Text("$\(breakdownTotal)")
                     .font(WinnieTypography.bodyM().weight(.semibold))
@@ -151,7 +151,7 @@ struct OnboardingNeedsView: View {
 
             Text(name)
                 .font(WinnieTypography.bodyS())
-                .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+                .foregroundColor(WinnieColors.cardText)
 
             Spacer()
 
@@ -164,7 +164,7 @@ struct OnboardingNeedsView: View {
                 }
             ), format: .currency(code: "USD").precision(.fractionLength(0)))
             .font(WinnieTypography.bodyS())
-            .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+            .foregroundColor(WinnieColors.cardText)
             .keyboardType(.numberPad)
             .multilineTextAlignment(.trailing)
             .frame(width: 80)

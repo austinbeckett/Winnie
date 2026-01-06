@@ -101,7 +101,7 @@ struct OnboardingGalleryView: View {
 
                     Text(step.name)
                         .font(WinnieTypography.bodyS())
-                        .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+                        .foregroundColor(WinnieColors.cardText)
                         .lineLimit(1)
 
                     Spacer()

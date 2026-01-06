@@ -85,7 +85,7 @@ struct OnboardingSavingsPoolView: View {
                 value: $onboardingState.directSavingsPool,
                 text: $savingsText,
                 suffix: "/mo",
-                accentValue: true
+                accentValue: false
             )
             .padding(.horizontal, WinnieSpacing.screenMarginMobile)
 
@@ -134,13 +134,13 @@ struct OnboardingSavingsPoolView: View {
             breakdownRow(
                 label: "Needs",
                 amount: -onboardingState.monthlyNeeds,
-                color: WinnieColors.tertiaryText(for: colorScheme)
+                color: WinnieColors.cardText.opacity(0.5)
             )
 
             breakdownRow(
                 label: "Wants",
                 amount: -onboardingState.monthlyWants,
-                color: WinnieColors.tertiaryText(for: colorScheme)
+                color: WinnieColors.cardText.opacity(0.5)
             )
 
             Divider()
@@ -167,7 +167,7 @@ struct OnboardingSavingsPoolView: View {
         HStack {
             Text(label)
                 .font(isBold ? WinnieTypography.bodyM().weight(.semibold) : WinnieTypography.bodyM())
-                .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+                .foregroundColor(WinnieColors.cardText)
 
             Spacer()
 
