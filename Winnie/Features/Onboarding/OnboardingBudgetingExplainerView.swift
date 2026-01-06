@@ -45,18 +45,18 @@ struct OnboardingBudgetingExplainerView: View {
                         icon: "house.fill",
                         title: "Needs",
                         description: "Fixed bills and essentials",
-                        color: WinnieColors.primaryText(for: colorScheme)
+                        color: WinnieColors.accent
                     )
 
                     categoryRow(
                         icon: "cart.fill",
                         title: "Wants",
                         description: "Discretionary spending",
-                        color: WinnieColors.primaryText(for: colorScheme)
+                        color: WinnieColors.accent
                     )
 
                     categoryRow(
-                        icon: "arrow.up.circle.fill",
+                        icon: "dollarsign.circle.fill",
                         title: "Savings",
                         description: "What's left for your goals",
                         color: WinnieColors.accent

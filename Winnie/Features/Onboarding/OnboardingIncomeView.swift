@@ -44,7 +44,7 @@ struct OnboardingIncomeView: View {
                 .padding(.horizontal, WinnieSpacing.screenMarginMobile)
 
                 // Helper text
-                Text("It's okay to guess but try to be as close as possible.")
+                Text("Please be as accurate as possible.")
                     .font(WinnieTypography.bodyS())
                     .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
             }

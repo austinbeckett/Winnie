@@ -59,6 +59,8 @@ struct GoalCard: View {
                         Text(Formatting.currency(goal.currentAmount))
                             .font(WinnieTypography.financialM())
                             .foregroundColor(WinnieColors.cardText)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.6)
                     }
 
                     Spacer()
@@ -70,6 +72,8 @@ struct GoalCard: View {
                         Text(Formatting.currency(goal.targetAmount))
                             .font(WinnieTypography.financialM())
                             .foregroundColor(WinnieColors.cardText.opacity(0.8))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.6)
                     }
                 }
             }

@@ -39,11 +39,11 @@ struct OnboardingWantsView: View {
             VStack(spacing: WinnieSpacing.xl) {
                 // Header
                 VStack(spacing: WinnieSpacing.s) {
-                    Text("Your discretionary spending")
+                    Text("Your \"wants\" spending")
                         .font(WinnieTypography.headlineL())
                         .foregroundColor(WinnieColors.primaryText(for: colorScheme))
 
-                    Text("About how much goes to wants and fun each month?")
+                    Text("How much goes to discretionary spending and fun each month?")
                         .font(WinnieTypography.bodyL())
                         .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
                         .multilineTextAlignment(.center)
@@ -63,7 +63,7 @@ struct OnboardingWantsView: View {
                     .opacity(showBreakdown ? 0.5 : 1)
 
                     // Helper text
-                    Text("Dining out, entertainment, shopping, hobbies—the fun stuff.")
+                    Text("Dining out, entertainment, shopping, hobbies—the things you want to do.")
                         .font(WinnieTypography.bodyS())
                         .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
                         .multilineTextAlignment(.center)
@@ -126,7 +126,7 @@ struct OnboardingWantsView: View {
             HStack {
                 Text("Total")
                     .font(WinnieTypography.bodyM().weight(.semibold))
-                    .foregroundColor(WinnieColors.cardText)
+                    .contextPrimaryText()
                 Spacer()
                 Text("$\(breakdownTotal)")
                     .font(WinnieTypography.bodyM().weight(.semibold))
@@ -134,6 +134,7 @@ struct OnboardingWantsView: View {
             }
             .padding(.top, WinnieSpacing.xs)
         }
+        .cardContext(.pineTeal)  // Set context so children use correct colors
         .padding(WinnieSpacing.m)
         .background(WinnieColors.cardBackground(for: colorScheme))
         .clipShape(RoundedRectangle(cornerRadius: WinnieSpacing.cardCornerRadius))
@@ -150,22 +151,18 @@ struct OnboardingWantsView: View {
 
             Text(name)
                 .font(WinnieTypography.bodyS())
-                .foregroundColor(WinnieColors.cardText)
+                .contextPrimaryText()
 
             Spacer()
 
-            // Small text field for amount
-            TextField("", value: Binding(
-                get: { categoryAmounts[name] ?? 0 },
-                set: { newValue in
-                    categoryAmounts[name] = newValue
-                    syncTotalFromCategories()
-                }
-            ), format: .currency(code: "USD").precision(.fractionLength(0)), prompt: Text("$0").foregroundColor(WinnieColors.cardText.opacity(0.5)))
-            .font(WinnieTypography.bodyS())
-            .foregroundColor(WinnieColors.cardText)
-            .keyboardType(.numberPad)
-            .multilineTextAlignment(.trailing)
+            // Amount input using reusable component
+            WinnieCardNumberField(
+                value: Binding(
+                    get: { categoryAmounts[name] ?? 0 },
+                    set: { categoryAmounts[name] = $0 }
+                ),
+                onChange: syncTotalFromCategories
+            )
             .frame(width: 80)
         }
     }

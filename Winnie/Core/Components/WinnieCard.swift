@@ -3,24 +3,28 @@ import SwiftUI
 /// A styled card container following Winnie design system.
 /// Supports multiple background styles with automatic text color adaptation.
 ///
+/// WinnieCard automatically sets `cardContext` in the environment, so child views
+/// can use context-aware modifiers like `.contextPrimaryText()` to automatically
+/// get the correct text color.
+///
 /// Usage:
 /// ```swift
-/// // Default Pine Teal card
+/// // Simple usage - text auto-adapts via context modifiers
 /// WinnieCard {
 ///     Text("Card content")
-///         .foregroundStyle(WinnieColors.cardTextColor(for: .pineTeal, colorScheme: colorScheme))
+///         .contextPrimaryText()  // Automatically uses ivory on pine teal
 /// }
 ///
-/// // Carbon Black card
+/// // Or use WinnieColors.cardText directly
+/// WinnieCard {
+///     Text("Card content")
+///         .foregroundColor(WinnieColors.cardText)
+/// }
+///
+/// // Different card styles
 /// WinnieCard(style: .carbon) {
-///     Text("Dark card content")
-///         .foregroundStyle(WinnieColors.cardTextColor(for: .carbon, colorScheme: colorScheme))
-/// }
-///
-/// // Ivory card (inverts in dark mode)
-/// WinnieCard(style: .ivory) {
-///     Text("Light card content")
-///         .foregroundStyle(WinnieColors.cardTextColor(for: .ivory, colorScheme: colorScheme))
+///     Text("Dark card")
+///         .contextPrimaryText()
 /// }
 ///
 /// // Card with accent border (for goals)
@@ -52,6 +56,7 @@ struct WinnieCard<Content: View>: View {
 
     var body: some View {
         content
+            .cardContext(style)  // Propagate card context to all children
             .padding(WinnieSpacing.l)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(WinnieColors.cardBackground(for: style, colorScheme: colorScheme))

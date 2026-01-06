@@ -123,6 +123,48 @@ enum WinnieCardStyle {
     case ivory
 }
 
+// MARK: - Card Context Environment
+
+/// Environment key to propagate card background context down the view hierarchy.
+/// This allows child views to automatically adapt their text colors based on their container.
+private struct CardContextKey: EnvironmentKey {
+    static let defaultValue: WinnieCardStyle? = nil  // nil = not inside a card
+}
+
+extension EnvironmentValues {
+    /// The current card style context (nil if not inside a card).
+    /// Child views can read this to automatically use correct text colors.
+    var cardContext: WinnieCardStyle? {
+        get { self[CardContextKey.self] }
+        set { self[CardContextKey.self] = newValue }
+    }
+}
+
+extension View {
+    /// Sets the card context for all child views.
+    /// Children can then use context-aware modifiers like `.contextPrimaryText()`.
+    func cardContext(_ style: WinnieCardStyle) -> some View {
+        environment(\.cardContext, style)
+    }
+}
+
+// MARK: - Opacity Levels
+
+extension WinnieColors {
+    /// Standard opacity levels for text hierarchy.
+    /// Use these instead of magic numbers for consistency.
+    enum Opacity {
+        /// Full opacity for primary text (1.0)
+        static let primary: Double = 1.0
+        /// Secondary text opacity (0.8)
+        static let secondary: Double = 0.8
+        /// Tertiary/placeholder text opacity (0.5)
+        static let tertiary: Double = 0.5
+        /// Small label text opacity (0.6)
+        static let label: Double = 0.6
+    }
+}
+
 // MARK: - Theme-Aware Colors
 
 extension WinnieColors {
@@ -332,6 +374,56 @@ extension WinnieColors {
     /// Light: Carbon Black at 15% | Dark: Sweet Salmon at 25%
     static func buttonShadow(for colorScheme: ColorScheme) -> Color {
         colorScheme == .dark ? sweetSalmon.opacity(0.25) : carbonBlack.opacity(0.15)
+    }
+}
+
+// MARK: - Context-Aware Text Modifiers
+
+extension View {
+    /// Applies primary text color based on card context.
+    /// - On card: uses card text color (ivory for dark backgrounds)
+    /// - On background: uses primaryText for current colorScheme
+    func contextPrimaryText() -> some View {
+        modifier(ContextTextModifier(opacity: WinnieColors.Opacity.primary))
+    }
+
+    /// Applies secondary text color based on card context (80% opacity).
+    func contextSecondaryText() -> some View {
+        modifier(ContextTextModifier(opacity: WinnieColors.Opacity.secondary))
+    }
+
+    /// Applies tertiary/placeholder text color based on card context (50% opacity).
+    func contextTertiaryText() -> some View {
+        modifier(ContextTextModifier(opacity: WinnieColors.Opacity.tertiary))
+    }
+
+    /// Applies label text color based on card context (60% opacity).
+    func contextLabelText() -> some View {
+        modifier(ContextTextModifier(opacity: WinnieColors.Opacity.label))
+    }
+}
+
+/// View modifier that reads card context from environment and applies appropriate text color.
+private struct ContextTextModifier: ViewModifier {
+    @Environment(\.cardContext) private var cardContext
+    @Environment(\.colorScheme) private var colorScheme
+
+    let opacity: Double
+
+    func body(content: Content) -> some View {
+        content.foregroundColor(textColor)
+    }
+
+    private var textColor: Color {
+        if let style = cardContext {
+            // We're inside a card - use card text color
+            return WinnieColors.cardTextColor(for: style, colorScheme: colorScheme)
+                .opacity(opacity)
+        } else {
+            // We're on the background - use primary text
+            return WinnieColors.primaryText(for: colorScheme)
+                .opacity(opacity)
+        }
     }
 }
 

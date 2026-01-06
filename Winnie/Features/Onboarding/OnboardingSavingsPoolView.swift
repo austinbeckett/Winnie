@@ -105,6 +105,8 @@ struct OnboardingSavingsPoolView: View {
             Text("$\(NSDecimalNumber(decimal: onboardingState.savingsPool).intValue)")
                 .font(WinnieTypography.financialXL())
                 .foregroundColor(WinnieColors.accent)
+                .lineLimit(1)
+                .minimumScaleFactor(0.5)
                 .contentTransition(.numericText())
                 .scaleEffect(hasAnimated ? 1 : 0.5)
                 .opacity(hasAnimated ? 1 : 0)

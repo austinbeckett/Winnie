@@ -135,7 +135,7 @@ struct OnboardingProjectionView: View {
 
         case .pastDesired, .normal:
             VStack(spacing: WinnieSpacing.s) {
-                Text("Based on your habits,")
+                Text("Based on your inputs,")
                     .font(WinnieTypography.bodyL())
                     .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
 
@@ -234,6 +234,8 @@ struct OnboardingProjectionView: View {
             Text(value)
                 .font(WinnieTypography.financialM())
                 .foregroundColor(WinnieColors.cardText)
+                .lineLimit(1)
+                .minimumScaleFactor(0.6)
 
             Text(label)
                 .font(WinnieTypography.caption())
