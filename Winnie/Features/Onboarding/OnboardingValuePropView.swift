@@ -36,7 +36,7 @@ struct OnboardingValuePropView: View {
         ChatMessage(text: "I know, maybe we can push that back a year or two", isFromMe: true),
         ChatMessage(text: "And what about the wedding? We haven't even started saving for that yet", isFromMe: false),
         ChatMessage(text: "Ugh, you're right. And if we have kids soon after", isFromMe: true),
-        ChatMessage(text: "Our little civic won't have enough room for a baby and the dog", isFromMe: false),
+        ChatMessage(text: "Our civic won't have enough room for a baby and the dog", isFromMe: false),
         ChatMessage(text: "Are we even saving enough for retirement through all of this?", isFromMe: false),
         ChatMessage(text: "I honestly have no idea", isFromMe: true),
         ChatMessage(text: "Me neither", isFromMe: false)
