@@ -120,40 +120,21 @@ struct GoalsListView: View {
                     }
                     .buttonStyle(.plain)
                 }
+
+                // Add button at the bottom of the list
+                addAnotherGoalButton
             }
             .padding(.horizontal, WinnieSpacing.screenMarginMobile)
             .padding(.top, WinnieSpacing.m)
             .padding(.bottom, WinnieSpacing.m)
-        }
-        .safeAreaInset(edge: .bottom) {
-            addAnotherGoalButton
         }
     }
 
     // MARK: - Add Another Goal Button
 
     private var addAnotherGoalButton: some View {
-        VStack(spacing: 0) {
-            // Gradient fade for smooth transition from content
-            LinearGradient(
-                colors: [
-                    WinnieColors.background(for: colorScheme).opacity(0),
-                    WinnieColors.background(for: colorScheme)
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .frame(height: WinnieSpacing.l)
-
-            // Button container
-            VStack {
-                WinnieButton("Add a new goal", style: .primary) {
-                    showCreateGoal = true
-                }
-            }
-            .padding(.horizontal, WinnieSpacing.screenMarginMobile)
-            .padding(.bottom, WinnieSpacing.m)
-            .background(WinnieColors.background(for: colorScheme))
+        WinnieButton("Add a new goal", style: .primary) {
+            showCreateGoal = true
         }
     }
 

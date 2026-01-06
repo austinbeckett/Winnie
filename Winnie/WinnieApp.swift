@@ -36,16 +36,13 @@ struct WinnieApp: App {
     /// Called once at app startup. Uses dynamic UIColors for automatic dark/light mode support.
     /// Note: SwiftUI views use WinnieColors with @Environment(\.colorScheme) instead.
     private func configureGlobalAppearance() {
-        // Serif fonts for navigation titles (matches Winnie design system)
-        let largeTitleFont: UIFont = {
-            let descriptor = UIFont.systemFont(ofSize: 34, weight: .bold).fontDescriptor.withDesign(.serif)
-            return descriptor.map { UIFont(descriptor: $0, size: 34) } ?? UIFont.systemFont(ofSize: 34, weight: .bold)
-        }()
+        // Use EB Garamond for navigation titles (matches Winnie design system)
+        // Falls back to system serif if custom font fails to load
+        let largeTitleFont = UIFont(name: "EBGaramond-SemiBold", size: 34)
+            ?? UIFont.systemFont(ofSize: 34, weight: .bold)
 
-        let inlineTitleFont: UIFont = {
-            let descriptor = UIFont.systemFont(ofSize: 17, weight: .semibold).fontDescriptor.withDesign(.serif)
-            return descriptor.map { UIFont(descriptor: $0, size: 17) } ?? UIFont.systemFont(ofSize: 17, weight: .semibold)
-        }()
+        let inlineTitleFont = UIFont(name: "EBGaramond-SemiBold", size: 17)
+            ?? UIFont.systemFont(ofSize: 17, weight: .semibold)
 
         // Configure navigation bar
         let appearance = UINavigationBarAppearance()
