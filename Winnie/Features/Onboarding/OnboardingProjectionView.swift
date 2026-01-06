@@ -173,7 +173,7 @@ struct OnboardingProjectionView: View {
                 VStack(spacing: WinnieSpacing.s) {
                     Text("Set a target date")
                         .font(WinnieTypography.caption())
-                        .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
+                        .foregroundColor(WinnieColors.cardText.opacity(0.5))
                         .textCase(.uppercase)
 
                     DatePicker(

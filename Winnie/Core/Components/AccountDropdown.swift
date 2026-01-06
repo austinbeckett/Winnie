@@ -97,7 +97,7 @@ struct AccountDropdown: View {
 
     private var customTextField: some View {
         HStack(spacing: WinnieSpacing.s) {
-            TextField("Enter account name", text: $customText)
+            TextField("", text: $customText, prompt: Text("Enter account name").foregroundColor(WinnieColors.cardText.opacity(0.5)))
                 .font(WinnieTypography.bodyM())
                 .foregroundStyle(WinnieColors.cardText)
                 .focused($isCustomFieldFocused)

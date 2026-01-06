@@ -47,7 +47,7 @@ struct EditNameSheet: View {
                         .textCase(.uppercase)
                         .tracking(0.5)
 
-                    TextField("Enter your name", text: $name)
+                    TextField("", text: $name, prompt: Text("Enter your name").foregroundColor(WinnieColors.cardText.opacity(0.5)))
                         .font(WinnieTypography.bodyL())
                         .foregroundColor(WinnieColors.cardText)
                         .padding(WinnieSpacing.m)

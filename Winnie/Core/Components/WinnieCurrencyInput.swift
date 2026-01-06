@@ -45,7 +45,7 @@ struct WinnieCurrencyInput: View {
                 .foregroundColor(isFocused ? WinnieColors.accent : WinnieColors.cardText.opacity(0.5))
 
             // Text field
-            TextField(placeholder, text: $text)
+            TextField("", text: $text, prompt: Text(placeholder).foregroundColor(WinnieColors.cardText.opacity(0.5)))
                 .font(WinnieTypography.financialL())
                 .foregroundColor(accentValue ? WinnieColors.accent : WinnieColors.cardText)
                 .keyboardType(.numberPad)

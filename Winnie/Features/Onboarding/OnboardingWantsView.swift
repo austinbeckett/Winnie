@@ -155,13 +155,13 @@ struct OnboardingWantsView: View {
             Spacer()
 
             // Small text field for amount
-            TextField("$0", value: Binding(
+            TextField("", value: Binding(
                 get: { categoryAmounts[name] ?? 0 },
                 set: { newValue in
                     categoryAmounts[name] = newValue
                     syncTotalFromCategories()
                 }
-            ), format: .currency(code: "USD").precision(.fractionLength(0)))
+            ), format: .currency(code: "USD").precision(.fractionLength(0)), prompt: Text("$0").foregroundColor(WinnieColors.cardText.opacity(0.5)))
             .font(WinnieTypography.bodyS())
             .foregroundColor(WinnieColors.cardText)
             .keyboardType(.numberPad)

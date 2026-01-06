@@ -74,7 +74,7 @@ struct GoalSuggestionsView: View {
                 Text(suggestion.name)
                     .font(WinnieTypography.bodyM())
                     .fontWeight(.medium)
-                    .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+                    .foregroundColor(WinnieColors.cardText)
 
                 Spacer()
             }

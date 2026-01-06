@@ -101,7 +101,7 @@ struct GoalDetailsFormView: View {
 
             TextEditor(text: $notes)
                 .font(WinnieTypography.bodyM())
-                .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+                .foregroundColor(WinnieColors.cardText)
                 .scrollContentBackground(.hidden)
                 .padding(WinnieSpacing.m)
                 .frame(minHeight: 100)
