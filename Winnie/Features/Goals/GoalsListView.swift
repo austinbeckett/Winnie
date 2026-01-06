@@ -147,7 +147,7 @@ struct GoalsListView: View {
 
             // Button container
             VStack {
-                WinnieButton("Add a new goal", style: .secondary) {
+                WinnieButton("Add a new goal", style: .primary) {
                     showCreateGoal = true
                 }
             }
