@@ -91,11 +91,11 @@ struct OnboardingGoalPickerView: View {
                 VStack(alignment: .leading, spacing: WinnieSpacing.xxs) {
                     Text(title(for: goalType))
                         .font(WinnieTypography.bodyL().weight(.semibold))
-                        .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+                        .foregroundColor(WinnieColors.cardText)
 
                     Text(subtitle(for: goalType))
                         .font(WinnieTypography.bodyS())
-                        .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
+                        .foregroundColor(WinnieColors.cardText.opacity(0.8))
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(WinnieSpacing.m)

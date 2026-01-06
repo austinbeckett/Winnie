@@ -144,16 +144,42 @@ Users can select a color for each goal from this warm palette:
 
 ### Cards
 
-#### Standard Card (Pine Teal)
-- **Background**: Pine Teal (`#034F46`) in both modes
-- **Text**: Always Ivory (`#FFFFEB`)
+Cards support three background styles via `WinnieCardStyle`:
+
+#### Card Styles
+
+| Style | Light Mode BG | Dark Mode BG | Text Color |
+|-------|---------------|--------------|------------|
+| `.pineTeal` | Pine Teal | Pine Teal | Ivory |
+| `.carbon` | Carbon Black | Carbon Black | Ivory |
+| `.ivory` | Ivory | Carbon Black | Adapts |
+
+**Usage:**
+```swift
+// Pine Teal (default)
+WinnieCard {
+    Text("Content").cardPrimaryText(for: .pineTeal)
+}
+
+// Carbon Black
+WinnieCard(style: .carbon) {
+    Text("Content").cardPrimaryText(for: .carbon)
+}
+
+// Ivory (inverts in dark mode)
+WinnieCard(style: .ivory) {
+    Text("Content").cardPrimaryText(for: .ivory)
+}
+```
+
+#### Common Card Properties
 - **Border radius**: 20px
 - **Padding**: 24px
 - **Shadow (light)**: `0 2px 12px rgba(26, 26, 26, 0.08)`
 - **Shadow (dark)**: None
 
 #### Goal Cards
-- **Base**: Standard card styling
+- **Base**: Standard card styling (`.pineTeal` by default)
 - **Accent border**: 4px left border in goal's selected color
 - **Icon background**: Ivory at 20% opacity
 
@@ -233,7 +259,7 @@ All design tokens are defined in:
 Before considering a screen complete:
 
 - [ ] Background uses Ivory (light) / Carbon Black (dark)
-- [ ] Cards use Pine Teal with Ivory text
+- [ ] Cards use appropriate style (`.pineTeal`, `.carbon`, or `.ivory`) with matching text colors
 - [ ] Buttons have 3px borders
 - [ ] Primary buttons use Sweet Salmon
 - [ ] Goal colors use the new warm palette

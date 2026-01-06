@@ -50,11 +50,11 @@ struct ContributionRow: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(descriptionText)
                     .font(WinnieTypography.bodyM())
-                    .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+                    .foregroundColor(WinnieColors.cardText)
 
                 Text(relativeDate)
                     .font(WinnieTypography.caption())
-                    .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
+                    .foregroundColor(WinnieColors.cardText.opacity(0.5))
             }
 
             Spacer()

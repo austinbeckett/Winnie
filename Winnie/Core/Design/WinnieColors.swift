@@ -110,6 +110,19 @@ enum GoalPresetColor: String, CaseIterable, Identifiable, Sendable {
     static let defaultColor: GoalPresetColor = .coral
 }
 
+// MARK: - Card Styles
+
+/// Card background style variants for mixed card aesthetics.
+/// Each style provides consistent background and text colors.
+enum WinnieCardStyle {
+    /// Pine Teal background with Ivory text (same in both light/dark modes)
+    case pineTeal
+    /// Carbon Black background with Ivory text (same in both light/dark modes)
+    case carbon
+    /// Ivory background in light mode, Carbon Black in dark mode (text adapts)
+    case ivory
+}
+
 // MARK: - Theme-Aware Colors
 
 extension WinnieColors {
@@ -126,6 +139,50 @@ extension WinnieColors {
     /// Both modes: Pine Teal (#034F46)
     static func cardBackground(for colorScheme: ColorScheme) -> Color {
         pineTeal
+    }
+
+    // MARK: - Card Style Colors
+
+    /// Card background color based on style.
+    /// - Parameters:
+    ///   - style: The card style (pineTeal, carbon, or ivory)
+    ///   - colorScheme: Current color scheme for adaptive styles
+    /// - Returns: Background color for the card
+    static func cardBackground(for style: WinnieCardStyle, colorScheme: ColorScheme) -> Color {
+        switch style {
+        case .pineTeal:
+            return pineTeal
+        case .carbon:
+            return carbonBlack
+        case .ivory:
+            // Ivory inverts in dark mode to maintain theme consistency
+            return colorScheme == .dark ? carbonBlack : ivory
+        }
+    }
+
+    /// Primary text color for card content based on style.
+    /// - Parameters:
+    ///   - style: The card style (pineTeal, carbon, or ivory)
+    ///   - colorScheme: Current color scheme for adaptive styles
+    /// - Returns: Primary text color for the card
+    static func cardTextColor(for style: WinnieCardStyle, colorScheme: ColorScheme) -> Color {
+        switch style {
+        case .pineTeal, .carbon:
+            // Dark backgrounds always use Ivory text
+            return ivory
+        case .ivory:
+            // Light background uses dark text; dark mode uses light text
+            return colorScheme == .dark ? ivory : carbonBlack
+        }
+    }
+
+    /// Secondary text color for card content based on style (80% opacity).
+    /// - Parameters:
+    ///   - style: The card style (pineTeal, carbon, or ivory)
+    ///   - colorScheme: Current color scheme for adaptive styles
+    /// - Returns: Secondary text color for the card
+    static func cardSecondaryTextColor(for style: WinnieCardStyle, colorScheme: ColorScheme) -> Color {
+        cardTextColor(for: style, colorScheme: colorScheme).opacity(0.8)
     }
 
     // MARK: - Text Colors

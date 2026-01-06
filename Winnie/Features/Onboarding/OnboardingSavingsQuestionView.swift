@@ -64,11 +64,11 @@ struct OnboardingSavingsQuestionView: View {
             VStack(alignment: .leading, spacing: WinnieSpacing.xxs) {
                 Text(title)
                     .font(WinnieTypography.bodyM().weight(.semibold))
-                    .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+                    .foregroundColor(WinnieColors.cardText)
 
                 Text(subtitle)
                     .font(WinnieTypography.bodyS())
-                    .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
+                    .foregroundColor(WinnieColors.cardText.opacity(0.8))
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(WinnieSpacing.m)

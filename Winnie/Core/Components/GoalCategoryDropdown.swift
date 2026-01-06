@@ -42,13 +42,13 @@ struct GoalCategoryDropdown: View {
                 HStack {
                     Text(selectedType.displayName)
                         .font(WinnieTypography.bodyM())
-                        .foregroundStyle(WinnieColors.primaryText(for: colorScheme))
+                        .foregroundStyle(WinnieColors.cardText)
 
                     Spacer()
 
                     Image(systemName: "chevron.down")
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundStyle(WinnieColors.secondaryText(for: colorScheme))
+                        .foregroundStyle(WinnieColors.cardText.opacity(0.8))
                 }
                 .padding(.horizontal, WinnieSpacing.m)
                 .frame(height: WinnieSpacing.inputHeight)

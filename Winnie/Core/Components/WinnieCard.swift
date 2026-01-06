@@ -1,13 +1,26 @@
 import SwiftUI
 
 /// A styled card container following Winnie design system.
-/// Uses Pine Teal background for strong brand presence with Ivory text.
+/// Supports multiple background styles with automatic text color adaptation.
 ///
 /// Usage:
 /// ```swift
-/// // Basic card
+/// // Default Pine Teal card
 /// WinnieCard {
-///     Text("Card content here")
+///     Text("Card content")
+///         .foregroundStyle(WinnieColors.cardTextColor(for: .pineTeal, colorScheme: colorScheme))
+/// }
+///
+/// // Carbon Black card
+/// WinnieCard(style: .carbon) {
+///     Text("Dark card content")
+///         .foregroundStyle(WinnieColors.cardTextColor(for: .carbon, colorScheme: colorScheme))
+/// }
+///
+/// // Ivory card (inverts in dark mode)
+/// WinnieCard(style: .ivory) {
+///     Text("Light card content")
+///         .foregroundStyle(WinnieColors.cardTextColor(for: .ivory, colorScheme: colorScheme))
 /// }
 ///
 /// // Card with accent border (for goals)
@@ -16,19 +29,23 @@ import SwiftUI
 /// }
 /// ```
 struct WinnieCard<Content: View>: View {
+    let style: WinnieCardStyle
     let accentColor: Color?
     let content: Content
 
     @Environment(\.colorScheme) private var colorScheme
 
-    /// Creates a card with optional accent border.
+    /// Creates a card with optional style and accent border.
     /// - Parameters:
+    ///   - style: The card background style. Defaults to `.pineTeal`.
     ///   - accentColor: Optional left border color (4pt wide). Use for goal type identification.
     ///   - content: The card's content.
     init(
+        style: WinnieCardStyle = .pineTeal,
         accentColor: Color? = nil,
         @ViewBuilder content: () -> Content
     ) {
+        self.style = style
         self.accentColor = accentColor
         self.content = content()
     }
@@ -37,7 +54,7 @@ struct WinnieCard<Content: View>: View {
         content
             .padding(WinnieSpacing.l)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(WinnieColors.cardBackground(for: colorScheme))
+            .background(WinnieColors.cardBackground(for: style, colorScheme: colorScheme))
             .clipShape(RoundedRectangle(cornerRadius: WinnieSpacing.cardCornerRadius))
             .overlay(accentBorderOverlay)
             .shadow(
@@ -65,29 +82,53 @@ struct WinnieCard<Content: View>: View {
     }
 }
 
-// MARK: - Preview
+// MARK: - Card Text Modifiers
 
-#Preview("Basic Card") {
-    VStack(spacing: WinnieSpacing.m) {
-        WinnieCard {
-            VStack(alignment: .leading, spacing: WinnieSpacing.xs) {
-                Text("Card Title")
-                    .font(WinnieTypography.headlineM())
-                    .foregroundColor(WinnieColors.cardText)
-                Text("This is some card content that explains something important.")
-                    .font(WinnieTypography.bodyM())
-                    .foregroundColor(WinnieColors.cardText.opacity(0.8))
-            }
-        }
+extension View {
+    /// Applies primary text styling for card content based on the card style.
+    /// - Parameter style: The card style to match text color to
+    /// - Returns: View with appropriate foreground color
+    func cardPrimaryText(for style: WinnieCardStyle) -> some View {
+        modifier(CardTextModifier(style: style, isSecondary: false))
+    }
 
-        WinnieCard {
-            Text("Simple card with just text")
-                .font(WinnieTypography.bodyM())
-                .foregroundColor(WinnieColors.cardText)
+    /// Applies secondary text styling for card content based on the card style.
+    /// - Parameter style: The card style to match text color to
+    /// - Returns: View with appropriate foreground color at 80% opacity
+    func cardSecondaryText(for style: WinnieCardStyle) -> some View {
+        modifier(CardTextModifier(style: style, isSecondary: true))
+    }
+}
+
+/// View modifier that applies the correct text color for a card style.
+private struct CardTextModifier: ViewModifier {
+    let style: WinnieCardStyle
+    let isSecondary: Bool
+
+    @Environment(\.colorScheme) private var colorScheme
+
+    func body(content: Content) -> some View {
+        content.foregroundStyle(textColor)
+    }
+
+    private var textColor: Color {
+        if isSecondary {
+            return WinnieColors.cardSecondaryTextColor(for: style, colorScheme: colorScheme)
+        } else {
+            return WinnieColors.cardTextColor(for: style, colorScheme: colorScheme)
         }
     }
-    .padding(WinnieSpacing.l)
-    .background(WinnieColors.ivory)
+}
+
+// MARK: - Preview
+
+#Preview("Card Styles") {
+    CardStylePreview()
+}
+
+#Preview("Card Styles - Dark Mode") {
+    CardStylePreview()
+        .preferredColorScheme(.dark)
 }
 
 #Preview("Cards with Accent Borders") {
@@ -109,32 +150,56 @@ struct WinnieCard<Content: View>: View {
                 .font(WinnieTypography.headlineM())
                 .foregroundColor(WinnieColors.cardText)
         }
-
-        WinnieCard(accentColor: GoalPresetColor.clay.color) {
-            Text("Clay Goal")
-                .font(WinnieTypography.headlineM())
-                .foregroundColor(WinnieColors.cardText)
-        }
     }
     .padding(WinnieSpacing.l)
     .background(WinnieColors.ivory)
 }
 
-#Preview("Dark Mode") {
-    VStack(spacing: WinnieSpacing.m) {
-        WinnieCard {
-            Text("Card in Dark Mode")
-                .font(WinnieTypography.headlineM())
-                .foregroundColor(WinnieColors.cardText)
-        }
+/// Preview helper that shows all three card styles
+private struct CardStylePreview: View {
+    @Environment(\.colorScheme) private var colorScheme
 
-        WinnieCard(accentColor: GoalPresetColor.coral.color) {
-            Text("With Accent Border")
-                .font(WinnieTypography.headlineM())
-                .foregroundColor(WinnieColors.cardText)
+    var body: some View {
+        ScrollView {
+            VStack(spacing: WinnieSpacing.m) {
+                // Pine Teal (default)
+                WinnieCard(style: .pineTeal) {
+                    VStack(alignment: .leading, spacing: WinnieSpacing.xs) {
+                        Text("Pine Teal Card")
+                            .font(WinnieTypography.headlineM())
+                            .cardPrimaryText(for: .pineTeal)
+                        Text("Default style with Pine Teal background and Ivory text.")
+                            .font(WinnieTypography.bodyM())
+                            .cardSecondaryText(for: .pineTeal)
+                    }
+                }
+
+                // Carbon Black
+                WinnieCard(style: .carbon) {
+                    VStack(alignment: .leading, spacing: WinnieSpacing.xs) {
+                        Text("Carbon Black Card")
+                            .font(WinnieTypography.headlineM())
+                            .cardPrimaryText(for: .carbon)
+                        Text("Dark style with Carbon Black background and Ivory text.")
+                            .font(WinnieTypography.bodyM())
+                            .cardSecondaryText(for: .carbon)
+                    }
+                }
+
+                // Ivory (adaptive)
+                WinnieCard(style: .ivory) {
+                    VStack(alignment: .leading, spacing: WinnieSpacing.xs) {
+                        Text("Ivory Card")
+                            .font(WinnieTypography.headlineM())
+                            .cardPrimaryText(for: .ivory)
+                        Text("Light style that inverts in dark mode for theme consistency.")
+                            .font(WinnieTypography.bodyM())
+                            .cardSecondaryText(for: .ivory)
+                    }
+                }
+            }
+            .padding(WinnieSpacing.l)
         }
+        .background(WinnieColors.background(for: colorScheme))
     }
-    .padding(WinnieSpacing.l)
-    .background(WinnieColors.carbonBlack)
-    .preferredColorScheme(.dark)
 }

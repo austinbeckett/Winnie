@@ -64,7 +64,7 @@ struct WinnieTextField: View {
             // Text field
             TextField(placeholder, text: $text)
                 .font(WinnieTypography.bodyM())
-                .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+                .foregroundColor(WinnieColors.cardText)
                 .keyboardType(keyboardType)
                 .textContentType(contentType)
                 .textInputAutocapitalization(autocapitalization)
@@ -180,11 +180,11 @@ struct WinnieCurrencyField: View {
             HStack(spacing: WinnieSpacing.xs) {
                 Text("$")
                     .font(WinnieTypography.financialM())
-                    .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+                    .foregroundColor(WinnieColors.cardText)
 
                 TextField("0", text: $text)
                     .font(WinnieTypography.financialM())
-                    .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+                    .foregroundColor(WinnieColors.cardText)
                     .keyboardType(.numberPad)
                     .focused($isFocused)
             }

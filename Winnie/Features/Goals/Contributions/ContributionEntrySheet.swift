@@ -134,7 +134,7 @@ struct ContributionEntrySheet: View {
 
             TextField("e.g., Birthday money, Tax refund", text: $notes, axis: .vertical)
                 .font(WinnieTypography.bodyM())
-                .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+                .foregroundColor(WinnieColors.cardText)
                 .lineLimit(2...4)
                 .padding(WinnieSpacing.m)
                 .background(WinnieColors.cardBackground(for: colorScheme))

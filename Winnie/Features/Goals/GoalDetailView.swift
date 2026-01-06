@@ -192,7 +192,7 @@ struct GoalDetailView: View {
             VStack(alignment: .leading, spacing: WinnieSpacing.m) {
                 Text("Contributions")
                     .font(WinnieTypography.headlineM())
-                    .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+                    .foregroundColor(WinnieColors.cardText)
 
                 VStack(spacing: WinnieSpacing.s) {
                     // Current user row
@@ -200,12 +200,12 @@ struct GoalDetailView: View {
                         UserProfileAvatar(isCurrentUser: true, size: .small)
                         Text(viewModel.currentUserName)
                             .font(WinnieTypography.bodyM())
-                            .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+                            .foregroundColor(WinnieColors.cardText)
                         Spacer()
                         Text(Formatting.currency(viewModel.currentUserTotal))
                             .font(WinnieTypography.bodyM())
                             .fontWeight(.semibold)
-                            .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+                            .foregroundColor(WinnieColors.cardText)
                     }
 
                     // Partner row
@@ -213,12 +213,12 @@ struct GoalDetailView: View {
                         UserProfileAvatar(isCurrentUser: false, size: .small)
                         Text(viewModel.partnerName)
                             .font(WinnieTypography.bodyM())
-                            .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+                            .foregroundColor(WinnieColors.cardText)
                         Spacer()
                         Text(Formatting.currency(viewModel.partnerTotal))
                             .font(WinnieTypography.bodyM())
                             .fontWeight(.semibold)
-                            .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+                            .foregroundColor(WinnieColors.cardText)
                     }
                 }
 
@@ -243,14 +243,14 @@ struct GoalDetailView: View {
             VStack(spacing: WinnieSpacing.l) {
                 Text("Details")
                     .font(WinnieTypography.headlineM())
-                    .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+                    .foregroundColor(WinnieColors.cardText)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                 // MARK: Timeline Group
                 VStack(alignment: .leading, spacing: WinnieSpacing.s) {
                     Text("Timeline")
                         .font(WinnieTypography.caption())
-                        .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
+                        .foregroundColor(WinnieColors.cardText.opacity(0.5))
                         .textCase(.uppercase)
                         .tracking(0.5)
 
@@ -269,7 +269,7 @@ struct GoalDetailView: View {
                 VStack(alignment: .leading, spacing: WinnieSpacing.s) {
                     Text("Growth")
                         .font(WinnieTypography.caption())
-                        .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
+                        .foregroundColor(WinnieColors.cardText.opacity(0.5))
                         .textCase(.uppercase)
                         .tracking(0.5)
 
@@ -298,11 +298,11 @@ struct GoalDetailView: View {
                 HStack(spacing: WinnieSpacing.xs) {
                     Image(systemName: "clock")
                         .font(.system(size: 12))
-                        .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
+                        .foregroundColor(WinnieColors.cardText.opacity(0.5))
 
                     Text("Created \(Formatting.date(viewModel.goal.createdAt))")
                         .font(WinnieTypography.caption())
-                        .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
+                        .foregroundColor(WinnieColors.cardText.opacity(0.5))
 
                     Spacer()
                 }
@@ -319,13 +319,13 @@ struct GoalDetailView: View {
 
             Text(label)
                 .font(WinnieTypography.bodyM())
-                .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
+                .foregroundColor(WinnieColors.cardText.opacity(0.8))
 
             Spacer()
 
             Text(value)
                 .font(WinnieTypography.bodyM())
-                .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+                .foregroundColor(WinnieColors.cardText)
         }
     }
 
@@ -338,7 +338,7 @@ struct GoalDetailView: View {
 
             Text("Status")
                 .font(WinnieTypography.bodyM())
-                .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
+                .foregroundColor(WinnieColors.cardText.opacity(0.8))
 
             Spacer()
 
@@ -459,15 +459,15 @@ struct GoalDetailView: View {
             VStack(spacing: WinnieSpacing.s) {
                 Image(systemName: "chart.line.uptrend.xyaxis")
                     .font(.system(size: 32))
-                    .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
+                    .foregroundColor(WinnieColors.cardText.opacity(0.5))
 
                 Text("No contributions yet")
                     .font(WinnieTypography.bodyM())
-                    .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
+                    .foregroundColor(WinnieColors.cardText.opacity(0.8))
 
                 Text("Tap \"Log Contribution\" to record your first contribution")
                     .font(WinnieTypography.caption())
-                    .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
+                    .foregroundColor(WinnieColors.cardText.opacity(0.5))
                     .multilineTextAlignment(.center)
             }
             .frame(maxWidth: .infinity)

@@ -42,12 +42,12 @@ struct WinnieCurrencyInput: View {
             // Dollar sign
             Text("$")
                 .font(WinnieTypography.financialL())
-                .foregroundColor(isFocused ? WinnieColors.accent : WinnieColors.tertiaryText(for: colorScheme))
+                .foregroundColor(isFocused ? WinnieColors.accent : WinnieColors.cardText.opacity(0.5))
 
             // Text field
             TextField(placeholder, text: $text)
                 .font(WinnieTypography.financialL())
-                .foregroundColor(accentValue ? WinnieColors.accent : WinnieColors.primaryText(for: colorScheme))
+                .foregroundColor(accentValue ? WinnieColors.accent : WinnieColors.cardText)
                 .keyboardType(.numberPad)
                 .multilineTextAlignment(.leading)
                 .focused($isFocused)
@@ -71,7 +71,7 @@ struct WinnieCurrencyInput: View {
             if let suffix {
                 Text(suffix)
                     .font(WinnieTypography.bodyL())
-                    .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
+                    .foregroundColor(WinnieColors.cardText.opacity(0.5))
             }
         }
         .padding(.horizontal, WinnieSpacing.l)

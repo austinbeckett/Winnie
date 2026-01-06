@@ -72,15 +72,15 @@ struct AccountDropdown: View {
                     .font(WinnieTypography.bodyM())
                     .foregroundStyle(
                         selectedAccount == nil
-                            ? WinnieColors.tertiaryText(for: colorScheme)
-                            : WinnieColors.primaryText(for: colorScheme)
+                            ? WinnieColors.cardText.opacity(0.5)
+                            : WinnieColors.cardText
                     )
 
                 Spacer()
 
                 Image(systemName: "chevron.down")
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundStyle(WinnieColors.secondaryText(for: colorScheme))
+                    .foregroundStyle(WinnieColors.cardText.opacity(0.8))
             }
             .padding(.horizontal, WinnieSpacing.m)
             .frame(height: WinnieSpacing.inputHeight)
@@ -99,7 +99,7 @@ struct AccountDropdown: View {
         HStack(spacing: WinnieSpacing.s) {
             TextField("Enter account name", text: $customText)
                 .font(WinnieTypography.bodyM())
-                .foregroundStyle(WinnieColors.primaryText(for: colorScheme))
+                .foregroundStyle(WinnieColors.cardText)
                 .focused($isCustomFieldFocused)
                 .onSubmit {
                     commitCustomText()
@@ -112,7 +112,7 @@ struct AccountDropdown: View {
                 cancelCustom()
             } label: {
                 Image(systemName: "xmark.circle.fill")
-                    .foregroundStyle(WinnieColors.tertiaryText(for: colorScheme))
+                    .foregroundStyle(WinnieColors.cardText.opacity(0.5))
             }
         }
         .padding(.horizontal, WinnieSpacing.m)

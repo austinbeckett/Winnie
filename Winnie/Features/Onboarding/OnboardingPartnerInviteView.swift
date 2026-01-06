@@ -75,7 +75,7 @@ struct OnboardingPartnerInviteView: View {
 
             Text(text)
                 .font(WinnieTypography.bodyM())
-                .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+                .foregroundColor(WinnieColors.cardText)
         }
     }
 }

@@ -49,6 +49,7 @@ struct EditNameSheet: View {
 
                     TextField("Enter your name", text: $name)
                         .font(WinnieTypography.bodyL())
+                        .foregroundColor(WinnieColors.cardText)
                         .padding(WinnieSpacing.m)
                         .background(WinnieColors.cardBackground(for: colorScheme))
                         .clipShape(RoundedRectangle(cornerRadius: WinnieSpacing.inputCornerRadius))
