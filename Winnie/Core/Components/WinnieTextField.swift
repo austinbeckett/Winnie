@@ -129,7 +129,7 @@ struct WinnieTextField: View {
         if let error, !error.isEmpty {
             return WinnieColors.error(for: colorScheme)
         } else if isFocused {
-            return WinnieColors.amethystSmoke
+            return WinnieColors.sweetSalmon
         } else {
             return WinnieColors.inputBorder(for: colorScheme)
         }
@@ -210,7 +210,7 @@ struct WinnieCurrencyField: View {
         if let error, !error.isEmpty {
             return WinnieColors.error(for: colorScheme)
         } else if isFocused {
-            return WinnieColors.amethystSmoke
+            return WinnieColors.sweetSalmon
         } else {
             return WinnieColors.inputBorder(for: colorScheme)
         }
@@ -255,7 +255,7 @@ struct WinnieCurrencyField: View {
         }
         .padding(WinnieSpacing.l)
     }
-    .background(WinnieColors.parchment)
+    .background(WinnieColors.ivory)
 }
 
 #Preview("Dark Mode") {
@@ -272,6 +272,6 @@ struct WinnieCurrencyField: View {
         )
     }
     .padding(WinnieSpacing.l)
-    .background(WinnieColors.blackberryCream)
+    .background(WinnieColors.carbonBlack)
     .preferredColorScheme(.dark)
 }

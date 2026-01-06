@@ -51,7 +51,7 @@ struct GoalAppearanceSheet: View {
                         dismiss()
                     }
                     .fontWeight(.semibold)
-                    .foregroundStyle(WinnieColors.amethystSmoke)
+                    .foregroundStyle(WinnieColors.sweetSalmon)
                 }
             }
         }
@@ -104,13 +104,23 @@ private struct ColorSwatch: View {
 
                     Image(systemName: "checkmark")
                         .font(.system(size: 16, weight: .bold))
-                        .foregroundStyle(WinnieColors.contrastText)
+                        .foregroundStyle(checkmarkColor)
                 }
             }
         }
         .buttonStyle(.plain)
         .accessibilityLabel(color.displayName)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
+    }
+
+    /// Determine checkmark color based on background luminance
+    private var checkmarkColor: Color {
+        // For darker colors (teal, storm), use light checkmark
+        if color == .teal || color == .storm {
+            return WinnieColors.ivory
+        }
+        // For lighter colors, use dark checkmark
+        return WinnieColors.carbonBlack
     }
 }
 
@@ -119,7 +129,7 @@ private struct ColorSwatch: View {
 #Preview("Light Mode") {
     struct PreviewWrapper: View {
         @State private var selectedIcon: String? = nil
-        @State private var selectedColor: GoalPresetColor = .amethyst
+        @State private var selectedColor: GoalPresetColor = .coral
 
         var body: some View {
             GoalAppearanceSheet(
@@ -152,7 +162,7 @@ private struct ColorSwatch: View {
 #Preview("With Selection") {
     struct PreviewWrapper: View {
         @State private var selectedIcon: String? = "heart.fill"
-        @State private var selectedColor: GoalPresetColor = .rose
+        @State private var selectedColor: GoalPresetColor = .clay
 
         var body: some View {
             GoalAppearanceSheet(

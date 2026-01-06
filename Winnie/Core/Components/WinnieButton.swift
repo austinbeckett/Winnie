@@ -2,12 +2,13 @@ import SwiftUI
 
 /// Button style variants for Winnie design system
 enum WinnieButtonStyle {
-    case primary    // Solid background, main actions
-    case secondary  // Outlined border, secondary actions
-    case text       // No background, tertiary actions
+    case primary    // Sweet Salmon fill + thick border, main actions
+    case secondary  // Transparent + thick border, secondary actions
+    case text       // No background or border, tertiary actions
 }
 
 /// A styled button component following Winnie design system.
+/// Wispr Flow-inspired with thick borders and warm coral accent.
 ///
 /// Usage:
 /// ```swift
@@ -30,6 +31,9 @@ struct WinnieButton: View {
 
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.isEnabled) private var isEnabled
+
+    /// Border width for thick bordered buttons (per Wispr Flow aesthetic)
+    private let borderWidth: CGFloat = 3
 
     init(
         _ title: String,
@@ -62,11 +66,14 @@ struct WinnieButton: View {
     private var foregroundColor: Color {
         switch style {
         case .primary:
+            // Carbon Black text on Sweet Salmon background
             return WinnieColors.primaryButtonText(for: colorScheme)
         case .secondary:
-            return WinnieColors.secondaryButtonBorder(for: colorScheme)
+            // Match border color
+            return WinnieColors.secondaryButtonText(for: colorScheme)
         case .text:
-            return WinnieColors.secondaryButtonBorder(for: colorScheme)
+            // Sweet Salmon accent for text buttons
+            return WinnieColors.sweetSalmon
         }
     }
 
@@ -75,7 +82,7 @@ struct WinnieButton: View {
         case .primary:
             return WinnieColors.primaryButtonBackground(for: colorScheme)
         case .secondary:
-            return .clear
+            return WinnieColors.secondaryButtonBackground(for: colorScheme)
         case .text:
             return .clear
         }
@@ -84,11 +91,16 @@ struct WinnieButton: View {
     @ViewBuilder
     private var borderOverlay: some View {
         switch style {
-        case .primary, .text:
-            EmptyView()
-        case .secondary:
+        case .primary:
+            // Primary buttons get thick border too (Wispr Flow style)
             RoundedRectangle(cornerRadius: WinnieSpacing.buttonCornerRadius)
-                .stroke(WinnieColors.secondaryButtonBorder(for: colorScheme), lineWidth: 2)
+                .stroke(WinnieColors.primaryButtonBorder(for: colorScheme), lineWidth: borderWidth)
+        case .secondary:
+            // Secondary buttons have thick border, no fill
+            RoundedRectangle(cornerRadius: WinnieSpacing.buttonCornerRadius)
+                .stroke(WinnieColors.secondaryButtonBorder(for: colorScheme), lineWidth: borderWidth)
+        case .text:
+            EmptyView()
         }
     }
 }
@@ -110,7 +122,7 @@ private struct WinnieButtonPressStyle: ButtonStyle {
 
 // MARK: - Preview
 
-#Preview("Button Styles") {
+#Preview("Button Styles - Light") {
     VStack(spacing: WinnieSpacing.m) {
         WinnieButton("Primary Button", style: .primary) {
             print("Primary tapped")
@@ -130,16 +142,16 @@ private struct WinnieButtonPressStyle: ButtonStyle {
         .disabled(true)
     }
     .padding(WinnieSpacing.l)
-    .background(WinnieColors.parchment)
+    .background(WinnieColors.ivory)
 }
 
-#Preview("Dark Mode") {
+#Preview("Button Styles - Dark") {
     VStack(spacing: WinnieSpacing.m) {
         WinnieButton("Primary Button", style: .primary) {}
         WinnieButton("Secondary Button", style: .secondary) {}
         WinnieButton("Text Button", style: .text) {}
     }
     .padding(WinnieSpacing.l)
-    .background(WinnieColors.blackberryCream)
+    .background(WinnieColors.carbonBlack)
     .preferredColorScheme(.dark)
 }

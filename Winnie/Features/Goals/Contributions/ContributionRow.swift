@@ -197,6 +197,6 @@ struct SwipeableContributionRow: View {
         isCurrentUser: true
     )
     .padding()
-    .background(WinnieColors.ink)
+    .background(WinnieColors.carbonBlack)
     .preferredColorScheme(.dark)
 }

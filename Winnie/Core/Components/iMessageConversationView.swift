@@ -218,7 +218,7 @@ private struct MessageBubble: View {
 
             Text(message.text)
                 .font(WinnieTypography.bodyM())
-                .foregroundColor(message.isFromMe ? WinnieColors.contrastText : WinnieColors.primaryText(for: colorScheme))
+                .foregroundColor(bubbleTextColor)
                 .padding(.horizontal, WinnieSpacing.m)
                 .padding(.vertical, WinnieSpacing.s)
                 .background(bubbleBackground)
@@ -232,8 +232,14 @@ private struct MessageBubble: View {
 
     private var bubbleBackground: Color {
         message.isFromMe
-            ? WinnieColors.accent
-            : WinnieColors.cardBackground(for: colorScheme)
+            ? WinnieColors.sweetSalmon  // Sent messages: warm coral
+            : WinnieColors.pineTeal     // Received messages: deep teal
+    }
+
+    private var bubbleTextColor: Color {
+        message.isFromMe
+            ? WinnieColors.carbonBlack  // Dark text on light coral
+            : WinnieColors.ivory        // Light text on dark teal
     }
 }
 
@@ -366,7 +372,7 @@ private struct TypingIndicator: View {
             HStack(spacing: 4) {
                 ForEach(0..<3, id: \.self) { index in
                     Circle()
-                        .fill(WinnieColors.tertiaryText(for: colorScheme))
+                        .fill(WinnieColors.ivory.opacity(0.6))
                         .frame(width: 8, height: 8)
                         .scaleEffect(animatingDot == index ? 1.2 : 0.8)
                         .animation(
@@ -379,7 +385,7 @@ private struct TypingIndicator: View {
             }
             .padding(.horizontal, WinnieSpacing.m)
             .padding(.vertical, WinnieSpacing.s)
-            .background(WinnieColors.cardBackground(for: colorScheme))
+            .background(WinnieColors.pineTeal)
             .clipShape(BubbleShape(isFromMe: false))
 
             Spacer(minLength: 60)

@@ -97,7 +97,7 @@ struct GoalCategoryDropdown: View {
                     .foregroundStyle(.secondary)
             }
             .padding()
-            .background(WinnieColors.ink)
+            .background(WinnieColors.carbonBlack)
         }
     }
 

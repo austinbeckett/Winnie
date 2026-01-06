@@ -24,67 +24,66 @@ extension Color {
 }
 
 /// Winnie Design System - Color Palette
-/// Light Mode First Design System
-/// Based on DesignSystem.md
+/// Wispr Flow-Inspired Design: Rhythm, Presence, Clarity
+/// Based on DesignOverhaul.md - January 2026
 enum WinnieColors {
 
     // MARK: - Core Colors
 
-    /// Primary black color for text (light mode) and backgrounds (dark mode)
-    /// Hex: #131718
-    static let ink = Color(red: 19/255, green: 23/255, blue: 24/255)
+    /// Primary text color (light mode) and background (dark mode)
+    /// Hex: #1A1A1A
+    static let carbonBlack = Color(hex: "1A1A1A")
 
-    /// Elevated surface color for dark mode (cards, panels)
-    /// Slightly lighter than ink for visual hierarchy
-    /// Hex: #1E2224
-    static let inkElevated = Color(red: 30/255, green: 34/255, blue: 36/255)
-
-    /// Primary white color for backgrounds (light mode) and text (dark mode)
-    /// Hex: #FFFCFF
-    static let snow = Color(red: 255/255, green: 252/255, blue: 255/255)
-
-    /// Elevated surface color for light mode (cards, panels)
-    /// Slightly darker than snow for visual hierarchy
-    /// Hex: #F7F4F7
-    static let snowElevated = Color(red: 247/255, green: 244/255, blue: 247/255)
-
-    /// Warm neutral background for light mode
-    /// Hex: #F2EFE9
-    static let parchment = Color(red: 242/255, green: 239/255, blue: 233/255)
+    /// Primary background (light mode) and text (dark mode)
+    /// Warm ivory with subtle yellow undertone
+    /// Hex: #FFFFEB
+    static let ivory = Color(hex: "FFFFEB")
 
     // MARK: - Accent Colors
 
-    /// Primary accent - purple, interactive elements, progress indicators
-    /// Hex: #A393BF
-    static let amethystSmoke = Color(red: 163/255, green: 147/255, blue: 191/255)
+    /// Primary accent - warm coral for buttons and interactive elements
+    /// Hex: #FFA099
+    static let sweetSalmon = Color(hex: "FFA099")
 
-    /// Secondary accent - deep plum, primary buttons in light mode
-    /// Hex: #5B325D
-    static let blackberryCream = Color(red: 91/255, green: 50/255, blue: 93/255)
+    /// Secondary accent - deep teal for cards and large areas
+    /// Hex: #034F46
+    static let pineTeal = Color(hex: "034F46")
 
-    // MARK: - Legacy Colors
+    /// Tertiary accent - golden orange for highlights and icons
+    /// Hex: #F0A202
+    static let goldenOrange = Color(hex: "F0A202")
 
-    /// Legacy: Deep black - kept for compatibility
-    /// Hex: #252627
-    static let carbonBlack = Color(red: 37/255, green: 38/255, blue: 39/255)
+    // MARK: - Legacy Aliases (for migration compatibility)
 
-    /// Pure white for legacy compatibility
+    /// Legacy alias for carbonBlack - use carbonBlack directly in new code
+    static var ink: Color { carbonBlack }
+
+    /// Legacy alias for ivory - use ivory directly in new code
+    static var snow: Color { ivory }
+
+    /// Legacy alias for sweetSalmon - use sweetSalmon directly in new code
+    static var amethystSmoke: Color { sweetSalmon }
+
+    /// Legacy alias for pineTeal - use pineTeal directly in new code
+    static var blackberryCream: Color { pineTeal }
+
+    /// Pure white for specific use cases
     static let white = Color.white
 }
 
 // MARK: - Goal Preset Colors
 
 /// User-selectable colors for goals
-/// These replace the automatic goal type colors with user choice
+/// Warm palette that harmonizes with Sweet Salmon/Pine Teal/Golden Orange
 enum GoalPresetColor: String, CaseIterable, Identifiable, Sendable {
-    case amethyst = "#A393BF"
-    case blackberry = "#5B325D"
-    case rose = "#D4A5A5"
-    case sage = "#B5C4B1"
-    case slate = "#8BA3B3"
-    case sand = "#D4C4A8"
-    case terracotta = "#C4907A"
-    case storm = "#8B8B9B"
+    case coral = "#FFA099"      // Sweet Salmon - default
+    case teal = "#034F46"       // Pine Teal
+    case gold = "#F0A202"       // Golden Orange
+    case sage = "#7A9E7E"       // Warm muted green
+    case clay = "#C4907A"       // Terracotta/earthy warm
+    case sand = "#D4C4A8"       // Warm beige
+    case slate = "#6B8B9B"      // Cool blue-gray
+    case storm = "#5A5A6B"      // Deep neutral gray
 
     var id: String { rawValue }
 
@@ -96,109 +95,129 @@ enum GoalPresetColor: String, CaseIterable, Identifiable, Sendable {
     /// User-facing display name
     var displayName: String {
         switch self {
-        case .amethyst: return "Amethyst"
-        case .blackberry: return "Blackberry"
-        case .rose: return "Rose"
+        case .coral: return "Coral"
+        case .teal: return "Teal"
+        case .gold: return "Gold"
         case .sage: return "Sage"
-        case .slate: return "Slate"
+        case .clay: return "Clay"
         case .sand: return "Sand"
-        case .terracotta: return "Terracotta"
+        case .slate: return "Slate"
         case .storm: return "Storm"
         }
     }
 
     /// The default color for new goals
-    static let defaultColor: GoalPresetColor = .amethyst
+    static let defaultColor: GoalPresetColor = .coral
 }
 
-// MARK: - Theme-Aware Colors (Light Mode Primary)
+// MARK: - Theme-Aware Colors
 
 extension WinnieColors {
 
     // MARK: - Backgrounds
 
     /// Main app background
-    /// Light: Snow (#FFFCFF) | Dark: Ink (#131718)
+    /// Light: Ivory (#FFFFEB) | Dark: Carbon Black (#1A1A1A)
     static func background(for colorScheme: ColorScheme) -> Color {
-        colorScheme == .dark ? ink : snow
+        colorScheme == .dark ? carbonBlack : ivory
     }
 
-    /// Card and elevated surface background
-    /// Light: Snow Elevated (#F7F4F7) | Dark: Ink Elevated (#1E2224)
+    /// Card background - Pine Teal in both modes for strong brand presence
+    /// Both modes: Pine Teal (#034F46)
     static func cardBackground(for colorScheme: ColorScheme) -> Color {
-        colorScheme == .dark ? inkElevated : snowElevated
+        pineTeal
     }
 
     // MARK: - Text Colors
 
     /// Primary text (headlines, important text)
-    /// Light: Ink (#131718) | Dark: Snow (#FFFCFF)
+    /// Light: Carbon Black (#1A1A1A) | Dark: Ivory (#FFFFEB)
     static func primaryText(for colorScheme: ColorScheme) -> Color {
-        colorScheme == .dark ? snow : ink
+        colorScheme == .dark ? ivory : carbonBlack
     }
 
     /// Secondary text (body text, descriptions)
-    /// Light: Ink at 80% | Dark: Snow at 80%
+    /// Light: Carbon Black at 80% | Dark: Ivory at 80%
     static func secondaryText(for colorScheme: ColorScheme) -> Color {
-        colorScheme == .dark ? snow.opacity(0.8) : ink.opacity(0.8)
+        colorScheme == .dark ? ivory.opacity(0.8) : carbonBlack.opacity(0.8)
     }
 
     /// Tertiary text (helper text, captions)
-    /// Light: Ink at 50% | Dark: Snow at 50%
+    /// Light: Carbon Black at 50% | Dark: Ivory at 50%
     static func tertiaryText(for colorScheme: ColorScheme) -> Color {
-        colorScheme == .dark ? snow.opacity(0.5) : ink.opacity(0.5)
+        colorScheme == .dark ? ivory.opacity(0.5) : carbonBlack.opacity(0.5)
     }
+
+    /// Text color for use on Pine Teal card backgrounds
+    /// Always Ivory for contrast on dark teal
+    static var cardText: Color { ivory }
 
     // MARK: - Button Colors
 
-    /// Primary button background
-    /// Light: Blackberry Cream (#5B325D) | Dark: Amethyst Smoke (#A393BF)
+    /// Primary button background - Sweet Salmon in both modes
+    /// Both modes: Sweet Salmon (#FFA099)
     static func primaryButtonBackground(for colorScheme: ColorScheme) -> Color {
-        colorScheme == .dark ? amethystSmoke : blackberryCream
+        sweetSalmon
     }
 
-    /// Primary button text
-    /// Light: Snow (#FFFCFF) | Dark: Ink (#131718)
+    /// Primary button text - Carbon Black for contrast on salmon
+    /// Both modes: Carbon Black (#1A1A1A)
     static func primaryButtonText(for colorScheme: ColorScheme) -> Color {
-        colorScheme == .dark ? ink : snow
+        carbonBlack
     }
 
-    /// Secondary button background
-    /// Light: Amethyst Smoke (#A393BF) | Dark: Blackberry Cream (#5B325D)
+    /// Primary button border - thick 3px border per Wispr Flow aesthetic
+    /// Light: Carbon Black | Dark: Ivory
+    static func primaryButtonBorder(for colorScheme: ColorScheme) -> Color {
+        colorScheme == .dark ? ivory : carbonBlack
+    }
+
+    /// Secondary button background - transparent with border
     static func secondaryButtonBackground(for colorScheme: ColorScheme) -> Color {
-        colorScheme == .dark ? blackberryCream : amethystSmoke
+        Color.clear
     }
 
-    /// Secondary button border (for outlined style)
-    /// Light: Amethyst Smoke (#A393BF) | Dark: Blackberry Cream (#5B325D)
+    /// Secondary button border
+    /// Light: Carbon Black | Dark: Ivory
     static func secondaryButtonBorder(for colorScheme: ColorScheme) -> Color {
-        colorScheme == .dark ? blackberryCream : amethystSmoke
+        colorScheme == .dark ? ivory : carbonBlack
+    }
+
+    /// Secondary button text
+    /// Light: Carbon Black | Dark: Ivory
+    static func secondaryButtonText(for colorScheme: ColorScheme) -> Color {
+        colorScheme == .dark ? ivory : carbonBlack
     }
 
     // MARK: - UI Element Colors
 
     /// Border and divider color
-    /// Light: Ink at 20% | Dark: Snow at 15%
+    /// Light: Carbon Black at 20% | Dark: Ivory at 15%
     static func border(for colorScheme: ColorScheme) -> Color {
-        colorScheme == .dark ? snow.opacity(0.15) : ink.opacity(0.2)
+        colorScheme == .dark ? ivory.opacity(0.15) : carbonBlack.opacity(0.2)
     }
 
     /// Input field border
-    /// Light: Ink at 30% | Dark: Snow at 30%
+    /// Light: Carbon Black at 30% | Dark: Ivory at 30%
     static func inputBorder(for colorScheme: ColorScheme) -> Color {
-        colorScheme == .dark ? snow.opacity(0.3) : ink.opacity(0.3)
+        colorScheme == .dark ? ivory.opacity(0.3) : carbonBlack.opacity(0.3)
+    }
+
+    /// Input field focus border - Sweet Salmon accent
+    static func inputFocusBorder(for colorScheme: ColorScheme) -> Color {
+        sweetSalmon
     }
 
     /// Slider/progress track background
-    /// Light: Ink at 20% | Dark: Snow at 20%
+    /// Light: Carbon Black at 20% | Dark: Ivory at 20%
     static func trackBackground(for colorScheme: ColorScheme) -> Color {
-        colorScheme == .dark ? snow.opacity(0.2) : ink.opacity(0.2)
+        colorScheme == .dark ? ivory.opacity(0.2) : carbonBlack.opacity(0.2)
     }
 
     /// Progress bar background
-    /// Light: Ink at 15% | Dark: Snow at 15%
+    /// Light: Carbon Black at 15% | Dark: Ivory at 15%
     static func progressBackground(for colorScheme: ColorScheme) -> Color {
-        colorScheme == .dark ? snow.opacity(0.15) : ink.opacity(0.15)
+        colorScheme == .dark ? ivory.opacity(0.15) : carbonBlack.opacity(0.15)
     }
 
     // MARK: - Semantic Colors
@@ -206,19 +225,19 @@ extension WinnieColors {
     /// Error color for validation states
     /// Uses a consistent red that works in both light and dark modes
     static func error(for colorScheme: ColorScheme) -> Color {
-        Color(hex: "#DC3545")
+        Color(hex: "DC3545")
     }
 
     /// Success/on-track status color
     /// Uses a consistent green that works in both light and dark modes
     static func success(for colorScheme: ColorScheme) -> Color {
-        Color(hex: "#28A745")
+        Color(hex: "28A745")
     }
 
     /// Warning/behind status color
     /// Uses a consistent orange that works in both light and dark modes
     static func warning(for colorScheme: ColorScheme) -> Color {
-        Color(hex: "#F5A623")
+        Color(hex: "F5A623")
     }
 
     /// Shadow color for elevated surfaces
@@ -230,29 +249,32 @@ extension WinnieColors {
     }
 
     /// Contrast text for colored backgrounds (icons, initials on accent backgrounds)
-    /// Always white - used on colored backgrounds where we need maximum contrast
-    static var contrastText: Color { snow }
+    /// Always ivory - used on colored backgrounds where we need maximum contrast
+    static var contrastText: Color { ivory }
 
     // MARK: - Accent Colors (same in both modes)
 
     /// Primary accent color (interactive elements, progress indicators)
-    static var accent: Color { amethystSmoke }
+    static var accent: Color { sweetSalmon }
 
     /// Secondary accent color (highlights, CTAs)
-    static var secondaryAccent: Color { blackberryCream }
+    static var secondaryAccent: Color { pineTeal }
+
+    /// Tertiary accent color (icons, small highlights)
+    static var tertiaryAccent: Color { goldenOrange }
 
     // MARK: - Shadow Colors
 
     /// Card shadow color
-    /// Light: Ink at 8% | Dark: transparent
+    /// Light: Carbon Black at 8% | Dark: transparent
     static func cardShadow(for colorScheme: ColorScheme) -> Color {
-        colorScheme == .dark ? .clear : ink.opacity(0.08)
+        colorScheme == .dark ? .clear : carbonBlack.opacity(0.08)
     }
 
     /// Button shadow color
-    /// Light: Ink at 15% | Dark: Amethyst Smoke at 25%
+    /// Light: Carbon Black at 15% | Dark: Sweet Salmon at 25%
     static func buttonShadow(for colorScheme: ColorScheme) -> Color {
-        colorScheme == .dark ? amethystSmoke.opacity(0.25) : ink.opacity(0.15)
+        colorScheme == .dark ? sweetSalmon.opacity(0.25) : carbonBlack.opacity(0.15)
     }
 }
 
@@ -279,23 +301,29 @@ extension WinnieColors {
         UIColor { traitCollection in
             switch traitCollection.userInterfaceStyle {
             case .dark:
-                return UIColor(snow)
+                return UIColor(ivory)
             default:
-                return UIColor(ink)
+                return UIColor(carbonBlack)
             }
         }
     }
 
     /// Dynamic UIColor for primary accent - automatically updates with dark/light mode.
     /// Use this for UIKit components (UITabBar tint, etc.).
-    /// Light: Blackberry Cream | Dark: Amethyst Smoke
+    /// Both modes: Sweet Salmon
     static var primaryAccentUIColor: UIColor {
+        UIColor(sweetSalmon)
+    }
+
+    /// Dynamic UIColor for backgrounds
+    /// Light: Ivory | Dark: Carbon Black
+    static var backgroundUIColor: UIColor {
         UIColor { traitCollection in
             switch traitCollection.userInterfaceStyle {
             case .dark:
-                return UIColor(amethystSmoke)
+                return UIColor(carbonBlack)
             default:
-                return UIColor(blackberryCream)
+                return UIColor(ivory)
             }
         }
     }

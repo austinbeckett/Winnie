@@ -44,7 +44,7 @@ struct GoalCreationHeaderView: View {
 
     /// Text color for the header - snow in light mode for contrast, ink in dark mode
     private var headerTextColor: Color {
-        colorScheme == .light ? WinnieColors.snow : WinnieColors.ink
+        colorScheme == .light ? WinnieColors.ivory : WinnieColors.carbonBlack
     }
 
     // Convenience initializer for backward compatibility (Phase 1)
@@ -52,7 +52,7 @@ struct GoalCreationHeaderView: View {
         goalName: Binding<String>,
         isFocused: FocusState<Bool>.Binding,
         selectedIcon: String? = nil,
-        selectedColor: GoalPresetColor = .amethyst,
+        selectedColor: GoalPresetColor = .coral,
         isCustomizable: Bool = false,
         onCustomizeTapped: (() -> Void)? = nil
     ) {
@@ -98,9 +98,9 @@ struct GoalCreationHeaderView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 16))
                 .overlay(
                     RoundedRectangle(cornerRadius: 16)
-                        .stroke(WinnieColors.snow, lineWidth: 3)
+                        .stroke(WinnieColors.ivory, lineWidth: 3)
                 )
-                .shadow(color: WinnieColors.ink.opacity(0.1), radius: 4, y: 2)
+                .shadow(color: WinnieColors.carbonBlack.opacity(0.1), radius: 4, y: 2)
                 .contentTransition(.symbolEffect(.replace))
                 .animation(.spring(response: 0.3, dampingFraction: 0.7), value: currentIcon)
 
@@ -118,11 +118,11 @@ struct GoalCreationHeaderView: View {
             .font(.system(size: 10, weight: .bold))
             .foregroundColor(WinnieColors.contrastText)
             .frame(width: 22, height: 22)
-            .background(WinnieColors.ink.opacity(0.7))
+            .background(WinnieColors.carbonBlack.opacity(0.7))
             .clipShape(Circle())
             .overlay(
                 Circle()
-                    .stroke(WinnieColors.snow, lineWidth: 2)
+                    .stroke(WinnieColors.ivory, lineWidth: 2)
             )
             .offset(x: 4, y: 4)
     }
@@ -214,7 +214,7 @@ struct GoalCreationHeaderView: View {
                     goalName: $goalName,
                     isFocused: $isFocused,
                     selectedIcon: "heart.fill",
-                    selectedColor: .rose,
+                    selectedColor: .clay,
                     isCustomizable: true,
                     onCustomizeTapped: { print("Customize tapped") }
                 )

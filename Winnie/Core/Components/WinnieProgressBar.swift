@@ -12,28 +12,35 @@ import SwiftUI
 ///
 /// // Show percentage label
 /// WinnieProgressBar(progress: 0.75, showLabel: true)
+///
+/// // On card background (uses ivory track)
+/// WinnieProgressBar(progress: 0.5, onCard: true)
 /// ```
 struct WinnieProgressBar: View {
     let progress: Double
     let color: Color
     let showLabel: Bool
+    let onCard: Bool
 
     @Environment(\.colorScheme) private var colorScheme
 
     /// Creates a progress bar.
     /// - Parameters:
     ///   - progress: Progress value from 0.0 to 1.0
-    ///   - color: Fill color (defaults to amethyst accent)
+    ///   - color: Fill color (defaults to Sweet Salmon accent)
     ///   - showLabel: Whether to show percentage label (defaults to false)
+    ///   - onCard: Whether displayed on a Pine Teal card (affects track color)
     init(
         progress: Double,
-        color: Color = WinnieColors.amethystSmoke,
-        showLabel: Bool = false
+        color: Color = WinnieColors.sweetSalmon,
+        showLabel: Bool = false,
+        onCard: Bool = true
     ) {
         // Clamp progress between 0 and 1
         self.progress = min(max(progress, 0), 1)
         self.color = color
         self.showLabel = showLabel
+        self.onCard = onCard
     }
 
     var body: some View {
@@ -43,7 +50,7 @@ struct WinnieProgressBar: View {
                 ZStack(alignment: .leading) {
                     // Background track
                     RoundedRectangle(cornerRadius: 4)
-                        .fill(WinnieColors.progressBackground(for: colorScheme))
+                        .fill(trackColor)
                         .frame(height: 8)
 
                     // Fill
@@ -59,8 +66,26 @@ struct WinnieProgressBar: View {
             if showLabel {
                 Text("\(Int(progress * 100))%")
                     .font(WinnieTypography.caption())
-                    .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
+                    .foregroundColor(labelColor)
             }
+        }
+    }
+
+    private var trackColor: Color {
+        if onCard {
+            // On Pine Teal cards, use semi-transparent ivory for track
+            return WinnieColors.ivory.opacity(0.2)
+        } else {
+            // On main background, use standard progress background
+            return WinnieColors.progressBackground(for: colorScheme)
+        }
+    }
+
+    private var labelColor: Color {
+        if onCard {
+            return WinnieColors.cardText.opacity(0.6)
+        } else {
+            return WinnieColors.tertiaryText(for: colorScheme)
         }
     }
 }
@@ -97,91 +122,107 @@ struct GoalProgressBar: View {
     }
 
     var body: some View {
-        WinnieProgressBar(progress: progress, color: color)
+        WinnieProgressBar(progress: progress, color: color, onCard: true)
     }
 }
 
 // MARK: - Preview
 
-#Preview("Progress Bars") {
-    VStack(spacing: WinnieSpacing.l) {
-        VStack(alignment: .leading, spacing: WinnieSpacing.xs) {
-            Text("0%")
-                .font(WinnieTypography.bodyS())
-            WinnieProgressBar(progress: 0)
+#Preview("Progress Bars on Cards") {
+    VStack(spacing: WinnieSpacing.m) {
+        WinnieCard {
+            VStack(alignment: .leading, spacing: WinnieSpacing.xs) {
+                Text("25% Progress")
+                    .font(WinnieTypography.bodyS())
+                    .foregroundColor(WinnieColors.cardText)
+                WinnieProgressBar(progress: 0.25, onCard: true)
+            }
         }
 
+        WinnieCard {
+            VStack(alignment: .leading, spacing: WinnieSpacing.xs) {
+                Text("50% Progress")
+                    .font(WinnieTypography.bodyS())
+                    .foregroundColor(WinnieColors.cardText)
+                WinnieProgressBar(progress: 0.50, color: GoalPresetColor.gold.color, onCard: true)
+            }
+        }
+
+        WinnieCard {
+            VStack(alignment: .leading, spacing: WinnieSpacing.xs) {
+                Text("75% Progress")
+                    .font(WinnieTypography.bodyS())
+                    .foregroundColor(WinnieColors.cardText)
+                WinnieProgressBar(progress: 0.75, color: GoalPresetColor.sage.color, showLabel: true, onCard: true)
+            }
+        }
+    }
+    .padding(WinnieSpacing.l)
+    .background(WinnieColors.ivory)
+}
+
+#Preview("Progress Bars on Background") {
+    VStack(spacing: WinnieSpacing.l) {
         VStack(alignment: .leading, spacing: WinnieSpacing.xs) {
             Text("25%")
                 .font(WinnieTypography.bodyS())
-            WinnieProgressBar(progress: 0.25)
+            WinnieProgressBar(progress: 0.25, onCard: false)
         }
 
         VStack(alignment: .leading, spacing: WinnieSpacing.xs) {
             Text("50%")
                 .font(WinnieTypography.bodyS())
-            WinnieProgressBar(progress: 0.50, color: GoalPresetColor.blackberry.color)
+            WinnieProgressBar(progress: 0.50, color: GoalPresetColor.teal.color, onCard: false)
         }
 
         VStack(alignment: .leading, spacing: WinnieSpacing.xs) {
             Text("75%")
                 .font(WinnieTypography.bodyS())
-            WinnieProgressBar(progress: 0.75, color: GoalPresetColor.sage.color)
+            WinnieProgressBar(progress: 0.75, color: GoalPresetColor.gold.color, onCard: false)
         }
 
         VStack(alignment: .leading, spacing: WinnieSpacing.xs) {
             Text("100%")
                 .font(WinnieTypography.bodyS())
-            WinnieProgressBar(progress: 1.0, color: GoalPresetColor.terracotta.color)
-        }
-
-        VStack(alignment: .leading, spacing: WinnieSpacing.xs) {
-            Text("With Label")
-                .font(WinnieTypography.bodyS())
-            WinnieProgressBar(progress: 0.65, showLabel: true)
+            WinnieProgressBar(progress: 1.0, color: GoalPresetColor.clay.color, onCard: false)
         }
     }
     .padding(WinnieSpacing.l)
-    .background(WinnieColors.parchment)
+    .background(WinnieColors.ivory)
 }
 
 #Preview("Goal Preset Colors") {
     VStack(spacing: WinnieSpacing.l) {
-        VStack(alignment: .leading, spacing: WinnieSpacing.xs) {
-            Text("Amethyst (Default)")
-                .font(WinnieTypography.bodyS())
-            WinnieProgressBar(progress: 0.45, color: GoalPresetColor.amethyst.color)
-        }
-
-        VStack(alignment: .leading, spacing: WinnieSpacing.xs) {
-            Text("Blackberry")
-                .font(WinnieTypography.bodyS())
-            WinnieProgressBar(progress: 0.30, color: GoalPresetColor.blackberry.color)
-        }
-
-        VStack(alignment: .leading, spacing: WinnieSpacing.xs) {
-            Text("Sand")
-                .font(WinnieTypography.bodyS())
-            WinnieProgressBar(progress: 0.80, color: GoalPresetColor.sand.color)
-        }
-
-        VStack(alignment: .leading, spacing: WinnieSpacing.xs) {
-            Text("Rose")
-                .font(WinnieTypography.bodyS())
-            WinnieProgressBar(progress: 0.60, color: GoalPresetColor.rose.color)
+        ForEach(GoalPresetColor.allCases) { preset in
+            VStack(alignment: .leading, spacing: WinnieSpacing.xs) {
+                Text(preset.displayName)
+                    .font(WinnieTypography.bodyS())
+                WinnieProgressBar(progress: 0.6, color: preset.color, onCard: false)
+            }
         }
     }
     .padding(WinnieSpacing.l)
-    .background(WinnieColors.parchment)
+    .background(WinnieColors.ivory)
 }
 
 #Preview("Dark Mode") {
-    VStack(spacing: WinnieSpacing.l) {
-        WinnieProgressBar(progress: 0.65)
-        WinnieProgressBar(progress: 0.45, color: GoalPresetColor.blackberry.color)
-        WinnieProgressBar(progress: 0.80, showLabel: true)
+    VStack(spacing: WinnieSpacing.m) {
+        WinnieCard {
+            VStack(alignment: .leading, spacing: WinnieSpacing.xs) {
+                Text("On Card")
+                    .font(WinnieTypography.bodyS())
+                    .foregroundColor(WinnieColors.cardText)
+                WinnieProgressBar(progress: 0.65, onCard: true)
+            }
+        }
+
+        VStack(alignment: .leading, spacing: WinnieSpacing.xs) {
+            Text("On Background")
+                .font(WinnieTypography.bodyS())
+            WinnieProgressBar(progress: 0.45, color: GoalPresetColor.gold.color, onCard: false)
+        }
     }
     .padding(WinnieSpacing.l)
-    .background(WinnieColors.blackberryCream)
+    .background(WinnieColors.carbonBlack)
     .preferredColorScheme(.dark)
 }

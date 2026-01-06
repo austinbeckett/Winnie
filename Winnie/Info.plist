@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>UIAppFonts</key>
+	<array>
+		<string>EBGaramond-BoldItalic.ttf</string>
+		<string>EBGaramond-SemiBold.ttf</string>
+		<string>EBGaramond-SemiBoldItalic.ttf</string>
+		<string>EBGaramond-MediumItalic.ttf</string>
+		<string>EBGaramond-ExtraBoldItalic.ttf</string>
+		<string>EBGaramond-Italic.ttf</string>
+		<string>EBGaramond-ExtraBold.ttf</string>
+		<string>EBGaramond-Bold.ttf</string>
+		<string>EBGaramond-Medium.ttf</string>
+		<string>EBGaramond-Regular.ttf</string>
+		<string>Figtree-BlackItalic.ttf</string>
+		<string>Figtree-ExtraBoldItalic.ttf</string>
+		<string>Figtree-SemiBoldItalic.ttf</string>
+		<string>Figtree-BoldItalic.ttf</string>
+		<string>Figtree-MediumItalic.ttf</string>
+		<string>Figtree-Italic.ttf</string>
+		<string>Figtree-LightItalic.ttf</string>
+		<string>Figtree-Black.ttf</string>
+		<string>Figtree-ExtraBold.ttf</string>
+		<string>Figtree-Bold.ttf</string>
+		<string>Figtree-SemiBold.ttf</string>
+		<string>Figtree-Medium.ttf</string>
+		<string>Figtree-Regular.ttf</string>
+		<string>Figtree-Light.ttf</string>
+	</array>
+</dict>
+</plist>

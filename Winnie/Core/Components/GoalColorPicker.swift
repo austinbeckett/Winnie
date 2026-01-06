@@ -4,7 +4,7 @@ import SwiftUI
 ///
 /// Usage:
 /// ```swift
-/// @State private var selectedColor = GoalPresetColor.amethyst.rawValue
+/// @State private var selectedColor = GoalPresetColor.coral.rawValue
 ///
 /// GoalColorPicker(selectedHex: $selectedColor)
 /// ```
@@ -77,12 +77,12 @@ private struct ColorCircle: View {
 
     /// Determine checkmark color based on background luminance
     private var checkmarkColor: Color {
-        // For darker colors, use white checkmark; for lighter colors, use dark
-        // Simple heuristic: blackberry and storm are dark enough to need white
-        if color == GoalPresetColor.blackberry.color || color == GoalPresetColor.storm.color {
-            return WinnieColors.contrastText
+        // For darker colors (teal, storm), use light checkmark
+        if color == GoalPresetColor.teal.color || color == GoalPresetColor.storm.color {
+            return WinnieColors.ivory
         }
-        return WinnieColors.ink
+        // For lighter colors, use dark checkmark
+        return WinnieColors.carbonBlack
     }
 
     private var accessibilityLabel: String {
@@ -95,7 +95,7 @@ private struct ColorCircle: View {
 
 #Preview("Goal Color Picker") {
     struct PreviewWrapper: View {
-        @State private var selectedHex = GoalPresetColor.amethyst.rawValue
+        @State private var selectedHex = GoalPresetColor.coral.rawValue
 
         var body: some View {
             VStack(spacing: 24) {
@@ -106,6 +106,7 @@ private struct ColorCircle: View {
                     .foregroundStyle(.secondary)
             }
             .padding()
+            .background(WinnieColors.ivory)
         }
     }
 
@@ -114,7 +115,7 @@ private struct ColorCircle: View {
 
 #Preview("Goal Color Picker - Dark") {
     struct PreviewWrapper: View {
-        @State private var selectedHex = GoalPresetColor.blackberry.rawValue
+        @State private var selectedHex = GoalPresetColor.teal.rawValue
 
         var body: some View {
             VStack(spacing: 24) {
@@ -125,7 +126,7 @@ private struct ColorCircle: View {
                     .foregroundStyle(.secondary)
             }
             .padding()
-            .background(WinnieColors.ink)
+            .background(WinnieColors.carbonBlack)
         }
     }
 

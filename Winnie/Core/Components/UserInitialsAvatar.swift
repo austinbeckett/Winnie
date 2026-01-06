@@ -64,22 +64,21 @@ struct UserInitialsAvatar: View {
 
     private var backgroundColor: Color {
         if isCurrentUser {
-            return WinnieColors.amethystSmoke
+            // Current user gets Sweet Salmon (primary accent)
+            return WinnieColors.sweetSalmon
         } else {
-            // Partner gets a complementary color
-            return colorScheme == .dark
-                ? Color(hex: "#4A4A5A") // Storm-like in dark mode
-                : Color(hex: "#E8E4E8") // Light gray in light mode
+            // Partner gets Pine Teal (secondary accent)
+            return WinnieColors.pineTeal
         }
     }
 
     private var textColor: Color {
         if isCurrentUser {
-            return WinnieColors.contrastText
+            // Carbon Black for contrast on Sweet Salmon
+            return WinnieColors.carbonBlack
         } else {
-            return colorScheme == .dark
-                ? WinnieColors.snow
-                : WinnieColors.ink
+            // Ivory for contrast on Pine Teal
+            return WinnieColors.ivory
         }
     }
 }

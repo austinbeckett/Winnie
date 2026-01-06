@@ -63,7 +63,7 @@ struct OnboardingProgressBar: View {
         OnboardingProgressBar(currentStep: 8, totalSteps: 8)
     }
     .padding()
-    .background(WinnieColors.ink)
+    .background(WinnieColors.carbonBlack)
     .preferredColorScheme(.dark)
 }
 

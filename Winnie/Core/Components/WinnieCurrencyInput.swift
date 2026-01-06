@@ -138,7 +138,7 @@ extension WinnieCurrencyInput {
         )
     }
     .padding(WinnieSpacing.l)
-    .background(WinnieColors.parchment)
+    .background(WinnieColors.ivory)
 }
 
 #Preview("Accent Value") {
@@ -149,7 +149,7 @@ extension WinnieCurrencyInput {
         accentValue: true
     )
     .padding(WinnieSpacing.l)
-    .background(WinnieColors.parchment)
+    .background(WinnieColors.ivory)
 }
 
 #Preview("Dark Mode") {
@@ -168,6 +168,6 @@ extension WinnieCurrencyInput {
         )
     }
     .padding(WinnieSpacing.l)
-    .background(WinnieColors.blackberryCream)
+    .background(WinnieColors.carbonBlack)
     .preferredColorScheme(.dark)
 }

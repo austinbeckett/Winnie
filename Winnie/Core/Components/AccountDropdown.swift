@@ -252,7 +252,7 @@ struct AccountDropdown: View {
                 AccountDropdown(selectedAccount: $account)
             }
             .padding()
-            .background(WinnieColors.ink)
+            .background(WinnieColors.carbonBlack)
         }
     }
 

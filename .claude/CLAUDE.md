@@ -33,40 +33,42 @@ Winnie/
 
 ## Design System Quick Reference
 
-### Colors
+**Wispr Flow-Inspired: Rhythm, Presence, Clarity**
+
+### Core Colors
 | Name | Hex | Usage |
 |------|-----|-------|
-| Ink | `#131718` | Primary text (light), background (dark) |
-| Ink Elevated | `#1E2224` | Card backgrounds in dark mode |
-| Snow | `#FFFCFF` | Background (light), primary text (dark) |
-| Snow Elevated | `#F7F4F7` | Card backgrounds in light mode |
-| Amethyst Smoke | `#A393BF` | Primary accent, interactive elements, progress, primary button (dark) |
-| Blackberry Cream | `#5B325D` | Secondary accent, primary button background (light) |
+| Ivory | `#FFFFEB` | Background (light), primary text (dark) |
+| Carbon Black | `#1A1A1A` | Primary text (light), background (dark) |
+| Sweet Salmon | `#FFA099` | Primary accent, buttons, interactive elements |
+| Pine Teal | `#034F46` | Card backgrounds (both modes), secondary accent |
+| Golden Orange | `#F0A202` | Tertiary accent, highlights, icons |
 
 ### Goal Colors
-Goals use a preset palette (defined in `GoalPresetColor`). Users can select any color for their goals:
-- **Amethyst** `#A393BF` (default), **Blackberry** `#5B325D`, **Rose** `#D4A5A5`, **Sage** `#B5C4B1`
-- **Slate** `#8BA3B3`, **Sand** `#D4C4A8`, **Terracotta** `#C4907A`, **Storm** `#8B8B9B`
+Goals use a warm preset palette (defined in `GoalPresetColor`). Users can select any color:
+- **Coral** `#FFA099` (default), **Teal** `#034F46`, **Gold** `#F0A202`, **Sage** `#7A9E7E`
+- **Clay** `#C4907A`, **Sand** `#D4C4A8`, **Slate** `#6B8B9B`, **Storm** `#5A5A6B`
 
 ### Text Colors
 | Level | Light Mode | Dark Mode |
 |-------|------------|-----------|
-| Primary | Ink (#131718) | Snow (#FFFCFF) |
-| Secondary | Ink @ 80% | Snow @ 80% |
-| Tertiary | Ink @ 50% | Snow @ 50% |
+| Primary | Carbon Black (#1A1A1A) | Ivory (#FFFFEB) |
+| Secondary | Carbon Black @ 80% | Ivory @ 80% |
+| Tertiary | Carbon Black @ 50% | Ivory @ 50% |
+| On Cards | Ivory (#FFFFEB) | Ivory (#FFFFEB) |
 
 ### Typography
-- **Headlines:** Playfair Display (serif) - warmth and sophistication
-- **Body/UI:** Lato or SF Pro (sans-serif) - readability
-- **Financial numbers:** Lato Bold with `tabular-nums`
+- **Headlines:** EB Garamond (serif) - elegant rhythm and warmth
+- **Body/UI:** Figtree (sans-serif) - modern and approachable
+- **Financial numbers:** Figtree Bold with `tabular-nums`
 
 ### Spacing (8pt grid)
 - XS: 8px | S: 12px | M: 16px | L: 24px | XL: 32px | XXL: 48px
 
 ### Components
-- Buttons: Pill-shaped, 28px radius, 56px min height
-- Cards: 20px radius, 24px padding, subtle shadows
-- Inputs: 16px radius, 56px min height
+- **Buttons:** Pill-shaped, 28px radius, 56px height, **3px thick borders**
+- **Cards:** Pine Teal background, 20px radius, 24px padding, Ivory text
+- **Inputs:** 16px radius, 56px height
 
 ## Coding Standards
 

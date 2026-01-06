@@ -211,7 +211,7 @@ private struct IconButton: View {
                     .foregroundStyle(.secondary)
             }
             .padding()
-            .background(WinnieColors.ink)
+            .background(WinnieColors.carbonBlack)
         }
     }
 

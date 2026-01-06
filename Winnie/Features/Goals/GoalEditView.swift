@@ -82,7 +82,7 @@ struct GoalEditView: View {
         _accountName = State(initialValue: existingGoal.accountName)
 
         // Pre-populate color from hex
-        let color = GoalPresetColor(rawValue: existingGoal.colorHex ?? GoalPresetColor.defaultColor.rawValue) ?? .amethyst
+        let color = GoalPresetColor(rawValue: existingGoal.colorHex ?? GoalPresetColor.defaultColor.rawValue) ?? .coral
         _selectedColor = State(initialValue: color)
 
         // Pre-populate icon - if stored icon differs from auto-generated, it's a manual selection
@@ -155,10 +155,10 @@ struct GoalEditView: View {
                 Text("Save Changes")
                     .font(WinnieTypography.bodyM())
                     .fontWeight(.semibold)
-                    .foregroundColor(WinnieColors.snow)
+                    .foregroundColor(WinnieColors.carbonBlack)
                     .frame(maxWidth: .infinity)
                     .frame(height: WinnieSpacing.buttonHeight)
-                    .background(WinnieColors.amethystSmoke)
+                    .background(WinnieColors.sweetSalmon)
                     .clipShape(RoundedRectangle(cornerRadius: WinnieSpacing.buttonCornerRadius))
             }
             .disabled(!canSave || isSaving)

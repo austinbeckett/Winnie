@@ -37,7 +37,7 @@ struct Goal: Codable, Identifiable, Equatable, Sendable {
     /// Optional notes or description
     var notes: String?
 
-    /// Custom color hex code (e.g., "#A393BF"). If nil, uses default Amethyst Smoke.
+    /// Custom color hex code (e.g., "#FFA099"). If nil, uses default Coral (Sweet Salmon).
     var colorHex: String?
 
     /// Custom SF Symbol icon name (e.g., "heart.fill"). If nil, uses type default.
@@ -55,12 +55,12 @@ struct Goal: Codable, Identifiable, Equatable, Sendable {
     }
 
     /// The color to display for this goal
-    /// Uses custom colorHex if set, otherwise defaults to Amethyst Smoke
+    /// Uses custom colorHex if set, otherwise defaults to Coral (Sweet Salmon)
     var displayColor: Color {
         if let hex = colorHex {
             return Color(hex: hex)
         }
-        return WinnieColors.amethystSmoke
+        return WinnieColors.sweetSalmon
     }
 
     /// Effective return rate (custom override or type default)
@@ -152,7 +152,7 @@ extension Goal {
         targetAmount: Decimal(1000000),
         currentAmount: Decimal(50000),
         priority: 2,
-        colorHex: GoalPresetColor.amethyst.rawValue,
+        colorHex: GoalPresetColor.coral.rawValue,
         iconName: "chart.line.uptrend.xyaxis"
     )
 
@@ -174,7 +174,7 @@ extension Goal {
         targetAmount: Decimal(20000),
         currentAmount: Decimal(12000),
         priority: 4,
-        colorHex: GoalPresetColor.terracotta.rawValue,
+        colorHex: GoalPresetColor.clay.rawValue,
         iconName: "shield.fill"
     )
 

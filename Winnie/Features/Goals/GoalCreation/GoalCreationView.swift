@@ -48,7 +48,7 @@ struct GoalCreationView: View {
 
     @State private var selectedType: GoalType = .custom
     @State private var selectedIcon: String? = nil  // nil = auto mode
-    @State private var selectedColor: GoalPresetColor = .amethyst
+    @State private var selectedColor: GoalPresetColor = .coral
     @State private var showAppearanceSheet: Bool = false
 
     // MARK: - Focus State
@@ -197,10 +197,10 @@ struct GoalCreationView: View {
             Text(title)
                 .font(WinnieTypography.bodyM())
                 .fontWeight(.semibold)
-                .foregroundColor(WinnieColors.snow)
+                .foregroundColor(WinnieColors.carbonBlack)
                 .frame(maxWidth: .infinity)
                 .frame(height: WinnieSpacing.buttonHeight)
-                .background(WinnieColors.amethystSmoke)
+                .background(WinnieColors.sweetSalmon)
                 .clipShape(RoundedRectangle(cornerRadius: WinnieSpacing.buttonCornerRadius))
         }
         .disabled(!isEnabled)

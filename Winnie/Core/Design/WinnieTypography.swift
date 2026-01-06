@@ -1,130 +1,93 @@
 import SwiftUI
 
 /// Winnie Design System - Typography
-/// Based on Winnie_Design_System.md
+/// Wispr Flow-Inspired: Rhythm, Presence, Clarity
 ///
 /// Fonts:
-/// - Headlines: Playfair Display (serif) - warmth and sophistication
-/// - Body/UI: Lato (sans-serif) - clean and friendly
+/// - Headlines: EB Garamond (serif) - elegant rhythm and warmth
+/// - Body/UI: Figtree (sans-serif) - modern, clean, approachable
 ///
-/// Note: Using system fonts as fallback until custom fonts are added.
-/// To add custom fonts:
-/// 1. Download Playfair Display and Lato from Google Fonts
-/// 2. Add .ttf files to Resources/Fonts/
-/// 3. Add font filenames to Info.plist under "Fonts provided by application"
-/// 4. Update the font names below
+/// Custom fonts are loaded from Resources/Fonts/ and registered in Info.plist.
+/// If fonts fail to load, system fonts are used as fallback.
 enum WinnieTypography {
 
-    // MARK: - Font Names
+    // MARK: - Font Names (EB Garamond)
 
-    /// Serif font for headlines (Playfair Display)
-    /// Using system serif as fallback
-    static let serifFontName: String? = nil  // Set to "PlayfairDisplay-Regular" after adding fonts
+    private static let garamondRegular = "EBGaramond-Regular"
+    private static let garamondMedium = "EBGaramond-Medium"
+    private static let garamondSemiBold = "EBGaramond-SemiBold"
 
-    /// Sans-serif font for body text (Lato)
-    /// Using system sans-serif as fallback
-    static let sansFontName: String? = nil  // Set to "Lato-Regular" after adding fonts
+    // MARK: - Font Names (Figtree)
 
-    // MARK: - Display Styles (Playfair Display / Serif)
+    private static let figtreeRegular = "Figtree-Regular"
+    private static let figtreeMedium = "Figtree-Medium"
+    private static let figtreeSemiBold = "Figtree-SemiBold"
+    private static let figtreeBold = "Figtree-Bold"
+
+    // MARK: - Display Styles (EB Garamond / Serif)
 
     /// 52pt - Welcome screens, major onboarding moments
     static func displayXL() -> Font {
-        if let fontName = serifFontName {
-            return .custom(fontName, size: 52)
-        }
-        return .system(size: 52, weight: .regular, design: .serif)
+        .custom(garamondRegular, size: 52)
     }
 
     /// 44pt - Subscription paywall, important screens
     static func displayL() -> Font {
-        if let fontName = serifFontName {
-            return .custom(fontName, size: 44)
-        }
-        return .system(size: 44, weight: .regular, design: .serif)
+        .custom(garamondRegular, size: 44)
     }
 
     /// 36pt - Screen titles, page headers
     static func displayM() -> Font {
-        if let fontName = serifFontName {
-            return .custom(fontName, size: 36)
-        }
-        return .system(size: 36, weight: .medium, design: .serif)
+        .custom(garamondMedium, size: 36)
     }
 
     /// 28pt - Section headers within screens
     static func headlineL() -> Font {
-        if let fontName = serifFontName {
-            return .custom(fontName, size: 28)
-        }
-        return .system(size: 28, weight: .semibold, design: .serif)
+        .custom(garamondSemiBold, size: 28)
     }
 
     /// 22pt - Card titles, goal names, subsection headers
     static func headlineM() -> Font {
-        if let fontName = serifFontName {
-            return .custom(fontName, size: 22)
-        }
-        return .system(size: 22, weight: .semibold, design: .serif)
+        .custom(garamondSemiBold, size: 22)
     }
 
-    // MARK: - Body Styles (Lato / Sans-serif)
+    // MARK: - Body Styles (Figtree / Sans-serif)
 
     /// 18pt - Primary body text, longer descriptions
     static func bodyL() -> Font {
-        if let fontName = sansFontName {
-            return .custom(fontName, size: 18)
-        }
-        return .system(size: 18, weight: .regular, design: .default)
+        .custom(figtreeRegular, size: 18)
     }
 
     /// 16pt - Button text, form labels, secondary descriptions
     static func bodyM() -> Font {
-        if let fontName = sansFontName {
-            return .custom(fontName, size: 16)
-        }
-        return .system(size: 16, weight: .regular, design: .default)
+        .custom(figtreeRegular, size: 16)
     }
 
     /// 14pt - Helper text, timestamps, legal text
     static func bodyS() -> Font {
-        if let fontName = sansFontName {
-            return .custom(fontName, size: 14)
-        }
-        return .system(size: 14, weight: .regular, design: .default)
+        .custom(figtreeRegular, size: 14)
     }
 
     /// 12pt - Very small helper text, footnotes
     static func caption() -> Font {
-        if let fontName = sansFontName {
-            return .custom(fontName, size: 12)
-        }
-        return .system(size: 12, weight: .regular, design: .default)
+        .custom(figtreeRegular, size: 12)
     }
 
-    // MARK: - Financial Styles (Lato Bold with tabular figures)
+    // MARK: - Financial Styles (Figtree Bold with tabular figures)
 
     /// 40pt - Hero financial amounts (disposable income display)
     static func financialXL() -> Font {
-        if let fontName = sansFontName {
-            return .custom(fontName, size: 40).weight(.bold)
-        }
-        return .system(size: 40, weight: .bold, design: .default).monospacedDigit()
+        .custom(figtreeBold, size: 40)
     }
 
     /// 32pt - Large amounts, goal targets, timeline projections
     static func financialL() -> Font {
-        if let fontName = sansFontName {
-            return .custom(fontName, size: 32).weight(.bold)
-        }
-        return .system(size: 32, weight: .bold, design: .default).monospacedDigit()
+        .custom(figtreeBold, size: 32)
     }
 
     /// 24pt - Card amounts, allocation values
     static func financialM() -> Font {
-        if let fontName = sansFontName {
-            return .custom(fontName, size: 24).weight(.bold)
-        }
-        return .system(size: 24, weight: .bold, design: .default).monospacedDigit()
+        .custom(figtreeBold, size: 24)
     }
 }
 

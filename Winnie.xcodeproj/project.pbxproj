@@ -26,9 +26,22 @@
 		529D2ED32F037F5E00867373 /* WinnieTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WinnieTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		525349342F0CC15B00D38FA4 /* Exceptions for "Winnie" folder in "Winnie" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 529D2E702F02FF2000867373 /* Winnie */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		529D2E732F02FF2000867373 /* Winnie */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				525349342F0CC15B00D38FA4 /* Exceptions for "Winnie" folder in "Winnie" target */,
+			);
 			path = Winnie;
 			sourceTree = "<group>";
 		};
@@ -344,6 +357,7 @@
 				DEVELOPMENT_TEAM = RATX74HS69;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Winnie/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -377,6 +391,7 @@
 				DEVELOPMENT_TEAM = RATX74HS69;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Winnie/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

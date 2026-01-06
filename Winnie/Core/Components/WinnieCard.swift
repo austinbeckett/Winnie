@@ -1,6 +1,7 @@
 import SwiftUI
 
 /// A styled card container following Winnie design system.
+/// Uses Pine Teal background for strong brand presence with Ivory text.
 ///
 /// Usage:
 /// ```swift
@@ -72,44 +73,51 @@ struct WinnieCard<Content: View>: View {
             VStack(alignment: .leading, spacing: WinnieSpacing.xs) {
                 Text("Card Title")
                     .font(WinnieTypography.headlineM())
+                    .foregroundColor(WinnieColors.cardText)
                 Text("This is some card content that explains something important.")
                     .font(WinnieTypography.bodyM())
+                    .foregroundColor(WinnieColors.cardText.opacity(0.8))
             }
         }
 
         WinnieCard {
             Text("Simple card with just text")
                 .font(WinnieTypography.bodyM())
+                .foregroundColor(WinnieColors.cardText)
         }
     }
     .padding(WinnieSpacing.l)
-    .background(WinnieColors.parchment)
+    .background(WinnieColors.ivory)
 }
 
 #Preview("Cards with Accent Borders") {
     VStack(spacing: WinnieSpacing.m) {
-        WinnieCard(accentColor: GoalPresetColor.amethyst.color) {
-            Text("Amethyst Goal")
+        WinnieCard(accentColor: GoalPresetColor.coral.color) {
+            Text("Coral Goal")
                 .font(WinnieTypography.headlineM())
+                .foregroundColor(WinnieColors.cardText)
         }
 
-        WinnieCard(accentColor: GoalPresetColor.blackberry.color) {
-            Text("Blackberry Goal")
+        WinnieCard(accentColor: GoalPresetColor.gold.color) {
+            Text("Gold Goal")
                 .font(WinnieTypography.headlineM())
+                .foregroundColor(WinnieColors.cardText)
         }
 
         WinnieCard(accentColor: GoalPresetColor.sage.color) {
             Text("Sage Goal")
                 .font(WinnieTypography.headlineM())
+                .foregroundColor(WinnieColors.cardText)
         }
 
-        WinnieCard(accentColor: GoalPresetColor.terracotta.color) {
-            Text("Terracotta Goal")
+        WinnieCard(accentColor: GoalPresetColor.clay.color) {
+            Text("Clay Goal")
                 .font(WinnieTypography.headlineM())
+                .foregroundColor(WinnieColors.cardText)
         }
     }
     .padding(WinnieSpacing.l)
-    .background(WinnieColors.parchment)
+    .background(WinnieColors.ivory)
 }
 
 #Preview("Dark Mode") {
@@ -117,14 +125,16 @@ struct WinnieCard<Content: View>: View {
         WinnieCard {
             Text("Card in Dark Mode")
                 .font(WinnieTypography.headlineM())
+                .foregroundColor(WinnieColors.cardText)
         }
 
-        WinnieCard(accentColor: GoalPresetColor.amethyst.color) {
+        WinnieCard(accentColor: GoalPresetColor.coral.color) {
             Text("With Accent Border")
                 .font(WinnieTypography.headlineM())
+                .foregroundColor(WinnieColors.cardText)
         }
     }
     .padding(WinnieSpacing.l)
-    .background(WinnieColors.blackberryCream)
+    .background(WinnieColors.carbonBlack)
     .preferredColorScheme(.dark)
 }
