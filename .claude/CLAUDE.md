@@ -39,8 +39,9 @@ Winnie/
 | Name | Hex | Usage |
 |------|-----|-------|
 | Porcelain | `#FFFFFB` | Background (light) |
+| Onyx | `#121212` | Background (dark) |
 | Ivory | `#FFFFEB` | Primary text (dark), card text |
-| Carbon Black | `#1A1A1A` | Primary text (light), background (dark) |
+| Carbon Black | `#1A1A1A` | Primary text (light), elevated surfaces (dark mode cards) |
 | Sweet Salmon | `#FFA099` | Primary accent, buttons, interactive elements |
 | Pine Teal | `#034F46` | Card backgrounds (both modes), secondary accent |
 | Golden Orange | `#F0A202` | Tertiary accent, highlights, icons |

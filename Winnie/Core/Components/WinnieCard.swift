@@ -76,9 +76,9 @@ struct WinnieCard<Content: View>: View {
     @ViewBuilder
     private var styleBorderOverlay: some View {
         if style == .ivoryBordered {
-            // Full 2.5px Carbon Black border for ivoryBordered style
+            // Border inverts with background for dark mode compatibility
             RoundedRectangle(cornerRadius: WinnieSpacing.cardCornerRadius)
-                .stroke(WinnieColors.carbonBlack, lineWidth: 2.5)
+                .stroke(colorScheme == .dark ? WinnieColors.ivory : WinnieColors.carbonBlack, lineWidth: 2.5)
         }
     }
 

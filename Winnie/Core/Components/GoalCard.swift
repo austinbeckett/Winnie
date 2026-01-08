@@ -29,7 +29,7 @@ struct GoalCard: View {
                         .font(.system(size: 20))
                         .foregroundColor(goal.displayColor)
                         .frame(width: 32, height: 32)
-                        .background(WinnieColors.pineTeal.opacity(0.15))
+                        .background(goal.displayColor.opacity(0.15))
                         .clipShape(RoundedRectangle(cornerRadius: 8))
 
                     // Goal name
@@ -97,7 +97,7 @@ struct GoalCardCompact: View {
                     .font(.system(size: 18))
                     .foregroundColor(goal.displayColor)
                     .frame(width: 28, height: 28)
-                    .background(WinnieColors.pineTeal.opacity(0.15))
+                    .background(goal.displayColor.opacity(0.15))
                     .clipShape(RoundedRectangle(cornerRadius: 6))
 
                 // Name and progress

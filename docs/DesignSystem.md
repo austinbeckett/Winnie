@@ -25,8 +25,9 @@ Winnie adopts the Wispr Flow aesthetic—warm, rhythmic, and present. The design
 | Color Name | Hex Code | Usage |
 |------------|----------|-------|
 | **Porcelain** | `#FFFFFB` | Background (light mode) |
+| **Onyx** | `#121212` | Background (dark mode) |
 | **Ivory** | `#FFFFEB` | Primary text (dark mode), card text |
-| **Carbon Black** | `#1A1A1A` | Primary text (light mode), background (dark mode) |
+| **Carbon Black** | `#1A1A1A` | Primary text (light mode), elevated surfaces (dark mode cards) |
 | **Sweet Salmon** | `#FFA099` | Primary accent, buttons, interactive elements |
 | **Pine Teal** | `#034F46` | Card backgrounds (both modes), secondary accent |
 | **Golden Orange** | `#F0A202` | Tertiary accent, highlights, icons |
@@ -49,7 +50,8 @@ Winnie adopts the Wispr Flow aesthetic—warm, rhythmic, and present. The design
 
 | Element | Color | Notes |
 |---------|-------|-------|
-| **Background** | Carbon Black (`#1A1A1A`) | Main app background |
+| **Background** | Onyx (`#121212`) | Main app background |
+| **Elevated Surfaces** | Carbon Black (`#1A1A1A`) | Cards appear elevated |
 | **Primary Text** | Ivory (`#FFFFEB`) | Headlines, important text |
 | **Secondary Text** | Ivory at 80% | Body text, descriptions |
 | **Tertiary Text** | Ivory at 50% | Helper text, captions |
@@ -149,11 +151,12 @@ Cards support three background styles via `WinnieCardStyle`:
 
 #### Card Styles
 
-| Style | Light Mode BG | Dark Mode BG | Text Color |
-|-------|---------------|--------------|------------|
-| `.pineTeal` | Pine Teal | Pine Teal | Ivory |
-| `.carbon` | Carbon Black | Carbon Black | Ivory |
-| `.ivory` | Ivory | Carbon Black | Adapts |
+| Style | Light Mode BG | Dark Mode BG | Text Color | Border |
+|-------|---------------|--------------|------------|--------|
+| `.pineTeal` | Pine Teal | Pine Teal | Ivory | None |
+| `.carbon` | Carbon Black | Carbon Black | Ivory | None |
+| `.ivory` | Ivory | Carbon Black | Adapts | None |
+| `.ivoryBordered` | Ivory | Carbon Black | Adapts | 2.5px (adapts) |
 
 **Usage:**
 ```swift
@@ -171,6 +174,11 @@ WinnieCard(style: .carbon) {
 WinnieCard(style: .ivory) {
     Text("Content").cardPrimaryText(for: .ivory)
 }
+
+// Ivory Bordered (inverts in dark mode, includes border)
+WinnieCard(style: .ivoryBordered) {
+    Text("Content").cardPrimaryText(for: .ivoryBordered)
+}
 ```
 
 #### Common Card Properties
@@ -180,7 +188,7 @@ WinnieCard(style: .ivory) {
 - **Shadow (dark)**: None
 
 #### Goal Cards
-- **Base**: Standard card styling (`.pineTeal` by default)
+- **Base**: `.ivoryBordered` style (inverts in dark mode)
 - **Accent border**: 4px left border in goal's selected color
 - **Icon background**: Ivory at 20% opacity
 

@@ -30,9 +30,14 @@ enum WinnieColors {
 
     // MARK: - Core Colors
 
-    /// Primary text color (light mode) and background (dark mode)
+    /// Primary text color (light mode) and elevated surfaces (dark mode cards)
     /// Hex: #1A1A1A
     static let carbonBlack = Color(hex: "1A1A1A")
+
+    /// Main app background in dark mode
+    /// Darker than Carbon Black for proper elevation hierarchy
+    /// Hex: #121212
+    static let onyx = Color(hex: "121212")
 
     /// Primary text (dark mode) and card text
     /// Warm ivory with subtle yellow undertone
@@ -126,7 +131,7 @@ enum WinnieCardStyle {
     case carbon
     /// Ivory background in light mode, Carbon Black in dark mode (text adapts)
     case ivory
-    /// Ivory background with Pine Teal border and Carbon Black text (same in both modes)
+    /// Ivory background with border in light mode, inverts to Carbon Black with Ivory border in dark mode
     case ivoryBordered
 }
 
@@ -179,9 +184,9 @@ extension WinnieColors {
     // MARK: - Backgrounds
 
     /// Main app background
-    /// Light: Porcelain (#FFFFFB) | Dark: Carbon Black (#1A1A1A)
+    /// Light: Porcelain (#FFFFFB) | Dark: Onyx (#121212)
     static func background(for colorScheme: ColorScheme) -> Color {
-        colorScheme == .dark ? carbonBlack : porcelain
+        colorScheme == .dark ? onyx : porcelain
     }
 
     /// Card background - Pine Teal in both modes for strong brand presence
@@ -207,8 +212,8 @@ extension WinnieColors {
             // Ivory inverts in dark mode to maintain theme consistency
             return colorScheme == .dark ? carbonBlack : ivory
         case .ivoryBordered:
-            // Always ivory background (border handled separately in WinnieCard)
-            return ivory
+            // Carbon Black in dark mode - elevated above Onyx app background
+            return colorScheme == .dark ? carbonBlack : ivory
         }
     }
 
@@ -226,8 +231,8 @@ extension WinnieColors {
             // Light background uses dark text; dark mode uses light text
             return colorScheme == .dark ? ivory : carbonBlack
         case .ivoryBordered:
-            // Always Carbon Black text on ivory background for legibility
-            return carbonBlack
+            // Text inverts with background for legibility
+            return colorScheme == .dark ? ivory : carbonBlack
         }
     }
 
@@ -478,12 +483,12 @@ extension WinnieColors {
     }
 
     /// Dynamic UIColor for backgrounds
-    /// Light: Porcelain | Dark: Carbon Black
+    /// Light: Porcelain | Dark: Onyx
     static var backgroundUIColor: UIColor {
         UIColor { traitCollection in
             switch traitCollection.userInterfaceStyle {
             case .dark:
-                return UIColor(carbonBlack)
+                return UIColor(onyx)
             default:
                 return UIColor(porcelain)
             }

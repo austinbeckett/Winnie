@@ -80,8 +80,10 @@ struct WinnieProgressBar: View {
                 // Dark backgrounds: use semi-transparent ivory
                 return WinnieColors.ivory.opacity(0.2)
             case .ivory, .ivoryBordered:
-                // Light backgrounds: use semi-transparent carbon black
-                return WinnieColors.carbonBlack.opacity(0.15)
+                // Adapts to color scheme - dark on light bg, light on dark
+                return colorScheme == .dark
+                    ? WinnieColors.ivory.opacity(0.15)
+                    : WinnieColors.carbonBlack.opacity(0.15)
             }
         } else if onCard {
             // Fallback for legacy onCard usage without context
