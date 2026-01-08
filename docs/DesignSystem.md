@@ -24,7 +24,8 @@ Winnie adopts the Wispr Flow aesthetic—warm, rhythmic, and present. The design
 
 | Color Name | Hex Code | Usage |
 |------------|----------|-------|
-| **Ivory** | `#FFFFEB` | Background (light mode), primary text (dark mode) |
+| **Porcelain** | `#FFFFFB` | Background (light mode) |
+| **Ivory** | `#FFFFEB` | Primary text (dark mode), card text |
 | **Carbon Black** | `#1A1A1A` | Primary text (light mode), background (dark mode) |
 | **Sweet Salmon** | `#FFA099` | Primary accent, buttons, interactive elements |
 | **Pine Teal** | `#034F46` | Card backgrounds (both modes), secondary accent |
@@ -34,7 +35,7 @@ Winnie adopts the Wispr Flow aesthetic—warm, rhythmic, and present. The design
 
 | Element | Color | Notes |
 |---------|-------|-------|
-| **Background** | Ivory (`#FFFFEB`) | Main app background |
+| **Background** | Porcelain (`#FFFFFB`) | Main app background |
 | **Primary Text** | Carbon Black (`#1A1A1A`) | Headlines, important text |
 | **Secondary Text** | Carbon Black at 80% | Body text, descriptions |
 | **Tertiary Text** | Carbon Black at 50% | Helper text, captions |
@@ -258,7 +259,7 @@ All design tokens are defined in:
 
 Before considering a screen complete:
 
-- [ ] Background uses Ivory (light) / Carbon Black (dark)
+- [ ] Background uses Porcelain (light) / Carbon Black (dark)
 - [ ] Cards use appropriate style (`.pineTeal`, `.carbon`, or `.ivory`) with matching text colors
 - [ ] Buttons have 3px borders
 - [ ] Primary buttons use Sweet Salmon

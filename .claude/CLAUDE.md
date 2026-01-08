@@ -38,7 +38,8 @@ Winnie/
 ### Core Colors
 | Name | Hex | Usage |
 |------|-----|-------|
-| Ivory | `#FFFFEB` | Background (light), primary text (dark) |
+| Porcelain | `#FFFFFB` | Background (light) |
+| Ivory | `#FFFFEB` | Primary text (dark), card text |
 | Carbon Black | `#1A1A1A` | Primary text (light), background (dark) |
 | Sweet Salmon | `#FFA099` | Primary accent, buttons, interactive elements |
 | Pine Teal | `#034F46` | Card backgrounds (both modes), secondary accent |

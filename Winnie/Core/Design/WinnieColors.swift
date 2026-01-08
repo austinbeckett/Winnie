@@ -34,10 +34,15 @@ enum WinnieColors {
     /// Hex: #1A1A1A
     static let carbonBlack = Color(hex: "1A1A1A")
 
-    /// Primary background (light mode) and text (dark mode)
+    /// Primary text (dark mode) and card text
     /// Warm ivory with subtle yellow undertone
     /// Hex: #FFFFEB
     static let ivory = Color(hex: "FFFFEB")
+
+    /// Primary background (light mode)
+    /// Clean white - purer than Ivory
+    /// Hex: #FFFFFB
+    static let porcelain = Color(hex: "FFFFFB")
 
     // MARK: - Accent Colors
 
@@ -174,9 +179,9 @@ extension WinnieColors {
     // MARK: - Backgrounds
 
     /// Main app background
-    /// Light: Ivory (#FFFFEB) | Dark: Carbon Black (#1A1A1A)
+    /// Light: Porcelain (#FFFFFB) | Dark: Carbon Black (#1A1A1A)
     static func background(for colorScheme: ColorScheme) -> Color {
-        colorScheme == .dark ? carbonBlack : ivory
+        colorScheme == .dark ? carbonBlack : porcelain
     }
 
     /// Card background - Pine Teal in both modes for strong brand presence
@@ -473,14 +478,14 @@ extension WinnieColors {
     }
 
     /// Dynamic UIColor for backgrounds
-    /// Light: Ivory | Dark: Carbon Black
+    /// Light: Porcelain | Dark: Carbon Black
     static var backgroundUIColor: UIColor {
         UIColor { traitCollection in
             switch traitCollection.userInterfaceStyle {
             case .dark:
                 return UIColor(carbonBlack)
             default:
-                return UIColor(ivory)
+                return UIColor(porcelain)
             }
         }
     }
