@@ -2,7 +2,7 @@ import Foundation
 
 /// A saved "what-if" allocation configuration
 /// Allows couples to create, compare, and decide on different savings strategies
-struct Scenario: Codable, Identifiable, Equatable {
+struct Scenario: Codable, Identifiable, Equatable, Hashable {
 
     /// Unique identifier
     let id: String

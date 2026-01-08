@@ -72,4 +72,17 @@ enum Formatting {
         formatter.unitsStyle = .full
         return formatter.localizedString(for: date, relativeTo: Date())
     }
+
+    /// Formats a date as month and year (e.g., "Jan 2026").
+    ///
+    /// Useful for target dates and projected completion dates where
+    /// day-level precision is not needed.
+    ///
+    /// - Parameter date: The date to format
+    /// - Returns: Month and year string
+    static func monthYear(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMM yyyy"
+        return formatter.string(from: date)
+    }
 }

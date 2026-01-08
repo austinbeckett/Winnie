@@ -153,6 +153,7 @@ struct ScenarioListView: View {
     @State private var viewModel: ScenarioListViewModel
     @State private var showCreateSheet = false
     @State private var scenarioToEdit: Scenario?
+    @State private var scenarioToView: Scenario?
 
     @Environment(\.colorScheme) private var colorScheme
 
@@ -199,7 +200,22 @@ struct ScenarioListView: View {
                 coupleID: coupleID,
                 userID: userID,
                 scenario: scenario,
-                onDismiss: { scenarioToEdit = nil }
+                onDismiss: { scenarioToEdit = nil },
+                onSave: {
+                    // Refresh list after edit
+                    Task { await viewModel.loadData() }
+                }
+            )
+        }
+        .navigationDestination(item: $scenarioToView) { scenario in
+            ScenarioDetailView(
+                scenario: scenario,
+                coupleID: coupleID,
+                userID: userID,
+                onScenarioUpdated: {
+                    // Refresh list when scenario is updated from detail view
+                    Task { await viewModel.loadData() }
+                }
             )
         }
         .alert("Error", isPresented: $viewModel.showError) {
@@ -261,9 +277,15 @@ struct ScenarioListView: View {
                             scenario: active,
                             goals: viewModel.goals,
                             projections: viewModel.projections(for: active),
-                            onTap: { scenarioToEdit = active }
+                            onTap: { scenarioToView = active }
                         )
                         .contextMenu {
+                            Button {
+                                scenarioToView = active
+                            } label: {
+                                Label("View Details", systemImage: "eye")
+                            }
+
                             Button {
                                 scenarioToEdit = active
                             } label: {
@@ -324,9 +346,15 @@ struct ScenarioListView: View {
             scenario: scenario,
             goals: viewModel.goals,
             projections: viewModel.projections(for: scenario),
-            onTap: { scenarioToEdit = scenario }
+            onTap: { scenarioToView = scenario }
         )
         .contextMenu {
+            Button {
+                scenarioToView = scenario
+            } label: {
+                Label("View Details", systemImage: "eye")
+            }
+
             Button {
                 scenarioToEdit = scenario
             } label: {

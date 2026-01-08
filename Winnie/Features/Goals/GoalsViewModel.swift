@@ -35,29 +35,81 @@ final class GoalsViewModel: ErrorHandlingViewModel {
     /// Whether to show error alert
     var showError = false
 
+    // MARK: - Scenario & Projection State
+
+    /// Active scenario for projections (loaded from listener)
+    private(set) var activeScenario: Scenario?
+
+    /// Financial profile for projection calculations
+    private(set) var financialProfile: FinancialProfile?
+
+    /// Computed projections for all goals based on active scenario.
+    ///
+    /// Returns empty dictionary if no active scenario or financial profile.
+    /// Recalculates automatically when scenario, profile, or goals change.
+    var projections: [String: GoalProjection] {
+        guard let profile = financialProfile,
+              let scenario = activeScenario else {
+            return [:]
+        }
+
+        let engine = FinancialEngine()
+        let input = EngineInput(
+            profile: profile,
+            goals: goals,
+            allocations: scenario.allocations
+        )
+
+        return engine.calculate(input: input).projections
+    }
+
+    /// Get projection for a specific goal.
+    func projection(for goalID: String) -> GoalProjection? {
+        projections[goalID]
+    }
+
     // MARK: - Dependencies
 
     private let coupleID: String
     private let repository: GoalRepository
     private let contributionRepository: ContributionRepository
+    private let scenarioRepository: ScenarioRepository
+    private let coupleRepository: CoupleRepository
     private var listenerRegistration: ListenerRegistrationProviding?
+    private var scenarioListener: ListenerRegistrationProviding?
 
     // MARK: - Initialization
 
     /// Create a ViewModel with a couple ID.
     /// - Parameters:
     ///   - coupleID: The couple's Firestore document ID
-    ///   - repository: Repository for data access
+    ///   - repository: Repository for goal data access
     ///   - contributionRepository: Repository for contribution operations
-    init(coupleID: String, repository: GoalRepository, contributionRepository: ContributionRepository) {
+    ///   - scenarioRepository: Repository for scenario data access
+    ///   - coupleRepository: Repository for couple/profile data access
+    init(
+        coupleID: String,
+        repository: GoalRepository,
+        contributionRepository: ContributionRepository,
+        scenarioRepository: ScenarioRepository,
+        coupleRepository: CoupleRepository
+    ) {
         self.coupleID = coupleID
         self.repository = repository
         self.contributionRepository = contributionRepository
+        self.scenarioRepository = scenarioRepository
+        self.coupleRepository = coupleRepository
     }
 
     /// Convenience initializer using default production repositories.
     convenience init(coupleID: String) {
-        self.init(coupleID: coupleID, repository: GoalRepository(), contributionRepository: ContributionRepository())
+        self.init(
+            coupleID: coupleID,
+            repository: GoalRepository(),
+            contributionRepository: ContributionRepository(),
+            scenarioRepository: ScenarioRepository(),
+            coupleRepository: CoupleRepository()
+        )
     }
 
 
@@ -66,11 +118,13 @@ final class GoalsViewModel: ErrorHandlingViewModel {
     func cleanup() {
         listenerRegistration?.remove()
         listenerRegistration = nil
+        scenarioListener?.remove()
+        scenarioListener = nil
     }
 
     // MARK: - Real-time Listener
 
-    /// Start listening to goals in real-time.
+    /// Start listening to goals and active scenario in real-time.
     /// Call this when the view appears.
     func startListening() {
         // Avoid duplicate listeners
@@ -78,19 +132,33 @@ final class GoalsViewModel: ErrorHandlingViewModel {
 
         isLoading = true
 
+        // Listen to goals
         listenerRegistration = repository.listenToGoals(coupleID: coupleID) { [weak self] goals in
             // Firebase runs this listener on main thread, and GoalsViewModel is @MainActor,
             // so we can update state directly without wrapping in Task
             self?.goals = goals
             self?.isLoading = false
         }
+
+        // Listen to active scenario for projections
+        scenarioListener = scenarioRepository.listenToActiveScenario(coupleID: coupleID) { [weak self] scenario in
+            self?.activeScenario = scenario
+        }
+
+        // Load financial profile (one-time fetch)
+        Task { [weak self] in
+            guard let self else { return }
+            self.financialProfile = try? await self.coupleRepository.fetchFinancialProfile(coupleID: self.coupleID)
+        }
     }
 
-    /// Stop listening to goals.
+    /// Stop listening to goals and scenario.
     /// Call this when the view disappears if you want to pause updates.
     func stopListening() {
         listenerRegistration?.remove()
         listenerRegistration = nil
+        scenarioListener?.remove()
+        scenarioListener = nil
     }
 
     // MARK: - CRUD Operations

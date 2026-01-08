@@ -64,6 +64,9 @@ final class ScenarioEditorViewModel: ErrorHandlingViewModel {
     /// Whether we're editing an existing scenario (vs creating new)
     var isEditingExisting: Bool = false
 
+    /// Selected goal IDs for this scenario (goals with checkmarks)
+    var selectedGoalIDs: Set<String> = []
+
     // MARK: - Private State
 
     /// The scenario being edited (if any)
@@ -122,12 +125,92 @@ final class ScenarioEditorViewModel: ErrorHandlingViewModel {
     var canSave: Bool {
         !scenarioName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             && !goals.isEmpty
+            && hasSelectedGoals
             && !isOverAllocated
     }
 
     /// Get projection for a specific goal
     func projection(for goalID: String) -> GoalProjection? {
         engineOutput?.projection(for: goalID)
+    }
+
+    /// Calculate required monthly contribution to hit a goal's target date.
+    /// Returns nil if the goal has no target date or is already complete.
+    func requiredContribution(for goal: Goal) -> Decimal? {
+        guard let targetDate = goal.desiredDate else { return nil }
+        guard goal.currentAmount < goal.targetAmount else { return nil }
+        return financialEngine.requiredMonthlyContribution(for: goal, by: targetDate)
+    }
+
+    /// Get the full allocation context for a goal (used by enhanced allocation row).
+    func allocationContext(for goal: Goal) -> GoalAllocationContext {
+        let allocation = workingAllocations[goal.id]
+        let projection = projection(for: goal.id)
+        let required = requiredContribution(for: goal)
+
+        // Calculate months delta between projected and target date
+        var monthsDelta: Int?
+        var isOnTrack = true
+
+        if let targetDate = goal.desiredDate,
+           let projectedDate = projection?.completionDate {
+            let calendar = Calendar.current
+            let projectedComponents = calendar.dateComponents([.year, .month], from: projectedDate)
+            let targetComponents = calendar.dateComponents([.year, .month], from: targetDate)
+
+            let projectedMonths = (projectedComponents.year ?? 0) * 12 + (projectedComponents.month ?? 0)
+            let targetMonths = (targetComponents.year ?? 0) * 12 + (targetComponents.month ?? 0)
+
+            // Positive = early, negative = late
+            monthsDelta = targetMonths - projectedMonths
+            isOnTrack = projectedMonths <= targetMonths
+        }
+
+        return GoalAllocationContext(
+            goal: goal,
+            allocation: allocation,
+            projection: projection,
+            requiredContribution: required,
+            targetDate: goal.desiredDate,
+            isOnTrack: isOnTrack,
+            monthsDelta: monthsDelta
+        )
+    }
+
+    /// Goals that are selected for this scenario (filtered by checkmarks)
+    var selectedGoals: [Goal] {
+        goals.filter { selectedGoalIDs.contains($0.id) }
+    }
+
+    /// Whether any goals are selected
+    var hasSelectedGoals: Bool {
+        !selectedGoalIDs.isEmpty
+    }
+
+    // MARK: - Goal Selection
+
+    /// Toggle a goal's selection status.
+    /// When deselected, the allocation is cleared.
+    /// - Parameter goalID: The goal to toggle
+    func toggleGoalSelection(_ goalID: String) {
+        if selectedGoalIDs.contains(goalID) {
+            selectedGoalIDs.remove(goalID)
+            workingAllocations[goalID] = 0  // Clear allocation when deselected
+        } else {
+            selectedGoalIDs.insert(goalID)
+        }
+        recalculate()
+    }
+
+    /// Select all goals
+    func selectAllGoals() {
+        selectedGoalIDs = Set(goals.map { $0.id })
+    }
+
+    /// Deselect all goals and clear allocations
+    func deselectAllGoals() {
+        selectedGoalIDs.removeAll()
+        clearAllAllocations()
     }
 
     // MARK: - Initialization
@@ -172,6 +255,9 @@ final class ScenarioEditorViewModel: ErrorHandlingViewModel {
 
             goals = loadedGoals.filter { $0.isActive }
             financialProfile = loadedProfile
+
+            // Initialize all goals as selected (user can uncheck ones they don't want)
+            selectedGoalIDs = Set(goals.map { $0.id })
 
             // Initialize allocations to zero for all goals
             for goal in goals {
@@ -220,6 +306,18 @@ final class ScenarioEditorViewModel: ErrorHandlingViewModel {
                 if !validGoalIDs.contains(goalID) {
                     workingAllocations.removeAllocation(for: goalID)
                 }
+            }
+
+            // Pre-select goals that have allocations > $0
+            selectedGoalIDs = Set(
+                goals
+                    .filter { workingAllocations[$0.id] > 0 }
+                    .map { $0.id }
+            )
+
+            // If no goals have allocations, select all by default
+            if selectedGoalIDs.isEmpty {
+                selectedGoalIDs = Set(goals.map { $0.id })
             }
 
             // Calculate projections
@@ -350,6 +448,12 @@ final class ScenarioEditorViewModel: ErrorHandlingViewModel {
                     createdBy: userID
                 )
                 try await scenarioRepository.createScenario(scenario, coupleID: coupleID)
+
+                // Auto-activate if this is the user's first/only scenario
+                let allScenarios = try await scenarioRepository.fetchAllScenarios(coupleID: coupleID)
+                if allScenarios.count == 1 {
+                    try await scenarioRepository.setActiveScenario(scenarioID: scenario.id, coupleID: coupleID)
+                }
             }
 
             isLoading = false
@@ -377,6 +481,72 @@ final class ScenarioEditorViewModel: ErrorHandlingViewModel {
             handleError(error, context: "deleting scenario")
             isLoading = false
             return false
+        }
+    }
+}
+
+// MARK: - Goal Allocation Context
+
+/// Context object containing all information needed to display an enhanced allocation row.
+/// Bundles the goal, current allocation, projection, and comparison data.
+struct GoalAllocationContext {
+    /// The goal being allocated
+    let goal: Goal
+
+    /// Current allocation amount (from slider)
+    let allocation: Decimal
+
+    /// Engine projection for this goal
+    let projection: GoalProjection?
+
+    /// Required contribution to hit target date (nil if no target date)
+    let requiredContribution: Decimal?
+
+    /// Target date from goal (nil if not set)
+    let targetDate: Date?
+
+    /// Whether current allocation puts goal on track to hit target
+    let isOnTrack: Bool
+
+    /// Months difference: positive = early, negative = late, nil = no comparison possible
+    let monthsDelta: Int?
+
+    // MARK: - Computed Properties
+
+    /// Whether this goal has a target date to compare against
+    var hasTargetDate: Bool {
+        targetDate != nil
+    }
+
+    /// Projected completion date based on current allocation
+    var projectedDate: Date? {
+        projection?.completionDate
+    }
+
+    /// Whether allocation needs to be increased to hit target
+    var needsMoreAllocation: Bool {
+        guard let required = requiredContribution else { return false }
+        return allocation < required
+    }
+
+    /// How much more is needed per month to hit target
+    var allocationDeficit: Decimal {
+        guard let required = requiredContribution else { return 0 }
+        return max(required - allocation, 0)
+    }
+
+    /// Formatted text for months delta (e.g., "4 months early" or "3 months late")
+    var monthsDeltaText: String? {
+        guard let delta = monthsDelta else { return nil }
+        let absMonths = abs(delta)
+        let monthWord = absMonths == 1 ? "month" : "months"
+
+        if delta > 0 {
+            return "\(absMonths) \(monthWord) early"
+        } else if delta < 0 {
+            return "\(absMonths) \(monthWord) late"
+        } else {
+            return "On target"
         }
     }
 }

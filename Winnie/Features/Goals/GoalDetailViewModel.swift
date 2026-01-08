@@ -1,13 +1,5 @@
 import SwiftUI
 
-/// Status of goal progress relative to target date
-enum OnTrackStatus: Equatable {
-    case onTrack
-    case behind
-    case noTarget
-    case completed
-}
-
 /// ViewModel for managing goal detail state including contributions.
 ///
 /// Uses @Observable for automatic change tracking and @MainActor for thread safety.
@@ -50,13 +42,34 @@ final class GoalDetailViewModel: ErrorHandlingViewModel {
     /// Contribution being edited (nil for new contribution)
     var contributionToEdit: Contribution?
 
+    /// Whether the add-to-plan sheet is showing
+    var showAddToPlanSheet = false
+
     // MARK: - Dependencies
 
     let currentUser: User
     let partner: User?
-    private let coupleID: String
+    let coupleID: String
     private let contributionRepository: ContributionRepository
     private let goalsViewModel: GoalsViewModel
+
+    /// Projection from the active plan (computed from parent ViewModel).
+    ///
+    /// This is computed rather than stored so it automatically updates
+    /// when the active scenario changes.
+    var projection: GoalProjection? {
+        goalsViewModel.projection(for: goal.id)
+    }
+
+    /// Name of the active plan (if any).
+    var activePlanName: String? {
+        goalsViewModel.activeScenario?.name
+    }
+
+    /// The active scenario/plan (if any).
+    var activeScenario: Scenario? {
+        goalsViewModel.activeScenario
+    }
 
     // MARK: - Initialization
 
@@ -126,9 +139,13 @@ final class GoalDetailViewModel: ErrorHandlingViewModel {
         contributions.count > 5
     }
 
-    /// Calculate on-track status based on linear progress
-    var onTrackStatus: OnTrackStatus {
-        calculateOnTrackStatus()
+    /// Calculate tracking status based on plan projections.
+    ///
+    /// Uses the projection from the active plan to determine if the goal
+    /// is on track to meet its target date, or falls back to "not in plan"
+    /// if no projection is available.
+    var trackingStatus: GoalTrackingStatus {
+        calculateTrackingStatus()
     }
 
     /// Check if a contribution belongs to the current user
@@ -302,35 +319,101 @@ final class GoalDetailViewModel: ErrorHandlingViewModel {
 
     // MARK: - Status Calculation
 
-    private func calculateOnTrackStatus() -> OnTrackStatus {
-        // Check if goal is completed
+    /// Calculate tracking status based on plan projection.
+    ///
+    /// Priority order:
+    /// 1. Completed - goal has reached target amount
+    /// 2. No target date - can still show projected date if available
+    /// 3. Not in plan - has target but no allocation
+    /// 4. On track / Behind - based on projected vs target date
+    private func calculateTrackingStatus() -> GoalTrackingStatus {
+        // 1. Check if goal is completed
         if goal.currentAmount >= goal.targetAmount {
             return .completed
         }
 
-        // Check if there's a target date
+        // 2. Check if there's a target date
         guard let targetDate = goal.desiredDate else {
-            return .noTarget
+            return .noTargetDate(projectedDate: projection?.completionDate)
         }
 
-        let now = Date()
-
-        // If past target date
-        guard targetDate > now else {
-            return goal.currentAmount >= goal.targetAmount ? .completed : .behind
+        // 3. Check if goal has a projection with allocation
+        guard let projection = projection,
+              projection.monthlyContribution > 0 else {
+            return .notInPlan(targetDate: targetDate)
         }
 
-        // Calculate linear progress expectation
-        let totalDuration = targetDate.timeIntervalSince(goal.createdAt)
-        guard totalDuration > 0 else { return .onTrack }
+        // 4. Check if projection is reachable
+        guard let projectedDate = projection.completionDate else {
+            // Unreachable goal (e.g., $0 allocation or infinite timeline)
+            let required = FinancialEngine().requiredMonthlyContribution(for: goal, by: targetDate)
+            return .behind(
+                GoalTrackingStatus.TrackingDetails(
+                    projectedDate: Date.distantFuture,
+                    targetDate: targetDate,
+                    monthsDifference: -999,
+                    currentContribution: projection.monthlyContribution
+                ),
+                requiredContribution: required ?? 0
+            )
+        }
 
-        let elapsed = now.timeIntervalSince(goal.createdAt)
-        guard elapsed > 0 else { return .onTrack }
+        // 5. Calculate months difference
+        let calendar = Calendar.current
+        let monthsDiff = calendar.dateComponents([.month], from: projectedDate, to: targetDate).month ?? 0
 
-        let expectedProgress = elapsed / totalDuration
-        let expectedAmount = goal.targetAmount * Decimal(expectedProgress)
+        let details = GoalTrackingStatus.TrackingDetails(
+            projectedDate: projectedDate,
+            targetDate: targetDate,
+            monthsDifference: monthsDiff,
+            currentContribution: projection.monthlyContribution
+        )
 
-        return goal.currentAmount >= expectedAmount ? .onTrack : .behind
+        // 6. Determine if on track or behind
+        // Compare at MONTH granularity to avoid drift issues from exact date comparisons.
+        // Users think in terms of "March 2027" not "March 8, 2027 at 3:15:22 PM".
+        let projectedComponents = calendar.dateComponents([.year, .month], from: projectedDate)
+        let targetComponents = calendar.dateComponents([.year, .month], from: targetDate)
+
+        let projectedMonths = (projectedComponents.year ?? 0) * 12 + (projectedComponents.month ?? 0)
+        let targetMonths = (targetComponents.year ?? 0) * 12 + (targetComponents.month ?? 0)
+
+        if projectedMonths <= targetMonths {
+            return .onTrack(details)
+        } else {
+            let required = FinancialEngine().requiredMonthlyContribution(for: goal, by: targetDate)
+            return .behind(details, requiredContribution: required ?? 0)
+        }
+    }
+
+    /// Adjust the goal's target date to match the projected completion date.
+    ///
+    /// Only works when the goal is behind schedule. This allows users to
+    /// accept the projected date with one tap, resolving the "behind" status.
+    ///
+    /// Note: Sets the target to the END of the projected month to provide
+    /// a margin of safety. This ensures that any future recalculation
+    /// landing in that month will still be considered "on track".
+    func adjustTargetDateToProjection() async {
+        guard case .behind(let details, _) = trackingStatus else { return }
+
+        var updatedGoal = goal
+
+        // Set target to END of the projected month for margin of safety.
+        // This prevents drift issues where recalculations produce slightly
+        // different dates within the same month.
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.year, .month], from: details.projectedDate)
+
+        if let startOfMonth = calendar.date(from: components),
+           let endOfMonth = calendar.date(byAdding: DateComponents(month: 1, day: -1), to: startOfMonth) {
+            updatedGoal.desiredDate = endOfMonth
+        } else {
+            // Fallback to the original projected date if date math fails
+            updatedGoal.desiredDate = details.projectedDate
+        }
+
+        await updateGoal(updatedGoal)
     }
 
 }

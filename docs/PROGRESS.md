@@ -6,7 +6,7 @@
 
 ## Current Focus
 
-**In Progress:** Financial Engine Integration + Scenarios UI
+**In Progress:** Goal-Plan UX Redesign (making the relationship between target dates, allocations, and projected dates clearer)
 
 **Next Up:** Partner System, Local-first architecture (SwiftData), or additional polish
 
@@ -281,6 +281,19 @@
 ---
 
 ## Recent Sessions
+
+### January 8, 2026 (Session 19) - Goal-Plan UX Redesign (In Progress)
+- **Goal-Plan Integration**: Building clearer UX for the relationship between target dates, allocations, and projected dates
+- **Enhanced GoalAllocationRow**: Complete rewrite with two variants:
+  - Goals WITH target date: Two-column "Required vs Your Allocation" comparison, slider with marker at required amount, status indicator ("X months early/late"), "Match Required" one-tap button
+  - Goals WITHOUT target date: Simpler UI with just allocation and projected completion date
+- **ScenarioEditorViewModel**: Added `requiredContribution(for:)` using FinancialEngine calculations, added `GoalAllocationContext` struct to bundle allocation data
+- **GoalDetailView Enhancement**: Enhanced allocation section showing plan name, target vs projected date comparison, "Edit in Plan" navigation button
+- **GoalDetailViewModel**: Added `activePlanName` and `activeScenario` computed properties, exposed `coupleID` for navigation
+- **ScenarioEditorView**: Updated to use new context-based GoalAllocationRow with "Match Required" callback
+- **Files created**: GoalTrackingStatus.swift, ScenarioDetailView.swift, ScenarioDetailViewModel.swift, ScenarioGoalRow.swift, AllocationEditSheet.swift, GoalSelectionView.swift
+- **Files modified**: GoalAllocationRow.swift (rewritten), ScenarioEditorViewModel.swift, ScenarioEditorView.swift, GoalDetailView.swift, GoalDetailViewModel.swift, Scenario.swift, Allocation.swift
+- **Documentation**: Created docs/GoalPlanIntegrationSummary.md explaining architecture and patterns
 
 ### January 8, 2026 (Session 18) - Financial Engine Integration + Scenarios UI
 - **Complete Scenarios System Built**: Full "What-If" planning feature now functional

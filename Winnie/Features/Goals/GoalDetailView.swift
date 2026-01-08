@@ -15,6 +15,7 @@ struct GoalDetailView: View {
     @State private var showDeleteConfirmation = false
     @State private var showAddContribution = false
     @State private var contributionToEdit: Contribution?
+    @State private var showPlanEditor = false
 
     // Animation state for progress ring entrance
     @State private var showRing = false
@@ -124,6 +125,39 @@ struct GoalDetailView: View {
             Button("OK", role: .cancel) {}
         } message: {
             Text(viewModel.errorMessage ?? "An error occurred")
+        }
+        .sheet(isPresented: $viewModel.showAddToPlanSheet) {
+            // TODO: Replace with actual AddGoalToPlanSheet when available
+            NavigationStack {
+                VStack(spacing: WinnieSpacing.l) {
+                    Text("Add to Plan")
+                        .font(WinnieTypography.headlineL())
+                    Text("This feature will allow you to add \"\(viewModel.goal.name)\" to your current plan.")
+                        .font(WinnieTypography.bodyM())
+                        .multilineTextAlignment(.center)
+                    Spacer()
+                }
+                .padding()
+                .navigationTitle("Add to Plan")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Cancel") {
+                            viewModel.showAddToPlanSheet = false
+                        }
+                    }
+                }
+            }
+        }
+        .sheet(isPresented: $showPlanEditor) {
+            if let scenario = viewModel.activeScenario {
+                ScenarioEditorView(
+                    coupleID: viewModel.coupleID,
+                    userID: viewModel.currentUser.id,
+                    scenario: scenario,
+                    onDismiss: { showPlanEditor = false }
+                )
+            }
         }
     }
 
@@ -279,11 +313,8 @@ struct GoalDetailView: View {
                         value: Formatting.percentage(viewModel.goal.effectiveReturnRate)
                     )
 
-                    detailRow(
-                        icon: "dollarsign.arrow.circlepath",
-                        label: "Monthly Contribution",
-                        value: "$300"
-                    )
+                    // Enhanced allocation section with plan context
+                    allocationSection
 
                     detailRow(
                         icon: "building.columns",
@@ -330,71 +361,233 @@ struct GoalDetailView: View {
     }
 
     private var statusRow: some View {
-        HStack(spacing: WinnieSpacing.s) {
-            Image(systemName: "flag")
-                .font(.system(size: 16))
-                .foregroundColor(viewModel.goal.displayColor)
-                .frame(width: 20)
+        VStack(alignment: .leading, spacing: WinnieSpacing.s) {
+            HStack(spacing: WinnieSpacing.s) {
+                Image(systemName: viewModel.trackingStatus.iconName)
+                    .font(.system(size: 16))
+                    .foregroundColor(viewModel.goal.displayColor)
+                    .frame(width: 20)
 
-            Text("Status")
-                .font(WinnieTypography.bodyM())
-                .foregroundColor(WinnieColors.cardText.opacity(WinnieColors.Opacity.secondary))
+                Text("Status")
+                    .font(WinnieTypography.bodyM())
+                    .foregroundColor(WinnieColors.cardText.opacity(WinnieColors.Opacity.secondary))
 
-            Spacer()
+                Spacer()
 
-            // Status chip/badge
-            HStack(spacing: WinnieSpacing.xs) {
-                Circle()
-                    .fill(statusColor)
-                    .frame(width: 8, height: 8)
+                // Status chip/badge
+                HStack(spacing: WinnieSpacing.xs) {
+                    Circle()
+                        .fill(statusColor)
+                        .frame(width: 8, height: 8)
 
-                Text(statusText)
-                    .font(WinnieTypography.bodyS())
-                    .fontWeight(.medium)
-                    .foregroundColor(statusTextColor)
+                    Text(statusText)
+                        .font(WinnieTypography.bodyS())
+                        .fontWeight(.medium)
+                        .foregroundColor(statusTextColor)
+                }
+                .padding(.horizontal, WinnieSpacing.s)
+                .padding(.vertical, WinnieSpacing.xs)
+                .background(statusBackgroundColor)
+                .clipShape(Capsule())
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel("Goal status: \(statusText)")
             }
-            .padding(.horizontal, WinnieSpacing.s)
-            .padding(.vertical, WinnieSpacing.xs)
-            .background(statusBackgroundColor)
-            .clipShape(Capsule())
-            .accessibilityElement(children: .combine)
-            .accessibilityLabel("Goal status: \(statusText)")
+
+            // Additional status details based on tracking status
+            statusDetailsSection
+        }
+    }
+
+    /// Additional details shown below the status badge for actionable states.
+    @ViewBuilder
+    private var statusDetailsSection: some View {
+        switch viewModel.trackingStatus {
+        case .completed:
+            EmptyView()
+
+        case .noTargetDate(let projectedDate):
+            if let date = projectedDate {
+                Text("Projected completion: \(Formatting.monthYear(date))")
+                    .font(WinnieTypography.caption())
+                    .foregroundColor(WinnieColors.cardText.opacity(WinnieColors.Opacity.secondary))
+                    .padding(.leading, 28) // Align with text after icon
+            }
+
+        case .notInPlan:
+            VStack(alignment: .leading, spacing: WinnieSpacing.xs) {
+                Text("Add this goal to a plan to track progress")
+                    .font(WinnieTypography.caption())
+                    .foregroundColor(WinnieColors.cardText.opacity(WinnieColors.Opacity.secondary))
+
+                Button {
+                    viewModel.showAddToPlanSheet = true
+                } label: {
+                    Text("Add to Current Plan")
+                        .font(WinnieTypography.bodyS())
+                        .fontWeight(.medium)
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(WinnieColors.amethystSmoke)
+            }
+            .padding(.leading, 28)
+
+        case .onTrack(let details):
+            Text("Projected: \(Formatting.monthYear(details.projectedDate)) (\(abs(details.monthsDifference)) months early)")
+                .font(WinnieTypography.caption())
+                .foregroundColor(WinnieColors.cardText.opacity(WinnieColors.Opacity.secondary))
+                .padding(.leading, 28)
+
+        case .behind(let details, let requiredContribution):
+            VStack(alignment: .leading, spacing: WinnieSpacing.s) {
+                Text("Current plan projects \(abs(details.monthsDifference)) months late")
+                    .font(WinnieTypography.caption())
+                    .foregroundColor(WinnieColors.cardText.opacity(WinnieColors.Opacity.secondary))
+
+                // Primary recommendation: increase savings
+                if requiredContribution > details.currentContribution {
+                    Text("Save \(Formatting.currency(requiredContribution))/month to hit your target")
+                        .font(WinnieTypography.bodyS())
+                        .fontWeight(.medium)
+                        .foregroundColor(WinnieColors.cardText)
+                }
+
+                // Secondary option: adjust target date
+                Button {
+                    Task {
+                        await viewModel.adjustTargetDateToProjection()
+                    }
+                } label: {
+                    Text("Adjust target to \(Formatting.monthYear(details.projectedDate))")
+                        .font(WinnieTypography.bodyS())
+                }
+                .buttonStyle(.bordered)
+            }
+            .padding(.leading, 28)
         }
     }
 
     private var statusText: String {
-        switch viewModel.onTrackStatus {
-        case .onTrack: return "On Track"
-        case .behind: return "Behind"
-        case .completed: return "Complete"
-        case .noTarget: return "No Target Date"
+        viewModel.trackingStatus.label
+    }
+
+    /// Display text for monthly allocation from plan.
+    private var monthlyAllocationText: String {
+        guard let projection = viewModel.projection else {
+            return "Not in plan"
+        }
+        if projection.monthlyContribution > 0 {
+            return Formatting.currency(projection.monthlyContribution) + "/month"
+        }
+        return "Not in plan"
+    }
+
+    // MARK: - Enhanced Allocation Section
+
+    /// Enhanced allocation section showing plan context and target vs projected comparison.
+    private var allocationSection: some View {
+        VStack(alignment: .leading, spacing: WinnieSpacing.s) {
+            // Header row with icon and label
+            HStack(spacing: WinnieSpacing.s) {
+                Image(systemName: "dollarsign.arrow.circlepath")
+                    .font(.system(size: 16))
+                    .foregroundColor(viewModel.goal.displayColor)
+                    .frame(width: 20)
+
+                Text("Monthly Allocation")
+                    .font(WinnieTypography.bodyM())
+                    .foregroundColor(WinnieColors.cardText.opacity(WinnieColors.Opacity.secondary))
+
+                Spacer()
+            }
+
+            // Allocation amount with plan context
+            if let projection = viewModel.projection, projection.monthlyContribution > 0 {
+                VStack(alignment: .leading, spacing: WinnieSpacing.xs) {
+                    // Amount and plan name
+                    HStack {
+                        Text(Formatting.currency(projection.monthlyContribution) + "/mo")
+                            .font(WinnieTypography.bodyM())
+                            .fontWeight(.semibold)
+                            .foregroundColor(WinnieColors.cardText)
+
+                        if let planName = viewModel.activePlanName {
+                            Text("from \"\(planName)\"")
+                                .font(WinnieTypography.caption())
+                                .foregroundColor(WinnieColors.cardText.opacity(WinnieColors.Opacity.tertiary))
+                        }
+                    }
+
+                    // Target vs Projected date comparison (if goal has target date)
+                    if let targetDate = viewModel.goal.desiredDate,
+                       let projectedDate = projection.completionDate {
+                        HStack(spacing: WinnieSpacing.xs) {
+                            Text("Target: \(Formatting.monthYear(targetDate))")
+                                .font(WinnieTypography.caption())
+                                .foregroundColor(WinnieColors.cardText.opacity(WinnieColors.Opacity.secondary))
+
+                            Image(systemName: "arrow.right")
+                                .font(.system(size: 10))
+                                .foregroundColor(WinnieColors.cardText.opacity(WinnieColors.Opacity.tertiary))
+
+                            Text("Projected: \(Formatting.monthYear(projectedDate))")
+                                .font(WinnieTypography.caption())
+                                .foregroundColor(WinnieColors.cardText.opacity(WinnieColors.Opacity.secondary))
+                        }
+                    }
+
+                    // Edit in Plan button
+                    if viewModel.activeScenario != nil {
+                        Button {
+                            showPlanEditor = true
+                        } label: {
+                            HStack(spacing: WinnieSpacing.xxs) {
+                                Text("Edit in Plan")
+                                Image(systemName: "arrow.right")
+                                    .font(.system(size: 10))
+                            }
+                            .font(WinnieTypography.bodyS())
+                            .fontWeight(.medium)
+                        }
+                        .buttonStyle(.plain)
+                        .foregroundColor(WinnieColors.lavenderVeil)
+                        .padding(.top, WinnieSpacing.xxs)
+                    }
+                }
+                .padding(.leading, 28) // Align with text after icon
+            } else {
+                // Not in plan state
+                Text("Not in plan")
+                    .font(WinnieTypography.bodyM())
+                    .foregroundColor(WinnieColors.cardText)
+                    .padding(.leading, 28)
+            }
         }
     }
 
     private var statusColor: Color {
-        switch viewModel.onTrackStatus {
+        switch viewModel.trackingStatus {
         case .onTrack: return WinnieColors.success(for: colorScheme)
         case .behind: return WinnieColors.warning(for: colorScheme)
         case .completed: return WinnieColors.amethystSmoke
-        case .noTarget: return WinnieColors.tertiaryText(for: colorScheme)
+        case .noTargetDate, .notInPlan: return WinnieColors.tertiaryText(for: colorScheme)
         }
     }
 
     private var statusTextColor: Color {
-        switch viewModel.onTrackStatus {
+        switch viewModel.trackingStatus {
         case .onTrack: return WinnieColors.success(for: colorScheme)
         case .behind: return WinnieColors.warning(for: colorScheme)
         case .completed: return WinnieColors.amethystSmoke
-        case .noTarget: return WinnieColors.secondaryText(for: colorScheme)
+        case .noTargetDate, .notInPlan: return WinnieColors.secondaryText(for: colorScheme)
         }
     }
 
     private var statusBackgroundColor: Color {
-        switch viewModel.onTrackStatus {
+        switch viewModel.trackingStatus {
         case .onTrack: return WinnieColors.success(for: colorScheme).opacity(0.12)
         case .behind: return WinnieColors.warning(for: colorScheme).opacity(0.12)
         case .completed: return WinnieColors.amethystSmoke.opacity(0.15)
-        case .noTarget: return WinnieColors.tertiaryText(for: colorScheme).opacity(0.1)
+        case .noTargetDate, .notInPlan: return WinnieColors.tertiaryText(for: colorScheme).opacity(0.1)
         }
     }
 

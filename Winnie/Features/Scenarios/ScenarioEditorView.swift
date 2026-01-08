@@ -76,11 +76,18 @@ struct ScenarioEditorView: View {
                                 isOverAllocated: viewModel.isOverAllocated
                             )
 
-                            // Goal allocation rows
+                            // Goal selection section (choose which goals to include)
+                            if !viewModel.goals.isEmpty {
+                                GoalSelectionSection(viewModel: viewModel)
+                            }
+
+                            // Goal allocation rows (only for selected goals)
                             if viewModel.goals.isEmpty {
                                 emptyGoalsState
-                            } else {
+                            } else if viewModel.hasSelectedGoals {
                                 goalAllocationList
+                            } else {
+                                noGoalsSelectedState
                             }
 
                             // Scenario name and notes
@@ -165,6 +172,26 @@ struct ScenarioEditorView: View {
         .padding(WinnieSpacing.xl)
     }
 
+    // MARK: - No Goals Selected State
+
+    private var noGoalsSelectedState: some View {
+        VStack(spacing: WinnieSpacing.m) {
+            Image(systemName: "checklist.unchecked")
+                .font(.system(size: 36))
+                .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
+
+            Text("No Goals Selected")
+                .font(WinnieTypography.headlineS())
+                .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+
+            Text("Select at least one goal above to set allocations.")
+                .font(WinnieTypography.bodyM())
+                .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
+                .multilineTextAlignment(.center)
+        }
+        .padding(WinnieSpacing.xl)
+    }
+
     // MARK: - Goal List
 
     private var goalAllocationList: some View {
@@ -183,16 +210,22 @@ struct ScenarioEditorView: View {
                 }
             }
 
-            // Goal rows
-            ForEach(viewModel.goals) { goal in
+            // Goal rows (only selected goals)
+            ForEach(viewModel.selectedGoals) { goal in
+                let context = viewModel.allocationContext(for: goal)
                 GoalAllocationRow(
-                    goal: goal,
+                    context: context,
                     allocationAmount: allocationBinding(for: goal.id),
-                    projection: viewModel.projection(for: goal.id),
                     maxAllocation: maxAllocationForGoal(goal),
                     onSliderChanged: { isEditing in
                         if !isEditing {
                             // Debounced recalculation happens in ViewModel
+                        }
+                    },
+                    onMatchRequired: {
+                        // Set allocation to required amount when user taps "Match Required"
+                        if let required = context.requiredContribution {
+                            viewModel.updateAllocation(goalID: goal.id, amount: required)
                         }
                     }
                 )
@@ -286,6 +319,10 @@ struct ScenarioEditorView: View {
                 }
                 .font(WinnieTypography.caption())
                 .foregroundColor(WinnieColors.error(for: colorScheme))
+            } else if !viewModel.hasSelectedGoals {
+                Text("Select at least one goal to include in this plan")
+                    .font(WinnieTypography.caption())
+                    .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
             } else if viewModel.scenarioName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                 Text("Enter a name for your scenario")
                     .font(WinnieTypography.caption())

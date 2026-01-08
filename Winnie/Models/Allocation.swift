@@ -2,7 +2,7 @@ import Foundation
 
 /// Type-safe wrapper for goal allocation mapping
 /// Maps goal IDs to monthly contribution amounts
-struct Allocation: Codable, Equatable {
+struct Allocation: Codable, Equatable, Hashable {
 
     /// Internal dictionary mapping goal ID to monthly amount
     private var allocations: [String: Decimal]
