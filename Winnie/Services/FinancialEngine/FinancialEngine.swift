@@ -137,7 +137,7 @@ enum EngineWarning: Equatable {
 
 /// The core financial calculation engine
 /// Runs client-side for instant feedback, pure Swift with no UI dependencies
-struct FinancialEngine {
+struct FinancialEngine: Sendable {
 
     // MARK: - Configuration
 

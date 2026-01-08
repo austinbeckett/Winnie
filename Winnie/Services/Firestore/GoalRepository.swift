@@ -18,7 +18,7 @@ import FirebaseFirestore
 /// let mock = MockFirestoreService()
 /// let repository = GoalRepository(db: mock)
 /// ```
-final class GoalRepository {
+final class GoalRepository: Sendable {
 
     // MARK: - Dependencies
 

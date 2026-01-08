@@ -68,7 +68,7 @@ final class DashboardViewModel: ErrorHandlingViewModel {
 
     // MARK: - Initialization
 
-    nonisolated init(
+    init(
         coupleID: String,
         coupleRepository: CoupleRepository? = nil,
         scenarioRepository: ScenarioRepository? = nil,

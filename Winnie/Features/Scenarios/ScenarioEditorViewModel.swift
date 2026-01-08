@@ -143,17 +143,17 @@ final class ScenarioEditorViewModel: ErrorHandlingViewModel {
     init(
         coupleID: String,
         userID: String,
-        goalRepository: GoalRepository = GoalRepository(),
-        scenarioRepository: ScenarioRepository = ScenarioRepository(),
-        coupleRepository: CoupleRepository = CoupleRepository(),
-        financialEngine: FinancialEngine = FinancialEngine()
+        goalRepository: GoalRepository? = nil,
+        scenarioRepository: ScenarioRepository? = nil,
+        coupleRepository: CoupleRepository? = nil,
+        financialEngine: FinancialEngine? = nil
     ) {
         self.coupleID = coupleID
         self.userID = userID
-        self.goalRepository = goalRepository
-        self.scenarioRepository = scenarioRepository
-        self.coupleRepository = coupleRepository
-        self.financialEngine = financialEngine
+        self.goalRepository = goalRepository ?? GoalRepository()
+        self.scenarioRepository = scenarioRepository ?? ScenarioRepository()
+        self.coupleRepository = coupleRepository ?? CoupleRepository()
+        self.financialEngine = financialEngine ?? FinancialEngine()
     }
 
     // MARK: - Data Loading
@@ -286,7 +286,7 @@ final class ScenarioEditorViewModel: ErrorHandlingViewModel {
             // Check if cancelled
             guard !Task.isCancelled else { return }
 
-            await self?.performCalculation()
+            self?.performCalculation()
         }
     }
 

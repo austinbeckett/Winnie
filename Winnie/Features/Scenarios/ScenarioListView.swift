@@ -66,7 +66,7 @@ final class ScenarioListViewModel: ErrorHandlingViewModel {
 
     // MARK: - Initialization
 
-    nonisolated init(
+    init(
         coupleID: String,
         scenarioRepository: ScenarioRepository? = nil,
         goalRepository: GoalRepository? = nil,

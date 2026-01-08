@@ -18,7 +18,7 @@ import FirebaseFirestore
 /// let mock = MockFirestoreService()
 /// let repository = ScenarioRepository(db: mock)
 /// ```
-final class ScenarioRepository {
+final class ScenarioRepository: Sendable {
 
     // MARK: - Dependencies
 

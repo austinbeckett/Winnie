@@ -19,7 +19,7 @@ import FirebaseFirestore
 /// let mock = MockFirestoreService()
 /// let repository = CoupleRepository(db: mock)
 /// ```
-final class CoupleRepository {
+final class CoupleRepository: Sendable {
 
     // MARK: - Dependencies
 
