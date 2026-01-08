@@ -59,7 +59,7 @@ struct OnboardingValuePropView: View {
                     ForEach(0..<3, id: \.self) { index in
                         Circle()
                             .fill(index == currentPage
-                                  ? WinnieColors.accent
+                                  ? WinnieColors.pineTeal
                                   : WinnieColors.tertiaryText(for: colorScheme))
                             .frame(width: 8, height: 8)
                             .animation(.easeInOut(duration: 0.2), value: currentPage)

@@ -52,7 +52,10 @@ struct WinnieTabBarController: UIViewControllerRepresentable {
 
         // Create view controllers for each tab
         let dashboardVC = makeHostingController(
-            rootView: DashboardView()
+            rootView: DashboardView(
+                coupleID: currentUser.coupleID ?? currentUser.id,
+                currentUser: currentUser
+            )
         )
         dashboardVC.tabBarItem = UITabBarItem(
             title: "Dashboard",
@@ -74,7 +77,10 @@ struct WinnieTabBarController: UIViewControllerRepresentable {
         )
 
         let scenariosVC = makeHostingController(
-            rootView: ScenariosView()
+            rootView: ScenariosView(
+                coupleID: currentUser.coupleID ?? currentUser.id,
+                userID: currentUser.id
+            )
         )
         scenariosVC.tabBarItem = UITabBarItem(
             title: "Planning",

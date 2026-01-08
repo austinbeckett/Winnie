@@ -27,10 +27,11 @@ enum WinnieButtonStyle {
 struct WinnieButton: View {
     let title: String
     let style: WinnieButtonStyle
+    let isLoading: Bool
+    let isEnabled: Bool
     let action: () -> Void
 
     @Environment(\.colorScheme) private var colorScheme
-    @Environment(\.isEnabled) private var isEnabled
 
     /// Border width for thick bordered buttons (per Wispr Flow aesthetic)
     private let borderWidth: CGFloat = 3
@@ -38,27 +39,46 @@ struct WinnieButton: View {
     init(
         _ title: String,
         style: WinnieButtonStyle = .primary,
+        isLoading: Bool = false,
+        isEnabled: Bool = true,
         action: @escaping () -> Void
     ) {
         self.title = title
         self.style = style
+        self.isLoading = isLoading
+        self.isEnabled = isEnabled
         self.action = action
+    }
+
+    private var effectivelyEnabled: Bool {
+        isEnabled && !isLoading
     }
 
     var body: some View {
         Button(action: action) {
-            Text(title)
-                .font(WinnieTypography.bodyM())
-                .fontWeight(.semibold)
-                .frame(maxWidth: .infinity)
-                .frame(height: WinnieSpacing.buttonHeight)
-                .foregroundColor(foregroundColor)
-                .background(backgroundColor)
-                .overlay(borderOverlay)
-                .clipShape(RoundedRectangle(cornerRadius: WinnieSpacing.buttonCornerRadius))
+            ZStack {
+                // Title (hidden when loading)
+                Text(title)
+                    .font(WinnieTypography.bodyM())
+                    .fontWeight(.semibold)
+                    .opacity(isLoading ? 0 : 1)
+
+                // Loading spinner
+                if isLoading {
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: foregroundColor))
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .frame(height: WinnieSpacing.buttonHeight)
+            .foregroundColor(foregroundColor)
+            .background(backgroundColor)
+            .overlay(borderOverlay)
+            .clipShape(RoundedRectangle(cornerRadius: WinnieSpacing.buttonCornerRadius))
         }
         .buttonStyle(WinnieButtonPressStyle())
-        .opacity(isEnabled ? 1.0 : 0.5)
+        .disabled(!effectivelyEnabled)
+        .opacity(effectivelyEnabled ? 1.0 : 0.5)
     }
 
     // MARK: - Style-Based Colors

@@ -3,6 +3,7 @@ import SwiftUI
 /// Projection reveal screen for onboarding wizard (The Magic Moment).
 ///
 /// Shows the calculated "Winnie Projection" date based on the user's savings rate and goal.
+/// Uses the Financial Engine for accurate compound interest calculations.
 /// Allows optional date adjustment after seeing the projection.
 struct OnboardingProjectionView: View {
 
@@ -14,12 +15,58 @@ struct OnboardingProjectionView: View {
     @State private var showDatePicker = false
     @State private var selectedDate: Date = Date()
 
+    // Use Financial Engine for accurate projections
+    private let financialEngine = FinancialEngine()
+
     private var goalType: GoalType {
         onboardingState.selectedGoalType ?? .house
     }
 
+    /// Create a Goal from onboarding state for engine calculation
+    private var goal: Goal? {
+        guard let type = onboardingState.selectedGoalType else { return nil }
+        return Goal(
+            id: UUID().uuidString,
+            type: type,
+            name: onboardingState.goalName ?? type.displayName,
+            targetAmount: onboardingState.goalTargetAmount,
+            currentAmount: onboardingState.startingBalance,
+            desiredDate: onboardingState.goalDesiredDate,
+            priority: 1,
+            isActive: true
+        )
+    }
+
+    /// Engine-calculated projection with proper return rates
+    private var engineProjection: GoalProjection? {
+        guard let goal = goal else { return nil }
+        return financialEngine.calculateGoalProjection(
+            goal: goal,
+            monthlyContribution: onboardingState.savingsPool
+        )
+    }
+
+    /// Months to complete using Financial Engine (with interest calculations)
     private var projectedMonths: Int {
-        onboardingState.projectedMonthsToGoal ?? 0
+        engineProjection?.monthsToComplete ?? onboardingState.projectedMonthsToGoal ?? 0
+    }
+
+    /// Projected completion date from engine
+    private var projectedDate: Date? {
+        engineProjection?.completionDate ?? onboardingState.projectedDate
+    }
+
+    /// Formatted projected date string
+    private var projectedDateFormatted: String? {
+        guard let date = projectedDate else { return nil }
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMMM yyyy"
+        return formatter.string(from: date)
+    }
+
+    /// Whether the goal is reachable within reasonable time
+    private var isReachable: Bool {
+        engineProjection?.isReachable ?? false
     }
 
     private var projectionState: ProjectionState {
@@ -143,7 +190,7 @@ struct OnboardingProjectionView: View {
                     .font(WinnieTypography.bodyL())
                     .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
 
-                Text(onboardingState.projectedDateFormatted ?? "—")
+                Text(projectedDateFormatted ?? "—")
                     .font(WinnieTypography.displayM())
                     .foregroundColor(WinnieColors.accent)
                     .scaleEffect(hasAnimated ? 1 : 0.5)

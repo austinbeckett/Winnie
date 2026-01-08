@@ -13,10 +13,37 @@ struct OnboardingStartingBalanceView: View {
     /// Local string for text field binding
     @State private var startingBalanceText: String = ""
 
+    /// Context-aware phrase based on selected goal type
+    private var goalContextPhrase: String {
+        guard let type = onboardingState.selectedGoalType else { return "this goal" }
+        switch type {
+        case .house: return "your home"
+        case .car: return "your new car"
+        case .vacation: return "your trip"
+        case .retirement: return "retirement"
+        case .emergencyFund: return "your emergency fund"
+        case .babyFamily: return "your growing family"
+        case .debt: return "paying down your debt"
+        case .education: return "your education"
+        case .hobby: return "your hobby"
+        case .fitness: return "your fitness goals"
+        case .gift: return "your gift"
+        case .homeImprovement: return "your home improvement"
+        case .investment: return "your investment"
+        case .charity: return "your charitable giving"
+        case .custom: return "this goal"
+        }
+    }
+
     var body: some View {
         ScrollView {
             VStack(spacing: WinnieSpacing.xl) {
                 Spacer(minLength: WinnieSpacing.xl)
+
+                // Goal icon placeholder
+                Image(systemName: onboardingState.selectedGoalType?.iconName ?? "sparkles")
+                    .font(.system(size: 56))
+                    .foregroundColor(WinnieColors.accent)
 
                 // Header
                 VStack(spacing: WinnieSpacing.s) {
@@ -24,7 +51,7 @@ struct OnboardingStartingBalanceView: View {
                         .font(WinnieTypography.headlineL())
                         .foregroundColor(WinnieColors.primaryText(for: colorScheme))
 
-                    Text("How much do you already have saved that you want to count toward this goal?")
+                    Text("How much do you already have saved for \(goalContextPhrase)?")
                         .font(WinnieTypography.bodyL())
                         .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
                         .multilineTextAlignment(.center)
@@ -72,21 +99,26 @@ struct OnboardingStartingBalanceView: View {
 
 // MARK: - Previews
 
-#Preview("Light Mode") {
-    OnboardingStartingBalanceView(onboardingState: OnboardingState()) {
+#Preview("Light Mode - House Goal") {
+    let state = OnboardingState()
+    state.selectedGoalType = .house
+    return OnboardingStartingBalanceView(onboardingState: state) {
         print("Continue tapped")
     }
 }
 
-#Preview("Dark Mode") {
-    OnboardingStartingBalanceView(onboardingState: OnboardingState()) {
+#Preview("Dark Mode - Car Goal") {
+    let state = OnboardingState()
+    state.selectedGoalType = .car
+    return OnboardingStartingBalanceView(onboardingState: state) {
         print("Continue tapped")
     }
     .preferredColorScheme(.dark)
 }
 
-#Preview("With Value") {
+#Preview("With Value - Vacation Goal") {
     let state = OnboardingState()
+    state.selectedGoalType = .vacation
     state.startingBalance = 15000
     return OnboardingStartingBalanceView(onboardingState: state) {
         print("Continue tapped")

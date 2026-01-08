@@ -1,14 +1,14 @@
 # Winnie App - Development Progress
 
-**Last Updated:** January 3, 2026 @ 1:01 PM EST
+**Last Updated:** January 8, 2026
 
 ---
 
 ## Current Focus
 
-**In Progress:** Onboarding Flow - Complete redesign with branching paths and improved UX
+**In Progress:** Financial Engine Integration + Scenarios UI
 
-**Next Up:** Partner System, Dashboard content, Planning and scenario creation, or Financial Engine
+**Next Up:** Partner System, Local-first architecture (SwiftData), or additional polish
 
 ---
 
@@ -72,10 +72,10 @@
 ### Financial Engine
 | Feature | Status | Notes |
 |---------|--------|-------|
-| Core calculation logic | Not Started | Already have domain models |
-| Goal timeline projection | Not Started | |
-| Scenario comparison | Not Started | |
-| Allocation modeling | Not Started | |
+| Core calculation logic | Done | FinancialEngine.swift with compound interest |
+| Goal timeline projection | Done | calculateGoalProjection() with interest rates |
+| Scenario comparison | Done | compareScenarios() side-by-side analysis |
+| Allocation modeling | Done | simulateAllocationChange() what-if scenarios |
 
 ### UI - Onboarding
 | Feature | Status | Notes |
@@ -91,7 +91,7 @@
 | Savings pool reveal | Done | Shows calculated or direct savings |
 | Nest egg input | Done | Current savings balance |
 | Goal detail | Done | Target amount + date |
-| Projection | Placeholder | Need Financial Engine |
+| Projection | Done | Wired to Financial Engine with compound interest |
 | Tune-up | Placeholder | Allocation adjustments |
 | Partner invite/skip | Placeholder | Partner system not started |
 | Name input | Done | "What should we call you?" screen |
@@ -101,14 +101,14 @@
 | Feature | Status | Notes |
 |---------|--------|-------|
 | Tab bar navigation | Done | 4 tabs: Dashboard, Goals, Scenarios, Me |
-| Dashboard | Placeholder | DashboardView with "Coming Soon" |
+| Dashboard | Done | Welcome card, active plan, goal progress cards |
 | Goals list | Done | GoalsListView with empty state |
 | Goal detail | Done | GoalDetailView with edit/delete |
 | Goal creation | Done | GoalCreationView (two-phase flow with suggestions) |
 | Goal edit | Done | GoalEditView (matches Phase 2 of creation) |
-| Scenarios | Placeholder | ScenariosView with "Coming Soon" |
-| Scenario editor (sliders) | Not Started | |
-| Scenario comparison | Not Started | |
+| Scenarios list | Done | ScenarioListView with status grouping |
+| Scenario editor (sliders) | Done | Real-time timeline updates with WinnieSlider |
+| Scenario comparison | Done | Side-by-side comparison with difference indicators |
 | Me view | Done | Profile tab with name editing and sign out |
 | Settings | Placeholder | Cogwheel icon in Me view (functionality coming) |
 
@@ -124,7 +124,7 @@
 | WinnieCurrencyInput | Done | Contained card style currency field |
 | WinnieProgressBar | Done | Goal progress indicator |
 | GoalCard | Done | Specialized goal summary card |
-| WinnieSlider | Not Started | For allocation controls (future) |
+| WinnieSlider | Done | Custom slider for allocation controls with haptics |
 
 ### Unit Tests - Phase 1 (Error Types + DTOs) ✅
 | Feature | Status | Notes |
@@ -259,17 +259,41 @@
 | `Assets.xcassets/MaleAvatarCircle.imageset` | Male avatar SVG asset |
 | `Assets.xcassets/FemaleAvatarCircle.imageset` | Female avatar SVG asset |
 | **User Data & Onboarding** | |
-| `Core/AppState.swift` | Central state container for user/couple data |
+| `Core/AppState.swift` | Central state container for user/couple data (updated with saveOnboardingData) |
 | `Features/Onboarding/NameInputView.swift` | "What should we call you?" onboarding screen |
+| `Features/Onboarding/OnboardingProjectionView.swift` | Updated to use Financial Engine for projections |
 | **Tab Bar Navigation** | |
-| `Features/Dashboard/DashboardView.swift` | Dashboard placeholder (Coming Soon) |
-| `Features/Scenarios/ScenariosView.swift` | Scenarios placeholder (Coming Soon) |
+| `Features/Dashboard/DashboardView.swift` | Dashboard with welcome card, active plan, goal progress |
 | `Features/Me/MeView.swift` | Profile tab with name editing and sign out |
 | `Features/Me/EditNameSheet.swift` | Bottom sheet for editing display name |
+| **Scenarios System** | |
+| `Features/Scenarios/ScenariosView.swift` | Wrapper for ScenarioListView |
+| `Features/Scenarios/ScenarioListView.swift` | List of scenarios with status grouping |
+| `Features/Scenarios/ScenarioEditorView.swift` | Create/edit scenarios with allocation sliders |
+| `Features/Scenarios/ScenarioEditorViewModel.swift` | State management with debounced calculations |
+| `Features/Scenarios/ScenarioComparisonView.swift` | Side-by-side scenario comparison |
+| `Features/Scenarios/Components/ScenarioCard.swift` | Scenario summary card for list |
+| `Features/Scenarios/Components/GoalAllocationRow.swift` | Goal row with slider and timeline |
+| `Features/Scenarios/Components/BudgetSummaryCard.swift` | Budget overview with allocation progress |
+| `Core/Components/WinnieSlider.swift` | Custom slider with haptics and step increments |
+| `Core/Components/MainTabView.swift` | Custom tab container (updated with coupleID/userID params) |
 
 ---
 
 ## Recent Sessions
+
+### January 8, 2026 (Session 18) - Financial Engine Integration + Scenarios UI
+- **Complete Scenarios System Built**: Full "What-If" planning feature now functional
+- **WinnieSlider Component**: Custom slider with 8px track, thick-bordered thumb, haptic feedback, $50 steps
+- **Scenario Editor**: Budget summary card, goal allocation rows with real-time timeline updates, 300ms debouncing
+- **Scenario List**: Cards grouped by status (Active, Under Review, Drafts, Archived), swipe actions for edit/delete/archive
+- **Scenario Comparison**: Side-by-side timeline comparison with green/orange difference indicators
+- **Dashboard Content**: Replaced placeholder with real content (welcome card, active plan summary, goal progress cards)
+- **Onboarding Projection Wiring**: Updated to use Financial Engine for compound interest calculations (was simple linear math)
+- **AppState.saveOnboardingData()**: Now creates couple, saves financial profile, saves first goal to Firestore
+- **Files created**: WinnieSlider.swift, ScenarioListView.swift, ScenarioEditorView.swift, ScenarioEditorViewModel.swift, ScenarioComparisonView.swift, ScenarioCard.swift, GoalAllocationRow.swift, BudgetSummaryCard.swift
+- **Files updated**: DashboardView.swift, ScenariosView.swift, MainTabView.swift, OnboardingProjectionView.swift, AppState.swift
+- Uses Ivory Bordered card style throughout (per user preference)
 
 ### January 3, 2026 (Session 17) - Onboarding Flow Redesign
 - **Branching Flow After Income**: Added decision point for users who know vs don't know their monthly savings

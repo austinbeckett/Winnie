@@ -7,51 +7,33 @@
 
 import SwiftUI
 
-/// Placeholder view for the Scenarios tab.
+/// Main view for the Scenarios/Planning tab.
 ///
-/// This will eventually show "what-if" financial scenarios:
-/// - Scenario builder
-/// - Projections and charts
+/// Displays the scenario list view where users can:
+/// - View all saved scenarios
+/// - Create new "what-if" scenarios
+/// - Edit allocations and see timeline projections
 /// - Compare different financial paths
 struct ScenariosView: View {
-    @Environment(\.colorScheme) private var colorScheme
+    let coupleID: String
+    let userID: String
 
     var body: some View {
-        NavigationStack {
-            VStack(spacing: WinnieSpacing.l) {
-                Spacer()
-
-                Image(systemName: "chart.pie")
-                    .font(.system(size: 64))
-                    .foregroundColor(WinnieColors.amethystSmoke)
-
-                VStack(spacing: WinnieSpacing.s) {
-                    Text("Planning")
-                        .font(WinnieTypography.headlineL())
-                        .foregroundColor(WinnieColors.primaryText(for: colorScheme))
-
-                    Text("Coming Soon")
-                        .font(WinnieTypography.bodyM())
-                        .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
-                }
-
-                Spacer()
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(WinnieColors.background(for: colorScheme).ignoresSafeArea())
-            .navigationTitle("Planning")
-            .navigationBarTitleDisplayMode(.large)
-        }
+        ScenarioListView(coupleID: coupleID, userID: userID)
     }
 }
 
 // MARK: - Previews
 
 #Preview("Light Mode") {
-    ScenariosView()
+    NavigationStack {
+        ScenariosView(coupleID: "preview", userID: "user1")
+    }
 }
 
 #Preview("Dark Mode") {
-    ScenariosView()
-        .preferredColorScheme(.dark)
+    NavigationStack {
+        ScenariosView(coupleID: "preview", userID: "user1")
+    }
+    .preferredColorScheme(.dark)
 }

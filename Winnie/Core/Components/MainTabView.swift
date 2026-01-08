@@ -37,7 +37,10 @@ struct MainTabView: View {
         switch selectedTab {
         case .dashboard:
             NavigationStack {
-                DashboardView()
+                DashboardView(
+                    coupleID: currentUser.coupleID ?? currentUser.id,
+                    currentUser: currentUser
+                )
             }
         case .goals:
             NavigationStack {
@@ -49,7 +52,10 @@ struct MainTabView: View {
             }
         case .planning:
             NavigationStack {
-                ScenariosView()
+                ScenariosView(
+                    coupleID: currentUser.coupleID ?? currentUser.id,
+                    userID: currentUser.id
+                )
             }
         case .me:
             NavigationStack {

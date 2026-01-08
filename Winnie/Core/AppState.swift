@@ -127,36 +127,86 @@ class AppState {
     /// Save onboarding data to Firestore.
     ///
     /// Called when user completes the onboarding wizard.
-    /// Saves the financial profile and first goal, then marks onboarding complete.
+    /// Creates a couple if needed, saves the financial profile and first goal,
+    /// then marks onboarding complete.
     ///
     /// - Parameters:
     ///   - profile: The user's financial profile from onboarding
     ///   - goal: The user's first goal from onboarding
     func saveOnboardingData(profile: FinancialProfile, goal: Goal?) async {
-        guard let uid = currentUser?.id else { return }
+        guard let uid = currentUser?.id else {
+            #if DEBUG
+            print("AppState: saveOnboardingData failed - no current user ID")
+            #endif
+            return
+        }
+
+        #if DEBUG
+        print("AppState: Saving onboarding data for user \(uid)")
+        print("AppState: Profile - income: \(profile.monthlyIncome), needs: \(profile.monthlyNeeds), wants: \(profile.monthlyWants), savingsPool: \(profile.savingsPool)")
+        #endif
 
         let userRepository = UserRepository()
+        let coupleRepository = CoupleRepository()
+        let goalRepository = GoalRepository()
 
         do {
-            // TODO: Save financial profile to Firestore
-            // await financialProfileRepository.save(profile, for: uid)
+            // Determine or create the couple ID
+            var coupleID = currentUser?.coupleID
 
-            // TODO: Save first goal to Firestore
-            // if let goal = goal {
-            //     await goalRepository.save(goal, for: uid)
-            // }
+            if coupleID == nil {
+                #if DEBUG
+                print("AppState: Creating new couple for user")
+                #endif
+                // Create a new couple for this user
+                let newCouple = try await coupleRepository.createCouple(for: uid)
+                coupleID = newCouple.id
+
+                // Update user's coupleID reference (no partner yet during onboarding)
+                try await userRepository.updateCoupleAssociation(uid: uid, coupleID: newCouple.id, partnerID: nil)
+                currentUser?.coupleID = newCouple.id
+                couple = newCouple
+                #if DEBUG
+                print("AppState: Created couple with ID: \(newCouple.id)")
+                #endif
+            } else {
+                #if DEBUG
+                print("AppState: Using existing coupleID: \(coupleID!)")
+                #endif
+            }
+
+            guard let coupleID else {
+                #if DEBUG
+                print("AppState: Failed - coupleID is nil after creation attempt")
+                #endif
+                return
+            }
+
+            // Save financial profile to the couple
+            #if DEBUG
+            print("AppState: Saving financial profile to couple \(coupleID)")
+            #endif
+            try await coupleRepository.updateFinancialProfile(profile, coupleID: coupleID)
+
+            // Save first goal if provided
+            if let goal {
+                #if DEBUG
+                print("AppState: Saving goal '\(goal.name)' to couple \(coupleID)")
+                #endif
+                try await goalRepository.createGoal(goal, coupleID: coupleID)
+            }
 
             // Mark onboarding as complete
             try await userRepository.completeOnboarding(uid: uid)
             currentUser?.hasCompletedOnboarding = true
 
             #if DEBUG
-            print("AppState: Onboarding data saved successfully")
+            print("AppState: ✅ Onboarding data saved successfully!")
             #endif
         } catch {
             errorMessage = "Failed to save onboarding data: \(error.localizedDescription)"
             #if DEBUG
-            print("AppState: Error saving onboarding data - \(type(of: error))")
+            print("AppState: ❌ Error saving onboarding data - \(error)")
             #endif
         }
     }

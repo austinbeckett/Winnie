@@ -36,7 +36,7 @@ struct OnboardingProgressBar: View {
 
                 // Filled progress
                 RoundedRectangle(cornerRadius: cornerRadius)
-                    .fill(WinnieColors.accent)
+                    .fill(WinnieColors.pineTeal)
                     .frame(width: geometry.size.width * progress, height: barHeight)
                     .animation(.easeInOut(duration: 0.3), value: currentStep)
             }

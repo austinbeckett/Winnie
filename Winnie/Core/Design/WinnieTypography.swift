@@ -41,6 +41,11 @@ enum WinnieTypography {
         .custom(garamondMedium, size: 36)
     }
 
+    /// 28pt - Smaller display text, card hero numbers
+    static func displayS() -> Font {
+        .custom(garamondMedium, size: 28)
+    }
+
     /// 28pt - Section headers within screens
     static func headlineL() -> Font {
         .custom(garamondSemiBold, size: 28)
@@ -49,6 +54,28 @@ enum WinnieTypography {
     /// 22pt - Card titles, goal names, subsection headers
     static func headlineM() -> Font {
         .custom(garamondSemiBold, size: 22)
+    }
+
+    /// 18pt - Small headlines, list item titles
+    static func headlineS() -> Font {
+        .custom(garamondSemiBold, size: 18)
+    }
+
+    // MARK: - Label Styles (Figtree Medium / Sans-serif)
+
+    /// 16pt - Large labels, form section headers
+    static func labelL() -> Font {
+        .custom(figtreeMedium, size: 16)
+    }
+
+    /// 14pt - Standard labels, form field labels
+    static func labelM() -> Font {
+        .custom(figtreeMedium, size: 14)
+    }
+
+    /// 12pt - Small labels, tags, badges
+    static func labelS() -> Font {
+        .custom(figtreeMedium, size: 12)
     }
 
     // MARK: - Body Styles (Figtree / Sans-serif)
@@ -106,12 +133,32 @@ extension View {
         self.font(WinnieTypography.displayM())
     }
 
+    func winnieDisplayS() -> some View {
+        self.font(WinnieTypography.displayS())
+    }
+
     func winnieHeadlineL() -> some View {
         self.font(WinnieTypography.headlineL())
     }
 
     func winnieHeadlineM() -> some View {
         self.font(WinnieTypography.headlineM())
+    }
+
+    func winnieHeadlineS() -> some View {
+        self.font(WinnieTypography.headlineS())
+    }
+
+    func winnieLabelL() -> some View {
+        self.font(WinnieTypography.labelL())
+    }
+
+    func winnieLabelM() -> some View {
+        self.font(WinnieTypography.labelM())
+    }
+
+    func winnieLabelS() -> some View {
+        self.font(WinnieTypography.labelS())
     }
 
     func winnieBodyL() -> some View {
