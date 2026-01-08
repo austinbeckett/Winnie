@@ -8,14 +8,20 @@ struct FinancialProfileDTO: Codable {
     /// Combined monthly take-home income (stored as Double for Firestore)
     var monthlyIncome: Double
 
-    /// Total monthly fixed expenses
-    var monthlyExpenses: Double
+    /// Monthly fixed expenses (rent, loans, utilities) - "Needs"
+    var monthlyNeeds: Double
+
+    /// Monthly discretionary spending (entertainment, dining) - "Wants"
+    var monthlyWants: Double
 
     /// Current liquid savings balance
     var currentSavings: Double
 
     /// Current retirement account balance (optional)
     var retirementBalance: Double?
+
+    /// Direct savings pool entry (used when user skips income/expense breakdown)
+    var directSavingsPool: Double?
 
     /// Timestamp of last update
     var lastUpdated: Date
@@ -24,9 +30,11 @@ struct FinancialProfileDTO: Codable {
 
     enum CodingKeys: String, CodingKey {
         case monthlyIncome
-        case monthlyExpenses
+        case monthlyNeeds
+        case monthlyWants
         case currentSavings
         case retirementBalance
+        case directSavingsPool
         case lastUpdated
     }
 
@@ -36,9 +44,13 @@ struct FinancialProfileDTO: Codable {
     /// Converts Decimal values to Double for Firestore storage
     init(from profile: FinancialProfile) {
         self.monthlyIncome = NSDecimalNumber(decimal: profile.monthlyIncome).doubleValue
-        self.monthlyExpenses = NSDecimalNumber(decimal: profile.monthlyExpenses).doubleValue
+        self.monthlyNeeds = NSDecimalNumber(decimal: profile.monthlyNeeds).doubleValue
+        self.monthlyWants = NSDecimalNumber(decimal: profile.monthlyWants).doubleValue
         self.currentSavings = NSDecimalNumber(decimal: profile.currentSavings).doubleValue
         self.retirementBalance = profile.retirementBalance.map {
+            NSDecimalNumber(decimal: $0).doubleValue
+        }
+        self.directSavingsPool = profile.directSavingsPool.map {
             NSDecimalNumber(decimal: $0).doubleValue
         }
         self.lastUpdated = profile.lastUpdated
@@ -47,9 +59,11 @@ struct FinancialProfileDTO: Codable {
     /// Create empty profile for new couples
     init() {
         self.monthlyIncome = 0
-        self.monthlyExpenses = 0
+        self.monthlyNeeds = 0
+        self.monthlyWants = 0
         self.currentSavings = 0
         self.retirementBalance = nil
+        self.directSavingsPool = nil
         self.lastUpdated = Date()
     }
 
@@ -60,9 +74,11 @@ struct FinancialProfileDTO: Codable {
     func toFinancialProfile() -> FinancialProfile {
         FinancialProfile(
             monthlyIncome: Decimal(monthlyIncome),
-            monthlyExpenses: Decimal(monthlyExpenses),
+            monthlyNeeds: Decimal(monthlyNeeds),
+            monthlyWants: Decimal(monthlyWants),
             currentSavings: Decimal(currentSavings),
             retirementBalance: retirementBalance.map { Decimal($0) },
+            directSavingsPool: directSavingsPool.map { Decimal($0) },
             lastUpdated: lastUpdated
         )
     }
@@ -74,13 +90,18 @@ struct FinancialProfileDTO: Codable {
     var dictionary: [String: Any] {
         var dict: [String: Any] = [
             "monthlyIncome": monthlyIncome,
-            "monthlyExpenses": monthlyExpenses,
+            "monthlyNeeds": monthlyNeeds,
+            "monthlyWants": monthlyWants,
             "currentSavings": currentSavings,
             "lastUpdated": Timestamp(date: lastUpdated)
         ]
 
         if let retirementBalance {
             dict["retirementBalance"] = retirementBalance
+        }
+
+        if let directSavingsPool {
+            dict["directSavingsPool"] = directSavingsPool
         }
 
         return dict

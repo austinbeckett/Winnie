@@ -19,6 +19,10 @@ struct FinancialProfile: Codable, Equatable {
     /// Current retirement account balance (401k, IRA, etc.)
     var retirementBalance: Decimal?
 
+    /// Direct savings pool entry (used when user skips income/expense breakdown)
+    /// When set, this takes precedence over the calculated savingsPool
+    var directSavingsPool: Decimal?
+
     /// Timestamp of last update
     var lastUpdated: Date
 
@@ -31,7 +35,12 @@ struct FinancialProfile: Codable, Equatable {
 
     /// The "Savings Pool" - money available for goals after needs and wants
     var savingsPool: Decimal {
-        max(monthlyIncome - monthlyNeeds - monthlyWants, 0)
+        // If user entered savings directly, use that
+        if let direct = directSavingsPool, direct > 0 {
+            return direct
+        }
+        // Otherwise calculate from income - needs - wants
+        return max(monthlyIncome - monthlyNeeds - monthlyWants, 0)
     }
 
     /// Available monthly amount for goal allocation (alias for savingsPool)
@@ -57,6 +66,7 @@ struct FinancialProfile: Codable, Equatable {
         monthlyWants: Decimal = 0,
         currentSavings: Decimal = 0,
         retirementBalance: Decimal? = nil,
+        directSavingsPool: Decimal? = nil,
         lastUpdated: Date = Date()
     ) {
         self.monthlyIncome = monthlyIncome
@@ -64,6 +74,7 @@ struct FinancialProfile: Codable, Equatable {
         self.monthlyWants = monthlyWants
         self.currentSavings = currentSavings
         self.retirementBalance = retirementBalance
+        self.directSavingsPool = directSavingsPool
         self.lastUpdated = lastUpdated
     }
 

@@ -144,12 +144,25 @@ final class OnboardingState {
 
     /// Create a FinancialProfile from the current onboarding state
     func toFinancialProfile() -> FinancialProfile {
-        FinancialProfile(
-            monthlyIncome: monthlyIncome,
-            monthlyNeeds: monthlyNeeds,
-            monthlyWants: monthlyWants,
-            currentSavings: startingBalance
-        )
+        if knowsSavingsAmount {
+            // Quick path: user entered savings directly, skip income/expenses
+            return FinancialProfile(
+                monthlyIncome: 0,
+                monthlyNeeds: 0,
+                monthlyWants: 0,
+                currentSavings: startingBalance,
+                directSavingsPool: directSavingsPool
+            )
+        } else {
+            // Guided path: user entered income/needs/wants
+            return FinancialProfile(
+                monthlyIncome: monthlyIncome,
+                monthlyNeeds: monthlyNeeds,
+                monthlyWants: monthlyWants,
+                currentSavings: startingBalance,
+                directSavingsPool: nil
+            )
+        }
     }
 
     /// Create a Goal from the current onboarding state
