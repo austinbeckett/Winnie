@@ -60,6 +60,7 @@ struct WinnieTabBar: View {
                 }
             }
             .padding(.top, WinnieSpacing.s)
+            .padding(.bottom, WinnieSpacing.xs)
         }
         .background(WinnieColors.pineTeal)
         .background(
