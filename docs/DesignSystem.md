@@ -28,7 +28,8 @@ Winnie adopts the Wispr Flow aesthetic—warm, rhythmic, and present. The design
 | **Onyx** | `#121212` | Background (dark mode) |
 | **Ivory** | `#FFFFEB` | Primary text (dark mode), card text |
 | **Carbon Black** | `#1A1A1A` | Primary text (light mode), elevated surfaces (dark mode cards) |
-| **Sweet Salmon** | `#FFA099` | Primary accent, buttons, interactive elements |
+| **Lavender Veil** | `#F0D7FF` | Primary accent, buttons, interactive elements, default goal color |
+| **Sweet Salmon** | `#FFA099` | Warm coral accent |
 | **Pine Teal** | `#034F46` | Card backgrounds (both modes), secondary accent |
 | **Golden Orange** | `#F0A202` | Tertiary accent, highlights, icons |
 
@@ -40,7 +41,7 @@ Winnie adopts the Wispr Flow aesthetic—warm, rhythmic, and present. The design
 | **Primary Text** | Carbon Black (`#1A1A1A`) | Headlines, important text |
 | **Secondary Text** | Carbon Black at 80% | Body text, descriptions |
 | **Tertiary Text** | Carbon Black at 50% | Helper text, captions |
-| **Primary Button** | Sweet Salmon + 3px Carbon Black border | Main actions |
+| **Primary Button** | Lavender Veil + 3px Carbon Black border | Main actions |
 | **Primary Button Text** | Carbon Black | |
 | **Secondary Button** | Transparent + 3px Carbon Black border | Secondary actions |
 | **Card Background** | Pine Teal (`#034F46`) | Strong brand presence |
@@ -55,7 +56,7 @@ Winnie adopts the Wispr Flow aesthetic—warm, rhythmic, and present. The design
 | **Primary Text** | Ivory (`#FFFFEB`) | Headlines, important text |
 | **Secondary Text** | Ivory at 80% | Body text, descriptions |
 | **Tertiary Text** | Ivory at 50% | Helper text, captions |
-| **Primary Button** | Sweet Salmon + 3px Ivory border | Main actions |
+| **Primary Button** | Lavender Veil + 3px Ivory border | Main actions |
 | **Primary Button Text** | Carbon Black | |
 | **Secondary Button** | Transparent + 3px Ivory border | Secondary actions |
 | **Card Background** | Pine Teal (`#034F46`) | Same as light mode |
@@ -74,13 +75,13 @@ Users can select a color for each goal from this warm palette:
 | **Clay** | `#C4907A` | Terracotta (earthy warm) |
 | **Sand** | `#D4C4A8` | Warm beige |
 | **Slate** | `#6B8B9B` | Cool blue-gray |
-| **Storm** | `#5A5A6B` | Deep neutral gray |
+| **Lavender** | `#F0D7FF` | Lavender Veil (soft purple) |
 
 **Usage Notes:**
-- New goals default to Coral (`#FFA099`)
+- New goals default to Lavender (`#F0D7FF`)
 - Goal colors appear as left accent borders on cards
 - Progress bars use the goal's selected color
-- Dark colors (Teal, Storm) use Ivory checkmarks in pickers
+- Dark colors (Teal) use Ivory checkmarks in pickers
 
 ### Semantic Colors
 
@@ -130,7 +131,7 @@ Users can select a color for each goal from this warm palette:
 #### Primary Button (Wispr Flow Style)
 - **Shape**: Pill-shaped (`border-radius: 28px`)
 - **Height**: 56px minimum
-- **Background**: Sweet Salmon (`#FFA099`)
+- **Background**: Lavender Veil (`#F0D7FF`)
 - **Border**: 3px solid (Carbon Black in light, Ivory in dark)
 - **Text**: Carbon Black, 16pt Bold
 - **Press animation**: Scale to 0.97 with spring
@@ -143,7 +144,7 @@ Users can select a color for each goal from this warm palette:
 #### Text Button
 - **Background**: None
 - **Border**: None
-- **Text**: Sweet Salmon
+- **Text**: Lavender Veil
 
 ### Cards
 
@@ -197,7 +198,7 @@ WinnieCard(style: .ivoryBordered) {
 - **Border radius**: 16px
 - **Height**: 56px
 - **Border**: 1px (unfocused), 2px (focused)
-- **Border color**: Carbon Black/Ivory at 30% (unfocused), Sweet Salmon (focused)
+- **Border color**: Carbon Black/Ivory at 30% (unfocused), Lavender Veil (focused)
 - **Background**: Card background color (Pine Teal)
 
 ### Progress Bars
@@ -270,7 +271,7 @@ Before considering a screen complete:
 - [ ] Background uses Porcelain (light) / Carbon Black (dark)
 - [ ] Cards use appropriate style (`.pineTeal`, `.carbon`, or `.ivory`) with matching text colors
 - [ ] Buttons have 3px borders
-- [ ] Primary buttons use Sweet Salmon
+- [ ] Primary buttons use Lavender Veil
 - [ ] Goal colors use the new warm palette
 - [ ] Spacing follows 8pt grid
 - [ ] Touch targets are 44pt minimum

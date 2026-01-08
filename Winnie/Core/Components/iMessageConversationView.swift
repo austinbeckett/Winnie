@@ -232,13 +232,13 @@ private struct MessageBubble: View {
 
     private var bubbleBackground: Color {
         message.isFromMe
-            ? WinnieColors.sweetSalmon  // Sent messages: warm coral
-            : WinnieColors.pineTeal     // Received messages: deep teal
+            ? WinnieColors.lavenderVeil  // Sent messages: soft lavender
+            : WinnieColors.pineTeal      // Received messages: deep teal
     }
 
     private var bubbleTextColor: Color {
         message.isFromMe
-            ? WinnieColors.carbonBlack  // Dark text on light coral
+            ? WinnieColors.carbonBlack  // Dark text on light lavender
             : WinnieColors.ivory        // Light text on dark teal
     }
 }

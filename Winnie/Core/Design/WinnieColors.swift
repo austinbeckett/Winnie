@@ -63,6 +63,10 @@ enum WinnieColors {
     /// Hex: #F0A202
     static let goldenOrange = Color(hex: "F0A202")
 
+    /// Primary accent - soft lavender for buttons and interactive elements
+    /// Hex: #F0D7FF
+    static let lavenderVeil = Color(hex: "F0D7FF")
+
     // MARK: - Legacy Aliases (for migration compatibility)
 
     /// Legacy alias for carbonBlack - use carbonBlack directly in new code
@@ -93,7 +97,7 @@ enum GoalPresetColor: String, CaseIterable, Identifiable, Sendable {
     case clay = "#C4907A"       // Terracotta/earthy warm
     case sand = "#D4C4A8"       // Warm beige
     case slate = "#6B8B9B"      // Cool blue-gray
-    case storm = "#5A5A6B"      // Deep neutral gray
+    case lavender = "#F0D7FF"   // Lavender Veil
 
     var id: String { rawValue }
 
@@ -112,12 +116,12 @@ enum GoalPresetColor: String, CaseIterable, Identifiable, Sendable {
         case .clay: return "Clay"
         case .sand: return "Sand"
         case .slate: return "Slate"
-        case .storm: return "Storm"
+        case .lavender: return "Lavender"
         }
     }
 
     /// The default color for new goals
-    static let defaultColor: GoalPresetColor = .coral
+    static let defaultColor: GoalPresetColor = .lavender
 }
 
 // MARK: - Card Styles
@@ -271,10 +275,10 @@ extension WinnieColors {
 
     // MARK: - Button Colors
 
-    /// Primary button background - Sweet Salmon in both modes
-    /// Both modes: Sweet Salmon (#FFA099)
+    /// Primary button background - Lavender Veil in both modes
+    /// Both modes: Lavender Veil (#F0D7FF)
     static func primaryButtonBackground(for colorScheme: ColorScheme) -> Color {
-        sweetSalmon
+        lavenderVeil
     }
 
     /// Primary button text - Carbon Black for contrast on salmon
@@ -320,9 +324,9 @@ extension WinnieColors {
         colorScheme == .dark ? ivory.opacity(0.3) : carbonBlack.opacity(0.3)
     }
 
-    /// Input field focus border - Sweet Salmon accent
+    /// Input field focus border - Lavender Veil accent
     static func inputFocusBorder(for colorScheme: ColorScheme) -> Color {
-        sweetSalmon
+        lavenderVeil
     }
 
     /// Slider/progress track background
@@ -372,7 +376,7 @@ extension WinnieColors {
     // MARK: - Accent Colors (same in both modes)
 
     /// Primary accent color (interactive elements, progress indicators)
-    static var accent: Color { sweetSalmon }
+    static var accent: Color { lavenderVeil }
 
     /// Secondary accent color (highlights, CTAs)
     static var secondaryAccent: Color { pineTeal }
@@ -389,9 +393,9 @@ extension WinnieColors {
     }
 
     /// Button shadow color
-    /// Light: Carbon Black at 15% | Dark: Sweet Salmon at 25%
+    /// Light: Carbon Black at 15% | Dark: Lavender Veil at 25%
     static func buttonShadow(for colorScheme: ColorScheme) -> Color {
-        colorScheme == .dark ? sweetSalmon.opacity(0.25) : carbonBlack.opacity(0.15)
+        colorScheme == .dark ? lavenderVeil.opacity(0.25) : carbonBlack.opacity(0.15)
     }
 }
 
@@ -477,9 +481,9 @@ extension WinnieColors {
 
     /// Dynamic UIColor for primary accent - automatically updates with dark/light mode.
     /// Use this for UIKit components (UITabBar tint, etc.).
-    /// Both modes: Sweet Salmon
+    /// Both modes: Lavender Veil
     static var primaryAccentUIColor: UIColor {
-        UIColor(sweetSalmon)
+        UIColor(lavenderVeil)
     }
 
     /// Dynamic UIColor for backgrounds

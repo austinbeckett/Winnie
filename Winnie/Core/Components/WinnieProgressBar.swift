@@ -28,12 +28,12 @@ struct WinnieProgressBar: View {
     /// Creates a progress bar.
     /// - Parameters:
     ///   - progress: Progress value from 0.0 to 1.0
-    ///   - color: Fill color (defaults to Sweet Salmon accent)
+    ///   - color: Fill color (defaults to Lavender Veil accent)
     ///   - showLabel: Whether to show percentage label (defaults to false)
     ///   - onCard: Whether displayed on a Pine Teal card (affects track color)
     init(
         progress: Double,
-        color: Color = WinnieColors.sweetSalmon,
+        color: Color = WinnieColors.lavenderVeil,
         showLabel: Bool = false,
         onCard: Bool = true
     ) {

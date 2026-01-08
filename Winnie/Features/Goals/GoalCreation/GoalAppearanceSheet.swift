@@ -51,7 +51,7 @@ struct GoalAppearanceSheet: View {
                         dismiss()
                     }
                     .fontWeight(.semibold)
-                    .foregroundStyle(WinnieColors.sweetSalmon)
+                    .foregroundStyle(WinnieColors.lavenderVeil)
                 }
             }
         }
@@ -115,8 +115,8 @@ private struct ColorSwatch: View {
 
     /// Determine checkmark color based on background luminance
     private var checkmarkColor: Color {
-        // For darker colors (teal, storm), use light checkmark
-        if color == .teal || color == .storm {
+        // For darker colors (teal), use light checkmark
+        if color == .teal {
             return WinnieColors.ivory
         }
         // For lighter colors, use dark checkmark

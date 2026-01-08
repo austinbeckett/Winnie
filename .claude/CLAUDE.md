@@ -42,14 +42,15 @@ Winnie/
 | Onyx | `#121212` | Background (dark) |
 | Ivory | `#FFFFEB` | Primary text (dark), card text |
 | Carbon Black | `#1A1A1A` | Primary text (light), elevated surfaces (dark mode cards) |
-| Sweet Salmon | `#FFA099` | Primary accent, buttons, interactive elements |
+| Lavender Veil | `#F0D7FF` | Primary accent, buttons, interactive elements, default goal color |
+| Sweet Salmon | `#FFA099` | Warm coral accent |
 | Pine Teal | `#034F46` | Card backgrounds (both modes), secondary accent |
 | Golden Orange | `#F0A202` | Tertiary accent, highlights, icons |
 
 ### Goal Colors
 Goals use a warm preset palette (defined in `GoalPresetColor`). Users can select any color:
-- **Coral** `#FFA099` (default), **Teal** `#034F46`, **Gold** `#F0A202`, **Sage** `#7A9E7E`
-- **Clay** `#C4907A`, **Sand** `#D4C4A8`, **Slate** `#6B8B9B`, **Storm** `#5A5A6B`
+- **Lavender** `#F0D7FF` (default), **Coral** `#FFA099`, **Teal** `#034F46`, **Gold** `#F0A202`
+- **Sage** `#7A9E7E`, **Clay** `#C4907A`, **Sand** `#D4C4A8`, **Slate** `#6B8B9B`
 
 ### Text Colors
 | Level | Light Mode | Dark Mode |

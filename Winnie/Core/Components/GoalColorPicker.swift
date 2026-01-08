@@ -77,8 +77,8 @@ private struct ColorCircle: View {
 
     /// Determine checkmark color based on background luminance
     private var checkmarkColor: Color {
-        // For darker colors (teal, storm), use light checkmark
-        if color == GoalPresetColor.teal.color || color == GoalPresetColor.storm.color {
+        // For darker colors (teal), use light checkmark
+        if color == GoalPresetColor.teal.color {
             return WinnieColors.ivory
         }
         // For lighter colors, use dark checkmark

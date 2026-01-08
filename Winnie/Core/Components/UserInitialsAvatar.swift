@@ -64,8 +64,8 @@ struct UserInitialsAvatar: View {
 
     private var backgroundColor: Color {
         if isCurrentUser {
-            // Current user gets Sweet Salmon (primary accent)
-            return WinnieColors.sweetSalmon
+            // Current user gets Lavender Veil (primary accent)
+            return WinnieColors.lavenderVeil
         } else {
             // Partner gets Pine Teal (secondary accent)
             return WinnieColors.pineTeal
@@ -74,7 +74,7 @@ struct UserInitialsAvatar: View {
 
     private var textColor: Color {
         if isCurrentUser {
-            // Carbon Black for contrast on Sweet Salmon
+            // Carbon Black for contrast on Lavender Veil
             return WinnieColors.carbonBlack
         } else {
             // Ivory for contrast on Pine Teal

@@ -86,7 +86,7 @@ struct WinnieTabBar: View {
                 Text(tab.title)
                     .font(WinnieTypography.caption())
             }
-            .foregroundColor(isSelected ? WinnieColors.sweetSalmon : WinnieColors.ivory)
+            .foregroundColor(isSelected ? WinnieColors.lavenderVeil : WinnieColors.ivory)
             .frame(maxWidth: .infinity)
         }
         .buttonStyle(.plain)
