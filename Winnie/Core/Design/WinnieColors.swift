@@ -121,6 +121,8 @@ enum WinnieCardStyle {
     case carbon
     /// Ivory background in light mode, Carbon Black in dark mode (text adapts)
     case ivory
+    /// Ivory background with Pine Teal border and Carbon Black text (same in both modes)
+    case ivoryBordered
 }
 
 // MARK: - Card Context Environment
@@ -199,6 +201,9 @@ extension WinnieColors {
         case .ivory:
             // Ivory inverts in dark mode to maintain theme consistency
             return colorScheme == .dark ? carbonBlack : ivory
+        case .ivoryBordered:
+            // Always ivory background (border handled separately in WinnieCard)
+            return ivory
         }
     }
 
@@ -215,6 +220,9 @@ extension WinnieColors {
         case .ivory:
             // Light background uses dark text; dark mode uses light text
             return colorScheme == .dark ? ivory : carbonBlack
+        case .ivoryBordered:
+            // Always Carbon Black text on ivory background for legibility
+            return carbonBlack
         }
     }
 
@@ -475,5 +483,15 @@ extension WinnieColors {
                 return UIColor(ivory)
             }
         }
+    }
+
+    /// UIColor for Pine Teal - for UIKit components (UITabBar background, etc.)
+    static var pineTealUIColor: UIColor {
+        UIColor(pineTeal)
+    }
+
+    /// UIColor for Ivory - for UIKit components (unselected tab icons, etc.)
+    static var ivoryUIColor: UIColor {
+        UIColor(ivory)
     }
 }

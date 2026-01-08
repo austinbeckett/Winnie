@@ -61,6 +61,7 @@ struct WinnieCard<Content: View>: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(WinnieColors.cardBackground(for: style, colorScheme: colorScheme))
             .clipShape(RoundedRectangle(cornerRadius: WinnieSpacing.cardCornerRadius))
+            .overlay(styleBorderOverlay)
             .overlay(accentBorderOverlay)
             .shadow(
                 color: WinnieColors.cardShadow(for: colorScheme),
@@ -68,6 +69,17 @@ struct WinnieCard<Content: View>: View {
                 x: 0,
                 y: 2
             )
+    }
+
+    // MARK: - Style Border
+
+    @ViewBuilder
+    private var styleBorderOverlay: some View {
+        if style == .ivoryBordered {
+            // Full 2.5px Carbon Black border for ivoryBordered style
+            RoundedRectangle(cornerRadius: WinnieSpacing.cardCornerRadius)
+                .stroke(WinnieColors.carbonBlack, lineWidth: 2.5)
+        }
     }
 
     // MARK: - Accent Border
@@ -200,6 +212,18 @@ private struct CardStylePreview: View {
                         Text("Light style that inverts in dark mode for theme consistency.")
                             .font(WinnieTypography.bodyM())
                             .cardSecondaryText(for: .ivory)
+                    }
+                }
+
+                // Ivory Bordered
+                WinnieCard(style: .ivoryBordered) {
+                    VStack(alignment: .leading, spacing: WinnieSpacing.xs) {
+                        Text("Ivory Bordered Card")
+                            .font(WinnieTypography.headlineM())
+                            .cardPrimaryText(for: .ivoryBordered)
+                        Text("Ivory background with Pine Teal border. Carbon Black text for legibility.")
+                            .font(WinnieTypography.bodyM())
+                            .cardSecondaryText(for: .ivoryBordered)
                     }
                 }
             }

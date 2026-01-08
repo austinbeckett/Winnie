@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// A card displaying a goal summary with progress.
-/// Uses Pine Teal card background with Ivory text for the new design system.
+/// Uses Ivory Bordered card style with Pine Teal border and Carbon Black text.
 ///
 /// Usage:
 /// ```swift
@@ -20,22 +20,22 @@ struct GoalCard: View {
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
-        WinnieCard(accentColor: goal.displayColor) {
+        WinnieCard(style: .ivoryBordered) {
             VStack(alignment: .leading, spacing: WinnieSpacing.m) {
                 // Header: Icon + Name
                 HStack(spacing: WinnieSpacing.s) {
-                    // Goal icon - uses goal color on lighter background for visibility on teal
+                    // Goal icon - uses goal color on tinted background
                     Image(systemName: goal.displayIcon)
                         .font(.system(size: 20))
                         .foregroundColor(goal.displayColor)
                         .frame(width: 32, height: 32)
-                        .background(WinnieColors.ivory.opacity(0.2))
+                        .background(WinnieColors.pineTeal.opacity(0.15))
                         .clipShape(RoundedRectangle(cornerRadius: 8))
 
                     // Goal name
                     Text(goal.name)
                         .font(WinnieTypography.headlineM())
-                        .foregroundColor(WinnieColors.cardText)
+                        .contextPrimaryText()
                         .lineLimit(1)
 
                     Spacer()
@@ -44,7 +44,7 @@ struct GoalCard: View {
                     Text("\(goal.progressPercentageInt)%")
                         .font(WinnieTypography.bodyS())
                         .fontWeight(.medium)
-                        .foregroundColor(WinnieColors.cardText.opacity(WinnieColors.Opacity.secondary))
+                        .contextSecondaryText()
                 }
 
                 // Progress bar
@@ -55,10 +55,10 @@ struct GoalCard: View {
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Saved")
                             .font(WinnieTypography.caption())
-                            .foregroundColor(WinnieColors.cardText.opacity(WinnieColors.Opacity.label))
+                            .contextLabelText()
                         Text(Formatting.currency(goal.currentAmount))
                             .font(WinnieTypography.financialM())
-                            .foregroundColor(WinnieColors.cardText)
+                            .contextPrimaryText()
                             .lineLimit(1)
                             .minimumScaleFactor(0.6)
                     }
@@ -68,10 +68,10 @@ struct GoalCard: View {
                     VStack(alignment: .trailing, spacing: 2) {
                         Text("Goal")
                             .font(WinnieTypography.caption())
-                            .foregroundColor(WinnieColors.cardText.opacity(WinnieColors.Opacity.label))
+                            .contextLabelText()
                         Text(Formatting.currency(goal.targetAmount))
                             .font(WinnieTypography.financialM())
-                            .foregroundColor(WinnieColors.cardText.opacity(WinnieColors.Opacity.secondary))
+                            .contextSecondaryText()
                             .lineLimit(1)
                             .minimumScaleFactor(0.6)
                     }
@@ -90,14 +90,14 @@ struct GoalCardCompact: View {
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
-        WinnieCard(accentColor: goal.displayColor) {
+        WinnieCard(style: .ivoryBordered) {
             HStack(spacing: WinnieSpacing.m) {
                 // Goal icon
                 Image(systemName: goal.displayIcon)
                     .font(.system(size: 18))
                     .foregroundColor(goal.displayColor)
                     .frame(width: 28, height: 28)
-                    .background(WinnieColors.ivory.opacity(0.2))
+                    .background(WinnieColors.pineTeal.opacity(0.15))
                     .clipShape(RoundedRectangle(cornerRadius: 6))
 
                 // Name and progress
@@ -105,7 +105,7 @@ struct GoalCardCompact: View {
                     Text(goal.name)
                         .font(WinnieTypography.bodyM())
                         .fontWeight(.medium)
-                        .foregroundColor(WinnieColors.cardText)
+                        .contextPrimaryText()
                         .lineLimit(1)
 
                     WinnieProgressBar(progress: goal.progressPercentage, color: goal.displayColor)
@@ -115,7 +115,7 @@ struct GoalCardCompact: View {
                 Text("\(goal.progressPercentageInt)%")
                     .font(WinnieTypography.bodyS())
                     .fontWeight(.medium)
-                    .foregroundColor(WinnieColors.cardText.opacity(WinnieColors.Opacity.secondary))
+                    .contextSecondaryText()
                     .frame(width: 40, alignment: .trailing)
             }
         }

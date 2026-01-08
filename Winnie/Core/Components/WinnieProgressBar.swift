@@ -23,6 +23,7 @@ struct WinnieProgressBar: View {
     let onCard: Bool
 
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.cardContext) private var cardContext
 
     /// Creates a progress bar.
     /// - Parameters:
@@ -72,8 +73,18 @@ struct WinnieProgressBar: View {
     }
 
     private var trackColor: Color {
-        if onCard {
-            // On Pine Teal cards, use semi-transparent ivory for track
+        if let style = cardContext {
+            // Inside a card - choose track color based on card style
+            switch style {
+            case .pineTeal, .carbon:
+                // Dark backgrounds: use semi-transparent ivory
+                return WinnieColors.ivory.opacity(0.2)
+            case .ivory, .ivoryBordered:
+                // Light backgrounds: use semi-transparent carbon black
+                return WinnieColors.carbonBlack.opacity(0.15)
+            }
+        } else if onCard {
+            // Fallback for legacy onCard usage without context
             return WinnieColors.ivory.opacity(0.2)
         } else {
             // On main background, use standard progress background

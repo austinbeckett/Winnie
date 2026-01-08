@@ -10,10 +10,10 @@ import UIKit
 
 /// A UIKit-based tab bar controller wrapped for SwiftUI.
 ///
-/// Uses UITabBarController to achieve native iOS tab bar appearance with:
-/// - Proper fill/outline icon switching (outline when unselected, fill when selected)
-/// - Custom tint color (amethyst smoke)
-/// - Native liquid glass appearance
+/// Uses UITabBarController to achieve custom tab bar appearance with:
+/// - Solid Pine Teal background
+/// - Sweet Salmon icons/labels when selected
+/// - Ivory outlined icons/labels when unselected
 ///
 /// This is necessary because SwiftUI's TabView doesn't reliably support
 /// different images for selected vs unselected states.
@@ -25,9 +25,30 @@ struct WinnieTabBarController: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UITabBarController {
         let tabBarController = UITabBarController()
 
-        // Configure tab bar appearance
-        // Uses dynamic color: Blackberry Cream (light) / Amethyst Smoke (dark)
+        // Configure tab bar appearance - solid Pine Teal background
+        let appearance = UITabBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = WinnieColors.pineTealUIColor
+
+        // Configure unselected item appearance - Ivory color
+        appearance.stackedLayoutAppearance.normal.iconColor = WinnieColors.ivoryUIColor
+        appearance.stackedLayoutAppearance.normal.titleTextAttributes = [
+            .foregroundColor: WinnieColors.ivoryUIColor
+        ]
+
+        // Configure selected item appearance - Sweet Salmon color
+        appearance.stackedLayoutAppearance.selected.iconColor = WinnieColors.primaryAccentUIColor
+        appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
+            .foregroundColor: WinnieColors.primaryAccentUIColor
+        ]
+
+        // Apply appearance to tab bar
+        tabBarController.tabBar.standardAppearance = appearance
+        tabBarController.tabBar.scrollEdgeAppearance = appearance
+
+        // Set tint colors (backup for system-level theming)
         tabBarController.tabBar.tintColor = WinnieColors.primaryAccentUIColor
+        tabBarController.tabBar.unselectedItemTintColor = WinnieColors.ivoryUIColor
 
         // Create view controllers for each tab
         let dashboardVC = makeHostingController(

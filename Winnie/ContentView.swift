@@ -15,8 +15,7 @@ import SwiftUI
 /// - Scenarios: What-if projections (coming soon)
 /// - Me: Profile and settings
 ///
-/// Uses UIKit's UITabBarController for native appearance with proper
-/// fill/outline icon switching based on selection state.
+/// Uses custom SwiftUI tab bar for full design control.
 struct ContentView: View {
     @Bindable var appState: AppState
     @EnvironmentObject var authService: AuthenticationService
@@ -24,12 +23,11 @@ struct ContentView: View {
     var body: some View {
         Group {
             if let currentUser = appState.currentUser {
-                WinnieTabBarController(
+                MainTabView(
                     appState: appState,
-                    authService: authService,
                     currentUser: currentUser
                 )
-                .ignoresSafeArea()
+                .environmentObject(authService)
             } else {
                 // Fallback if somehow signed in without user data
                 VStack {
