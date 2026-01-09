@@ -29,6 +29,7 @@ struct CircularProgressRing: View {
     let size: CGFloat
     let icon: String?
     let iconColor: Color?
+    let percentageText: String?
 
     @Environment(\.colorScheme) private var colorScheme
 
@@ -40,13 +41,15 @@ struct CircularProgressRing: View {
     ///   - size: Outer diameter of the ring (defaults to 60pt)
     ///   - icon: Optional SF Symbol name to display in center
     ///   - iconColor: Color for the center icon (defaults to ring color)
+    ///   - percentageText: Optional percentage text to display below the icon
     init(
         progress: Double,
         color: Color = WinnieColors.lavenderVeil,
         lineWidth: CGFloat = 6,
         size: CGFloat = 60,
         icon: String? = nil,
-        iconColor: Color? = nil
+        iconColor: Color? = nil,
+        percentageText: String? = nil
     ) {
         // Clamp progress between 0 and 1
         self.progress = min(max(progress, 0), 1)
@@ -55,6 +58,7 @@ struct CircularProgressRing: View {
         self.size = size
         self.icon = icon
         self.iconColor = iconColor
+        self.percentageText = percentageText
     }
 
     var body: some View {
@@ -77,11 +81,20 @@ struct CircularProgressRing: View {
                 .rotationEffect(.degrees(-90))
                 .animation(.spring(response: 0.4, dampingFraction: 0.8), value: progress)
 
-            // Optional center icon
-            if let iconName = icon {
-                Image(systemName: iconName)
-                    .font(.system(size: size * 0.33, weight: .medium))
-                    .foregroundColor(iconColor ?? color)
+            // Center content: icon + optional percentage stacked vertically
+            if icon != nil || percentageText != nil {
+                VStack(spacing: 2) {
+                    if let iconName = icon {
+                        Image(systemName: iconName)
+                            .font(.system(size: percentageText != nil ? size * 0.25 : size * 0.33, weight: .medium))
+                            .foregroundColor(iconColor ?? color)
+                    }
+                    if let percentage = percentageText {
+                        Text(percentage)
+                            .font(.system(size: size * 0.18, weight: .semibold))
+                            .foregroundColor(iconColor ?? color)
+                    }
+                }
             }
         }
         .frame(width: size, height: size)
@@ -105,11 +118,13 @@ struct GoalProgressRing: View {
     let goal: Goal
     let size: CGFloat
     let lineWidth: CGFloat
+    let showPercentage: Bool
 
-    init(goal: Goal, size: CGFloat = 60, lineWidth: CGFloat = 6) {
+    init(goal: Goal, size: CGFloat = 60, lineWidth: CGFloat = 6, showPercentage: Bool = false) {
         self.goal = goal
         self.size = size
         self.lineWidth = lineWidth
+        self.showPercentage = showPercentage
     }
 
     var body: some View {
@@ -119,7 +134,8 @@ struct GoalProgressRing: View {
             lineWidth: lineWidth,
             size: size,
             icon: goal.displayIcon,
-            iconColor: goal.displayColor
+            iconColor: goal.displayColor,
+            percentageText: showPercentage ? "\(goal.progressPercentageInt)%" : nil
         )
     }
 }
@@ -151,20 +167,15 @@ struct GoalProgressCell: View {
             onTap?()
         }) {
             VStack(spacing: WinnieSpacing.xs) {
-                // Circular progress ring with icon
-                GoalProgressRing(goal: goal, size: 60, lineWidth: 6)
+                // Circular progress ring with icon AND percentage inside
+                GoalProgressRing(goal: goal, size: 60, lineWidth: 6, showPercentage: true)
 
-                // Goal name
+                // Goal name only (percentage moved inside circle)
                 Text(goal.name)
                     .font(WinnieTypography.bodyS())
                     .foregroundColor(WinnieColors.primaryText(for: colorScheme))
                     .lineLimit(1)
                     .truncationMode(.tail)
-
-                // Progress percentage
-                Text("\(goal.progressPercentageInt)%")
-                    .font(WinnieTypography.labelS().weight(.semibold))
-                    .foregroundColor(goal.displayColor)
             }
             .frame(minWidth: WinnieSpacing.minTouchTarget, minHeight: WinnieSpacing.minTouchTarget)
         }

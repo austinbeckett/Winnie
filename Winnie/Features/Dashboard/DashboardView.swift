@@ -192,7 +192,6 @@ struct DashboardView: View {
     @State private var viewModel: DashboardViewModel
     @State private var selectedGoal: Goal?
     @State private var selectedScenario: Scenario?
-    @State private var goalsCarouselPage: Int = 0
     @Environment(\.colorScheme) private var colorScheme
     @Environment(TabCoordinator.self) private var tabCoordinator: TabCoordinator?
 
@@ -214,26 +213,45 @@ struct DashboardView: View {
             } else {
                 ScrollView {
                     VStack(alignment: .leading, spacing: WinnieSpacing.l) {
-                        // Active plan card with budget health
+                        // Active plan card
                         if let scenario = viewModel.activeScenario {
                             ActivePlanCard(
                                 scenario: scenario,
-                                savingsPool: viewModel.savingsPool,
-                                allocatedGoals: viewModel.allocatedGoals,
-                                projections: viewModel.projections,
-                                onTap: { selectedScenario = scenario },
-                                onMilestoneTap: { goal in selectedGoal = goal }
+                                totalSaved: viewModel.totalSavedAmount,
+                                isOnTrack: viewModel.isOnTrack,
+                                onTap: { selectedScenario = scenario }
                             )
+
+                            // Grid layout: 3-card stack on left, goals card on right
+                            // Math: gridHeight (392) = 3 × cardHeight (120) + 2 × spacing (16)
+                            HStack(alignment: .top, spacing: WinnieSpacing.m) {
+                                // Left column: 3 equal-height placeholder cards
+                                VStack(spacing: WinnieSpacing.m) {
+                                    DashboardPlaceholderCard(title: "Coming Soon")
+                                        .frame(height: 120)
+
+                                    DashboardPlaceholderCard(title: "Coming Soon")
+                                        .frame(height: 120)
+
+                                    DashboardPlaceholderCard(title: "Coming Soon")
+                                        .frame(height: 120)
+                                }
+                                .frame(maxWidth: .infinity)
+
+                                // Right column: Goals stack (same total height: 392pt)
+                                if !viewModel.goals.isEmpty {
+                                    GoalsStackCard(
+                                        goals: viewModel.goals,
+                                        onGoalTap: { goal in selectedGoal = goal }
+                                    )
+                                    .frame(maxWidth: .infinity)
+                                }
+                            }
                         } else if viewModel.savingsPool > 0 {
                             // Show empty plan card only if they have a financial profile
                             EmptyPlanCard(onTap: {
                                 tabCoordinator?.switchToPlanning()
                             })
-                        }
-
-                        // Goals grid (2x2 progress circles)
-                        if !viewModel.goals.isEmpty {
-                            goalsGrid
                         }
 
                         // Empty state for brand new users
@@ -276,51 +294,6 @@ struct DashboardView: View {
         }
     }
 
-    // MARK: - Goals Carousel (2x2 per page, horizontal swipe)
-
-    /// Chunk goals into pages of 4
-    private var goalPages: [[Goal]] {
-        viewModel.goals.chunked(into: 4)
-    }
-
-    private var goalsGrid: some View {
-        VStack(alignment: .leading, spacing: WinnieSpacing.s) {
-            // Horizontal carousel of 2x2 grids
-            TabView(selection: $goalsCarouselPage) {
-                ForEach(goalPages.indices, id: \.self) { pageIndex in
-                    goalGridPage(goals: goalPages[pageIndex])
-                        .tag(pageIndex)
-                }
-            }
-            .tabViewStyle(.page(indexDisplayMode: .never))
-            .frame(height: 240) // Height for 2x2 grid: 2 cells (~100pt each) + spacing + padding
-
-            // Custom line page indicators (only when multiple pages)
-            if goalPages.count > 1 {
-                LinePageIndicator(
-                    pageCount: goalPages.count,
-                    currentPage: $goalsCarouselPage
-                )
-                .frame(maxWidth: .infinity)
-            }
-        }
-    }
-
-    /// A single page of the goals carousel showing up to 4 goals in a 2x2 grid
-    private func goalGridPage(goals: [Goal]) -> some View {
-        LazyVGrid(columns: [
-            GridItem(.flexible(), spacing: WinnieSpacing.m),
-            GridItem(.flexible(), spacing: WinnieSpacing.m)
-        ], spacing: WinnieSpacing.m) {
-            ForEach(goals) { goal in
-                GoalProgressCell(goal: goal) {
-                    selectedGoal = goal
-                }
-            }
-        }
-        .padding(.horizontal, WinnieSpacing.xxs)
-        .padding(.top, WinnieSpacing.xs) // Prevent top clipping by TabView
-    }
 
     // MARK: - Empty State
 

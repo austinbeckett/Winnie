@@ -102,7 +102,12 @@ enum WinnieTypography {
 
     // MARK: - Financial Styles (Figtree Bold with tabular figures)
 
-    /// 40pt - Hero financial amounts (disposable income display)
+    /// 48pt - Dashboard hero amounts (total saved display)
+    static func financialHero() -> Font {
+        .custom(figtreeBold, size: 48)
+    }
+
+    /// 40pt - Large financial amounts (disposable income display)
     static func financialXL() -> Font {
         .custom(figtreeBold, size: 40)
     }

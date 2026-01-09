@@ -22,10 +22,20 @@ import SwiftUI
 /// ```swift
 /// StreakDisplay(months: 27)
 /// StreakDisplay(months: 0)  // Shows encouraging zero state
+/// StreakDisplay(months: 6, style: .compact)  // Inline horizontal format
 /// ```
 struct StreakDisplay: View {
+    /// Display style for the streak
+    enum Style {
+        case standard  // Vertical: icons on top, text below
+        case compact   // Horizontal inline: "🔥 6 months"
+    }
+
     /// Total streak in months
     let months: Int
+
+    /// Display style (defaults to standard vertical layout)
+    var style: Style = .standard
 
     /// Color for the dots and icons (defaults to lavender)
     var color: Color = WinnieColors.lavenderVeil
@@ -57,10 +67,15 @@ struct StreakDisplay: View {
     }
 
     var body: some View {
-        if months == 0 {
-            zeroState
-        } else {
-            activeStreak
+        switch style {
+        case .standard:
+            if months == 0 {
+                zeroState
+            } else {
+                activeStreak
+            }
+        case .compact:
+            compactStreak
         }
     }
 
@@ -106,6 +121,24 @@ struct StreakDisplay: View {
                 .contextSecondaryText()
         }
         .frame(maxWidth: .infinity)
+    }
+
+    // MARK: - Compact Streak (Inline)
+
+    @ViewBuilder
+    private var compactStreak: some View {
+        // Only render if there's an active streak
+        if months > 0 {
+            HStack(spacing: WinnieSpacing.xxs) {
+                Image(systemName: "flame.fill")
+                    .font(.system(size: 14))
+                    .foregroundColor(WinnieColors.goldenOrange)
+
+                Text(streakText)
+                    .font(WinnieTypography.caption())
+                    .contextSecondaryText()
+            }
+        }
     }
 }
 
