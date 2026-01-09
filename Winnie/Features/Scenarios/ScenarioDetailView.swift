@@ -24,6 +24,7 @@ struct ScenarioDetailView: View {
 
     @State private var viewModel: ScenarioDetailViewModel
     @State private var showEditSheet = false
+    @State private var selectedGoal: Goal?
     @Environment(\.colorScheme) private var colorScheme
 
     // MARK: - Initialization
@@ -117,6 +118,17 @@ struct ScenarioDetailView: View {
                 }
             )
         }
+        .sheet(item: $selectedGoal) { goal in
+            NavigationStack {
+                GoalDetailView(
+                    goal: goal,
+                    currentUser: User(id: userID, displayName: "User"),
+                    partner: nil,
+                    coupleID: coupleID,
+                    goalsViewModel: GoalsViewModel(coupleID: coupleID)
+                )
+            }
+        }
         .alert("Error", isPresented: $viewModel.showError) {
             Button("OK") { viewModel.showError = false }
         } message: {
@@ -177,6 +189,9 @@ struct ScenarioDetailView: View {
                     },
                     onEditAllocation: {
                         viewModel.goalToEditAllocation = goal
+                    },
+                    onGoalTap: {
+                        selectedGoal = goal
                     }
                 )
             }

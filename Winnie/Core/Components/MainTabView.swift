@@ -19,7 +19,7 @@ struct MainTabView: View {
     @EnvironmentObject var authService: AuthenticationService
     var currentUser: User
 
-    @State private var selectedTab: WinnieTab = .dashboard
+    @State private var tabCoordinator = TabCoordinator()
 
     var body: some View {
         VStack(spacing: 0) {
@@ -28,18 +28,20 @@ struct MainTabView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
 
             // Custom tab bar (handles its own safe area)
-            WinnieTabBar(selectedTab: $selectedTab)
+            WinnieTabBar(selectedTab: $tabCoordinator.selectedTab)
         }
+        .environment(tabCoordinator)
     }
 
     @ViewBuilder
     private var tabContent: some View {
-        switch selectedTab {
+        switch tabCoordinator.selectedTab {
         case .dashboard:
             NavigationStack {
                 DashboardView(
                     coupleID: currentUser.coupleID ?? currentUser.id,
-                    currentUser: currentUser
+                    currentUser: currentUser,
+                    partner: appState.partner
                 )
             }
         case .goals:

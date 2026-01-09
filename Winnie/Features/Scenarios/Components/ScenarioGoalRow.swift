@@ -18,6 +18,7 @@ struct ScenarioGoalRow: View {
     let trackingStatus: GoalTrackingStatus
     let onAdjustTarget: () -> Void
     let onEditAllocation: () -> Void
+    var onGoalTap: (() -> Void)?
 
     @Environment(\.colorScheme) private var colorScheme
 
@@ -41,7 +42,24 @@ struct ScenarioGoalRow: View {
 
     // MARK: - Goal Header
 
+    @ViewBuilder
     private var goalHeader: some View {
+        if let onGoalTap {
+            Button(action: {
+                HapticFeedback.light()
+                onGoalTap()
+            }) {
+                goalHeaderContent
+            }
+            .buttonStyle(InteractiveCardStyle())
+            .accessibilityLabel("\(goal.name), \(goal.progressPercentageInt) percent complete")
+            .accessibilityHint("Double tap to view goal details")
+        } else {
+            goalHeaderContent
+        }
+    }
+
+    private var goalHeaderContent: some View {
         HStack(spacing: WinnieSpacing.m) {
             // Goal icon - uses user's custom icon if set, otherwise type default
             Image(systemName: goal.displayIcon)
@@ -74,6 +92,13 @@ struct ScenarioGoalRow: View {
                 Text("/month")
                     .font(WinnieTypography.caption())
                     .contextSecondaryText()
+            }
+
+            // Chevron indicator when tappable
+            if onGoalTap != nil {
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 14, weight: .semibold))
+                    .contextTertiaryText()
             }
         }
     }

@@ -2,7 +2,7 @@ import Foundation
 import SwiftUI
 
 /// A single financial goal with target amount and progress tracking
-struct Goal: Codable, Identifiable, Equatable, Sendable {
+struct Goal: Codable, Identifiable, Equatable, Hashable, Sendable {
 
     /// Unique identifier (UUID locally, Firestore doc ID when synced)
     let id: String

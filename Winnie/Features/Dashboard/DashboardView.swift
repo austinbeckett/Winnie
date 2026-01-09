@@ -131,13 +131,18 @@ final class DashboardViewModel: ErrorHandlingViewModel {
 struct DashboardView: View {
     let coupleID: String
     let currentUser: User
+    let partner: User?
 
     @State private var viewModel: DashboardViewModel
+    @State private var selectedGoal: Goal?
+    @State private var selectedScenario: Scenario?
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(TabCoordinator.self) private var tabCoordinator: TabCoordinator?
 
-    init(coupleID: String, currentUser: User) {
+    init(coupleID: String, currentUser: User, partner: User? = nil) {
         self.coupleID = coupleID
         self.currentUser = currentUser
+        self.partner = partner
         self._viewModel = State(initialValue: DashboardViewModel(coupleID: coupleID))
     }
 
@@ -161,11 +166,15 @@ struct DashboardView: View {
                                 scenario: scenario,
                                 savingsPool: viewModel.savingsPool,
                                 allocatedGoals: viewModel.allocatedGoals,
-                                projections: viewModel.projections
+                                projections: viewModel.projections,
+                                onTap: { selectedScenario = scenario },
+                                onMilestoneTap: { goal in selectedGoal = goal }
                             )
                         } else if viewModel.savingsPool > 0 {
                             // Show empty plan card only if they have a financial profile
-                            EmptyPlanCard()
+                            EmptyPlanCard(onTap: {
+                                tabCoordinator?.switchToPlanning()
+                            })
                         }
 
                         // Goals grid (2x2 progress circles)
@@ -195,6 +204,22 @@ struct DashboardView: View {
         .onDisappear {
             viewModel.stopListening()
         }
+        .navigationDestination(item: $selectedGoal) { goal in
+            GoalDetailView(
+                goal: goal,
+                currentUser: currentUser,
+                partner: partner,
+                coupleID: coupleID,
+                goalsViewModel: GoalsViewModel(coupleID: coupleID)
+            )
+        }
+        .navigationDestination(item: $selectedScenario) { scenario in
+            ScenarioDetailView(
+                scenario: scenario,
+                coupleID: coupleID,
+                userID: currentUser.id
+            )
+        }
     }
 
     // MARK: - Compact Greeting
@@ -221,7 +246,7 @@ struct DashboardView: View {
             ], spacing: WinnieSpacing.m) {
                 ForEach(viewModel.goals.prefix(4)) { goal in
                     GoalProgressCell(goal: goal) {
-                        // TODO: Navigate to goal detail
+                        selectedGoal = goal
                     }
                 }
             }
@@ -231,7 +256,7 @@ struct DashboardView: View {
                 HStack {
                     Spacer()
                     Button(action: {
-                        // TODO: Switch to Goals tab
+                        tabCoordinator?.switchToGoals()
                     }) {
                         HStack(spacing: WinnieSpacing.xs) {
                             Text("View All Goals")

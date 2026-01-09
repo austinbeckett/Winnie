@@ -146,7 +146,10 @@ struct GoalProgressCell: View {
     }
 
     var body: some View {
-        Button(action: { onTap?() }) {
+        Button(action: {
+            HapticFeedback.light()
+            onTap?()
+        }) {
             VStack(spacing: WinnieSpacing.xs) {
                 // Circular progress ring with icon
                 GoalProgressRing(goal: goal, size: 60, lineWidth: 6)
@@ -165,7 +168,9 @@ struct GoalProgressCell: View {
             }
             .frame(minWidth: WinnieSpacing.minTouchTarget, minHeight: WinnieSpacing.minTouchTarget)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(InteractiveCardStyle())
+        .accessibilityLabel("\(goal.name), \(goal.progressPercentageInt) percent complete")
+        .accessibilityHint("Double tap to view goal details")
     }
 }
 

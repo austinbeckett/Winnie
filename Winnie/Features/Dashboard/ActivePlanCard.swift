@@ -28,27 +28,37 @@ struct ActivePlanCard: View {
     let savingsPool: Decimal
     let allocatedGoals: [Goal]
     let projections: [String: GoalProjection]
+    let onTap: () -> Void
+    var onMilestoneTap: ((Goal) -> Void)?
 
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
-        WinnieCard(style: .ivoryBordered) {
-            VStack(alignment: .leading, spacing: WinnieSpacing.m) {
-                // Header: Badge + Plan name
-                headerSection
+        Button(action: {
+            HapticFeedback.light()
+            onTap()
+        }) {
+            WinnieCard(style: .ivoryBordered) {
+                VStack(alignment: .leading, spacing: WinnieSpacing.m) {
+                    // Header: Badge + Plan name
+                    headerSection
 
-                // Budget health: Progress bar + amounts
-                budgetHealthSection
+                    // Budget health: Progress bar + amounts
+                    budgetHealthSection
 
-                // Next milestone (if exists)
-                if let milestone = nextMilestone {
-                    Divider()
-                        .background(WinnieColors.border(for: colorScheme))
+                    // Next milestone (if exists)
+                    if let milestone = nextMilestone {
+                        Divider()
+                            .background(WinnieColors.border(for: colorScheme))
 
-                    nextMilestoneSection(goal: milestone.goal, projection: milestone.projection)
+                        nextMilestoneSection(goal: milestone.goal, projection: milestone.projection)
+                    }
                 }
             }
         }
+        .buttonStyle(InteractiveCardStyle())
+        .accessibilityLabel("Active plan: \(scenario.name)")
+        .accessibilityHint("Double tap to view plan details")
     }
 
     // MARK: - Header Section
@@ -81,6 +91,11 @@ struct ActivePlanCard: View {
                     .font(WinnieTypography.caption())
                     .contextTertiaryText()
             }
+
+            // Chevron indicator for tap affordance
+            Image(systemName: "chevron.right")
+                .font(.system(size: 14, weight: .semibold))
+                .contextTertiaryText()
         }
     }
 
@@ -128,6 +143,7 @@ struct ActivePlanCard: View {
 
     // MARK: - Next Milestone Section
 
+    @ViewBuilder
     private func nextMilestoneSection(goal: Goal, projection: GoalProjection) -> some View {
         VStack(alignment: .leading, spacing: WinnieSpacing.s) {
             // Section label
@@ -136,32 +152,55 @@ struct ActivePlanCard: View {
                 .contextTertiaryText()
                 .tracking(0.5)
 
-            // Goal row
-            HStack {
-                // Goal icon
-                Image(systemName: goal.displayIcon)
-                    .font(.system(size: WinnieSpacing.iconSizeM))
-                    .foregroundColor(goal.displayColor)
-
-                // Goal name
-                Text(goal.name)
-                    .font(WinnieTypography.bodyM())
-                    .contextPrimaryText()
-                    .lineLimit(1)
-
-                Spacer()
-
-                // Timeline
-                Text(projection.timeToCompletionText)
-                    .font(WinnieTypography.bodyM())
-                    .fontWeight(.semibold)
-                    .contextSecondaryText()
+            // Goal row - tappable if callback provided
+            if let onMilestoneTap {
+                Button {
+                    HapticFeedback.light()
+                    onMilestoneTap(goal)
+                } label: {
+                    milestoneRowContent(goal: goal, projection: projection, showChevron: true)
+                }
+                .buttonStyle(InteractiveCardStyle())
+                .accessibilityLabel("Next milestone: \(goal.name)")
+                .accessibilityHint("Double tap to view goal details")
+            } else {
+                milestoneRowContent(goal: goal, projection: projection, showChevron: false)
             }
 
             // Progress text
             Text("\(goal.progressPercentageInt)% complete")
                 .font(WinnieTypography.caption())
                 .contextTertiaryText()
+        }
+    }
+
+    private func milestoneRowContent(goal: Goal, projection: GoalProjection, showChevron: Bool) -> some View {
+        HStack {
+            // Goal icon
+            Image(systemName: goal.displayIcon)
+                .font(.system(size: WinnieSpacing.iconSizeM))
+                .foregroundColor(goal.displayColor)
+
+            // Goal name
+            Text(goal.name)
+                .font(WinnieTypography.bodyM())
+                .contextPrimaryText()
+                .lineLimit(1)
+
+            Spacer()
+
+            // Timeline
+            Text(projection.timeToCompletionText)
+                .font(WinnieTypography.bodyM())
+                .fontWeight(.semibold)
+                .contextSecondaryText()
+
+            // Chevron when tappable
+            if showChevron {
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 12, weight: .semibold))
+                    .contextTertiaryText()
+            }
         }
     }
 
@@ -216,19 +255,50 @@ struct ActivePlanCard: View {
 
 /// Shown when there's no active plan
 struct EmptyPlanCard: View {
+    var onTap: (() -> Void)?
+
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
+        if let onTap {
+            Button(action: {
+                HapticFeedback.light()
+                onTap()
+            }) {
+                cardContent
+            }
+            .buttonStyle(InteractiveCardStyle())
+            .accessibilityLabel("No active plan")
+            .accessibilityHint("Double tap to create a plan")
+        } else {
+            cardContent
+        }
+    }
+
+    private var cardContent: some View {
         WinnieCard(style: .ivoryBordered) {
             VStack(spacing: WinnieSpacing.m) {
                 Text("No active plan yet")
                     .font(WinnieTypography.headlineS())
                     .contextPrimaryText()
 
-                Text("Create a plan in the Planning tab to see your budget health and goal timelines here.")
+                Text("Tap to create your first plan and start tracking your goals.")
                     .font(WinnieTypography.bodyS())
                     .contextSecondaryText()
                     .multilineTextAlignment(.center)
+
+                // Visual indicator when tappable
+                if onTap != nil {
+                    HStack(spacing: WinnieSpacing.xs) {
+                        Text("Get Started")
+                            .font(WinnieTypography.bodyS())
+                            .fontWeight(.medium)
+
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 12, weight: .semibold))
+                    }
+                    .foregroundColor(WinnieColors.lavenderVeil)
+                }
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, WinnieSpacing.s)
@@ -299,7 +369,9 @@ struct EmptyPlanCard: View {
             scenario: scenario,
             savingsPool: 2500,
             allocatedGoals: goals,
-            projections: projections
+            projections: projections,
+            onTap: { print("Card tapped") },
+            onMilestoneTap: { goal in print("Milestone tapped: \(goal.name)") }
         )
     }
     .padding(WinnieSpacing.l)
@@ -333,7 +405,8 @@ private struct ActivePlanCardPreviewFullyAllocated: View {
                 scenario: scenario,
                 savingsPool: 2500,
                 allocatedGoals: goals,
-                projections: projections
+                projections: projections,
+                onTap: {}
             )
         }
         .padding(WinnieSpacing.l)
@@ -368,7 +441,8 @@ private struct ActivePlanCardPreviewFullyAllocated: View {
             scenario: scenario,
             savingsPool: 2500,
             allocatedGoals: goals,
-            projections: projections
+            projections: projections,
+            onTap: {}
         )
     }
     .padding(WinnieSpacing.l)
