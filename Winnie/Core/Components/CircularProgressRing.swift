@@ -168,11 +168,11 @@ struct GoalProgressCell: View {
         }) {
             VStack(spacing: WinnieSpacing.xs) {
                 // Circular progress ring with icon AND percentage inside
-                GoalProgressRing(goal: goal, size: 60, lineWidth: 6, showPercentage: true)
+                GoalProgressRing(goal: goal, size: 55, lineWidth: 6, showPercentage: true)
 
                 // Goal name only (percentage moved inside circle)
                 Text(goal.name)
-                    .font(WinnieTypography.bodyS())
+                    .font(WinnieTypography.caption())
                     .foregroundColor(WinnieColors.primaryText(for: colorScheme))
                     .lineLimit(1)
                     .truncationMode(.tail)
