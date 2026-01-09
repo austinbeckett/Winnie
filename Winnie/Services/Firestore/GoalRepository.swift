@@ -90,10 +90,10 @@ final class GoalRepository: Sendable {
         return goal
     }
 
-    /// Fetch all goals for a couple, ordered by priority
+    /// Fetch all goals for a couple, ordered by creation date
     func fetchAllGoals(coupleID: String) async throws -> [Goal] {
         let snapshot = try await goalsCollection(coupleID: coupleID)
-            .order(by: "priority")
+            .order(by: "createdAt")
             .getDocuments()
 
         return snapshot.documents.compactMap { document in
@@ -102,11 +102,11 @@ final class GoalRepository: Sendable {
         }
     }
 
-    /// Fetch only active goals for a couple, ordered by priority
+    /// Fetch only active goals for a couple, ordered by creation date
     func fetchActiveGoals(coupleID: String) async throws -> [Goal] {
         let snapshot = try await goalsCollection(coupleID: coupleID)
             .whereField("isActive", isEqualTo: true)
-            .order(by: "priority")
+            .order(by: "createdAt")
             .getDocuments()
 
         return snapshot.documents.compactMap { document in
@@ -119,7 +119,7 @@ final class GoalRepository: Sendable {
     func fetchGoals(ofType type: GoalType, coupleID: String) async throws -> [Goal] {
         let snapshot = try await goalsCollection(coupleID: coupleID)
             .whereField("type", isEqualTo: type.rawValue)
-            .order(by: "priority")
+            .order(by: "createdAt")
             .getDocuments()
 
         return snapshot.documents.compactMap { document in
@@ -221,7 +221,7 @@ final class GoalRepository: Sendable {
         onChange: @escaping ([Goal]) -> Void
     ) -> ListenerRegistrationProviding {
         return goalsCollection(coupleID: coupleID)
-            .order(by: "priority", descending: false)
+            .order(by: "createdAt", descending: false)
             .addSnapshotListener { snapshot, error in
                 if let error {
                     #if DEBUG
@@ -250,7 +250,7 @@ final class GoalRepository: Sendable {
     ) -> ListenerRegistrationProviding {
         return goalsCollection(coupleID: coupleID)
             .whereField("isActive", isEqualTo: true)
-            .order(by: "priority", descending: false)
+            .order(by: "createdAt", descending: false)
             .addSnapshotListener { snapshot, error in
                 if let error {
                     #if DEBUG

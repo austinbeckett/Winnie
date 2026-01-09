@@ -20,7 +20,7 @@ final class GoalsViewModel: ErrorHandlingViewModel {
 
     // MARK: - Published State
 
-    /// All goals for the couple, ordered by priority
+    /// All goals for the couple, sorted by desired date (closest first, undated at bottom)
     var goals: [Goal] = []
 
     /// Currently selected goal (for detail view)
@@ -136,7 +136,8 @@ final class GoalsViewModel: ErrorHandlingViewModel {
         listenerRegistration = repository.listenToGoals(coupleID: coupleID) { [weak self] goals in
             // Firebase runs this listener on main thread, and GoalsViewModel is @MainActor,
             // so we can update state directly without wrapping in Task
-            self?.goals = goals
+            // Sort by desired date (closest first), with undated goals at the bottom
+            self?.goals = goals.sortedByTargetDate
             self?.isLoading = false
         }
 
@@ -250,7 +251,7 @@ final class GoalsViewModel: ErrorHandlingViewModel {
         errorMessage = nil
 
         do {
-            goals = try await repository.fetchAllGoals(coupleID: coupleID)
+            goals = try await repository.fetchAllGoals(coupleID: coupleID).sortedByTargetDate
         } catch {
             handleError(error, context: "fetching goals")
         }

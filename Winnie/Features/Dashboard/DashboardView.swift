@@ -147,9 +147,9 @@ final class DashboardViewModel: ErrorHandlingViewModel {
             self?.isLoading = false
         }
 
-        // Listen to goals
+        // Listen to goals (filter to active, then sort by target date)
         goalsListener = goalRepository.listenToGoals(coupleID: coupleID) { [weak self] goals in
-            self?.goals = goals.filter { $0.isActive }
+            self?.goals = goals.filter { $0.isActive }.sortedByTargetDate
         }
 
         // Load financial profile (one-time)

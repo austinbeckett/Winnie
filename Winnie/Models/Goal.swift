@@ -134,45 +134,49 @@ struct Goal: Codable, Identifiable, Equatable, Hashable, Sendable {
 
 extension Goal {
 
-    /// Sample house goal for previews
+    /// Sample house goal for previews (2 years out)
     static let sampleHouse = Goal(
         type: .house,
         name: "Down Payment",
         targetAmount: Decimal(60000),
         currentAmount: Decimal(15000),
+        desiredDate: Calendar.current.date(byAdding: .year, value: 2, to: Date()),
         priority: 1,
         colorHex: GoalPresetColor.sage.rawValue,
         iconName: "house.fill"
     )
 
-    /// Sample retirement goal for previews
+    /// Sample retirement goal for previews (no date - long-term goal, appears at bottom)
     static let sampleRetirement = Goal(
         type: .retirement,
         name: "Retirement Fund",
         targetAmount: Decimal(1000000),
         currentAmount: Decimal(50000),
+        desiredDate: nil,
         priority: 2,
         colorHex: GoalPresetColor.coral.rawValue,
         iconName: "chart.line.uptrend.xyaxis"
     )
 
-    /// Sample vacation goal for previews
+    /// Sample vacation goal for previews (6 months out - closest deadline)
     static let sampleVacation = Goal(
         type: .vacation,
         name: "Hawaii Trip",
         targetAmount: Decimal(8000),
         currentAmount: Decimal(2500),
+        desiredDate: Calendar.current.date(byAdding: .month, value: 6, to: Date()),
         priority: 3,
         colorHex: GoalPresetColor.sand.rawValue,
         iconName: "airplane"
     )
 
-    /// Sample emergency fund for previews
+    /// Sample emergency fund for previews (no date - ongoing goal, appears at bottom)
     static let sampleEmergency = Goal(
         type: .emergencyFund,
         name: "Emergency Fund",
         targetAmount: Decimal(20000),
         currentAmount: Decimal(12000),
+        desiredDate: nil,
         priority: 4,
         colorHex: GoalPresetColor.clay.rawValue,
         iconName: "shield.fill"
@@ -185,4 +189,38 @@ extension Goal {
         .sampleVacation,
         .sampleEmergency
     ]
+}
+
+// MARK: - Sorting
+
+extension Array where Element == Goal {
+
+    /// Returns goals sorted by desired date (ascending - closest date first).
+    ///
+    /// Goals without a desired date are placed at the bottom, sorted by creation date.
+    /// This provides a sensible default order: urgent goals first, then undated goals
+    /// in the order they were created.
+    ///
+    /// ## Sorting Logic
+    /// 1. Goals with `desiredDate` → sorted ascending (closest deadline first)
+    /// 2. Goals without `desiredDate` → sorted by `createdAt` ascending (oldest first)
+    /// 3. All dated goals appear before undated goals
+    var sortedByTargetDate: [Goal] {
+        self.sorted { goal1, goal2 in
+            switch (goal1.desiredDate, goal2.desiredDate) {
+            case let (date1?, date2?):
+                // Both have dates: sort by date ascending
+                return date1 < date2
+            case (_?, nil):
+                // First has date, second doesn't: first comes before second
+                return true
+            case (nil, _?):
+                // First has no date, second does: second comes before first
+                return false
+            case (nil, nil):
+                // Neither has date: maintain stable order by creation date
+                return goal1.createdAt < goal2.createdAt
+            }
+        }
+    }
 }
