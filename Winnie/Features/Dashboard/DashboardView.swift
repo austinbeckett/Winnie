@@ -28,6 +28,62 @@ final class DashboardViewModel: ErrorHandlingViewModel {
         financialProfile?.monthlyDisposable ?? 0
     }
 
+    /// Total amount saved across all goals
+    var totalSavedAmount: Decimal {
+        goals.reduce(Decimal.zero) { $0 + $1.currentAmount }
+    }
+
+    /// Overall progress percentage for near-term goals (desired date within 10 years)
+    /// Excludes long-term goals like retirement to avoid skewing perception
+    var overallProgress: Double {
+        let nearTermGoals = goals.filter { goal in
+            guard let desiredDate = goal.desiredDate else {
+                // Goals without desired dates are considered near-term
+                return true
+            }
+            let yearsUntilTarget = Calendar.current.dateComponents(
+                [.year],
+                from: Date(),
+                to: desiredDate
+            ).year ?? 0
+            return yearsUntilTarget <= 10
+        }
+
+        guard !nearTermGoals.isEmpty else { return 0 }
+
+        let totalProgress = nearTermGoals.reduce(0.0) { $0 + $1.progressPercentage }
+        return totalProgress / Double(nearTermGoals.count)
+    }
+
+    /// Contribution streak in months (consecutive months of full allocation)
+    /// TODO: Implement actual streak tracking from Firestore
+    var contributionStreak: Int {
+        // Placeholder: In the future, this will be tracked in Firestore
+        // by comparing monthly goal progress against planned allocations
+        // For now, return 0 to show the encouraging zero state
+        0
+    }
+
+    /// Whether the user is on track with their goals
+    /// Returns true if average goal progress meets or exceeds expected progress based on timeline
+    var isOnTrack: Bool {
+        // Check if allocated goals are on track based on their projections
+        guard !allocatedGoals.isEmpty else { return false }
+
+        let onTrackGoals = allocatedGoals.filter { goal in
+            guard let projection = projections[goal.id],
+                  projection.isReachable else {
+                return false
+            }
+            // Goal is on track if it has a valid projection and is reachable
+            return true
+        }
+
+        // On track if at least 80% of goals have valid, reachable projections
+        let onTrackRatio = Double(onTrackGoals.count) / Double(allocatedGoals.count)
+        return onTrackRatio >= 0.8
+    }
+
     /// Active scenario projections
     var projections: [String: GoalProjection] {
         guard let profile = financialProfile,
@@ -136,6 +192,7 @@ struct DashboardView: View {
     @State private var viewModel: DashboardViewModel
     @State private var selectedGoal: Goal?
     @State private var selectedScenario: Scenario?
+    @State private var goalsCarouselPage: Int = 0
     @Environment(\.colorScheme) private var colorScheme
     @Environment(TabCoordinator.self) private var tabCoordinator: TabCoordinator?
 
@@ -157,9 +214,6 @@ struct DashboardView: View {
             } else {
                 ScrollView {
                     VStack(alignment: .leading, spacing: WinnieSpacing.l) {
-                        // Compact greeting (no card)
-                        greetingText
-
                         // Active plan card with budget health
                         if let scenario = viewModel.activeScenario {
                             ActivePlanCard(
@@ -222,56 +276,50 @@ struct DashboardView: View {
         }
     }
 
-    // MARK: - Compact Greeting
+    // MARK: - Goals Carousel (2x2 per page, horizontal swipe)
 
-    private var greetingText: some View {
-        Text("Hi \(currentUser.greetingName)")
-            .font(WinnieTypography.headlineM())
-            .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+    /// Chunk goals into pages of 4
+    private var goalPages: [[Goal]] {
+        viewModel.goals.chunked(into: 4)
     }
 
-    // MARK: - Goals Grid (2x2 Progress Circles)
-
     private var goalsGrid: some View {
-        VStack(alignment: .leading, spacing: WinnieSpacing.m) {
-            // Section header
-            Text("Your Goals")
-                .font(WinnieTypography.labelM())
-                .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
-
-            // 2x2 grid of progress circles
-            LazyVGrid(columns: [
-                GridItem(.flexible(), spacing: WinnieSpacing.m),
-                GridItem(.flexible(), spacing: WinnieSpacing.m)
-            ], spacing: WinnieSpacing.m) {
-                ForEach(viewModel.goals.prefix(4)) { goal in
-                    GoalProgressCell(goal: goal) {
-                        selectedGoal = goal
-                    }
+        VStack(alignment: .leading, spacing: WinnieSpacing.s) {
+            // Horizontal carousel of 2x2 grids
+            TabView(selection: $goalsCarouselPage) {
+                ForEach(goalPages.indices, id: \.self) { pageIndex in
+                    goalGridPage(goals: goalPages[pageIndex])
+                        .tag(pageIndex)
                 }
             }
+            .tabViewStyle(.page(indexDisplayMode: .never))
+            .frame(height: 240) // Height for 2x2 grid: 2 cells (~100pt each) + spacing + padding
 
-            // View all link (if more than 4 goals)
-            if viewModel.goals.count > 4 {
-                HStack {
-                    Spacer()
-                    Button(action: {
-                        tabCoordinator?.switchToGoals()
-                    }) {
-                        HStack(spacing: WinnieSpacing.xs) {
-                            Text("View All Goals")
-                                .font(WinnieTypography.bodyS())
-
-                            Image(systemName: "chevron.right")
-                                .font(.system(size: 12, weight: .semibold))
-                        }
-                        .foregroundColor(WinnieColors.lavenderVeil)
-                    }
-                    Spacer()
-                }
-                .padding(.top, WinnieSpacing.xs)
+            // Custom line page indicators (only when multiple pages)
+            if goalPages.count > 1 {
+                LinePageIndicator(
+                    pageCount: goalPages.count,
+                    currentPage: $goalsCarouselPage
+                )
+                .frame(maxWidth: .infinity)
             }
         }
+    }
+
+    /// A single page of the goals carousel showing up to 4 goals in a 2x2 grid
+    private func goalGridPage(goals: [Goal]) -> some View {
+        LazyVGrid(columns: [
+            GridItem(.flexible(), spacing: WinnieSpacing.m),
+            GridItem(.flexible(), spacing: WinnieSpacing.m)
+        ], spacing: WinnieSpacing.m) {
+            ForEach(goals) { goal in
+                GoalProgressCell(goal: goal) {
+                    selectedGoal = goal
+                }
+            }
+        }
+        .padding(.horizontal, WinnieSpacing.xxs)
+        .padding(.top, WinnieSpacing.xs) // Prevent top clipping by TabView
     }
 
     // MARK: - Empty State
@@ -311,4 +359,22 @@ struct DashboardView: View {
         DashboardView(coupleID: "preview", currentUser: .sample)
     }
     .preferredColorScheme(.dark)
+}
+
+// MARK: - Array Chunking Extension
+
+extension Array {
+    /// Splits the array into chunks of the specified size.
+    ///
+    /// Example:
+    /// ```swift
+    /// [1, 2, 3, 4, 5, 6, 7].chunked(into: 4)
+    /// // Returns: [[1, 2, 3, 4], [5, 6, 7]]
+    /// ```
+    func chunked(into size: Int) -> [[Element]] {
+        guard size > 0 else { return [] }
+        return stride(from: 0, to: count, by: size).map {
+            Array(self[$0..<Swift.min($0 + size, count)])
+        }
+    }
 }

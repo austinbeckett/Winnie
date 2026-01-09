@@ -3,35 +3,57 @@
 //  Winnie
 //
 //  Created by Claude on 2026-01-08.
+//  Redesigned on 2026-01-09 for improved visual hierarchy and emotional engagement.
 //
 
 import SwiftUI
 
-/// A card showing the active plan with budget health and next milestone.
+/// A confidence-inspiring card showing the active plan with hero savings amount and key stats.
 ///
-/// Displays:
-/// - Plan name with "Active Plan" badge
-/// - Monthly savings pool allocation progress
-/// - Next milestone (closest goal to completion)
+/// New design (Jan 2026) displays:
+/// - Plan name with optional "On Track" badge (positive reinforcement only)
+/// - Hero total saved amount - the centerpiece
+/// - Stats row: Overall progress % + Contribution streak
+/// - Compact next milestone section
+///
+/// Design philosophy:
+/// - Primary emotion: Confidence ("We're on track and in control")
+/// - Balanced mix of status dashboard + celebration
+/// - Positive reinforcement only - no "behind" indicators
 ///
 /// Usage:
 /// ```swift
 /// ActivePlanCard(
 ///     scenario: viewModel.activeScenario,
-///     savingsPool: viewModel.savingsPool,
+///     totalSaved: viewModel.totalSavedAmount,
+///     overallProgress: viewModel.overallProgress,
+///     contributionStreak: viewModel.contributionStreak,
+///     isOnTrack: viewModel.isOnTrack,
 ///     allocatedGoals: viewModel.allocatedGoals,
-///     projections: viewModel.projections
+///     projections: viewModel.projections,
+///     onTap: { ... }
 /// )
 /// ```
 struct ActivePlanCard: View {
     let scenario: Scenario
-    let savingsPool: Decimal
+    let totalSaved: Decimal
+    let overallProgress: Double
+    let contributionStreak: Int
+    let isOnTrack: Bool
     let allocatedGoals: [Goal]
     let projections: [String: GoalProjection]
     let onTap: () -> Void
     var onMilestoneTap: ((Goal) -> Void)?
 
     @Environment(\.colorScheme) private var colorScheme
+
+    /// Animated value for the count-up effect
+    @State private var animatedSavedAmount: Double = 0
+
+    /// Color for the hero amount - Pine Teal in light mode, Lavender Veil in dark mode
+    private var heroAmountColor: Color {
+        colorScheme == .dark ? WinnieColors.lavenderVeil : WinnieColors.pineTeal
+    }
 
     var body: some View {
         Button(action: {
@@ -40,24 +62,27 @@ struct ActivePlanCard: View {
         }) {
             WinnieCard(style: .ivoryBordered) {
                 VStack(alignment: .leading, spacing: WinnieSpacing.m) {
-                    // Header: Badge + Plan name
+                    // Header: Plan name + On Track badge
                     headerSection
 
-                    // Budget health: Progress bar + amounts
-                    budgetHealthSection
+                    // Hero: Total saved amount
+                    heroSection
 
-                    // Next milestone (if exists)
+                    // Stats row: Progress + Streak
+                    statsRow
+
+                    // Next milestone (compact)
                     if let milestone = nextMilestone {
                         Divider()
                             .background(WinnieColors.border(for: colorScheme))
 
-                        nextMilestoneSection(goal: milestone.goal, projection: milestone.projection)
+                        compactMilestoneSection(goal: milestone.goal, projection: milestone.projection)
                     }
                 }
             }
         }
         .buttonStyle(InteractiveCardStyle())
-        .accessibilityLabel("Active plan: \(scenario.name)")
+        .accessibilityLabel("Active plan: \(scenario.name), \(formatCurrency(totalSaved)) saved")
         .accessibilityHint("Double tap to view plan details")
     }
 
@@ -65,16 +90,17 @@ struct ActivePlanCard: View {
 
     private var headerSection: some View {
         HStack {
-            // Active plan badge + name
+            // Active Plan badge + Plan name
             VStack(alignment: .leading, spacing: WinnieSpacing.xxs) {
-                HStack(spacing: WinnieSpacing.xs) {
+                // Active Plan badge with seal checkmark
+                HStack(spacing: WinnieSpacing.xxs) {
                     Image(systemName: "checkmark.seal.fill")
-                        .font(.system(size: 14))
+                        .font(.system(size: 12))
                         .foregroundColor(WinnieColors.success(for: colorScheme))
 
                     Text("Active Plan")
                         .font(WinnieTypography.caption())
-                        .contextSecondaryText()
+                        .foregroundColor(WinnieColors.success(for: colorScheme))
                 }
 
                 Text(scenario.name)
@@ -85,11 +111,17 @@ struct ActivePlanCard: View {
 
             Spacer()
 
-            // Goal count badge
-            if allocatedGoals.count > 0 {
-                Text("\(allocatedGoals.count) goals")
-                    .font(WinnieTypography.caption())
-                    .contextTertiaryText()
+            // On Track badge (only shown when on track - positive reinforcement)
+            if isOnTrack {
+                HStack(spacing: WinnieSpacing.xxs) {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.system(size: 12))
+                        .foregroundColor(WinnieColors.success(for: colorScheme))
+
+                    Text("On Track")
+                        .font(WinnieTypography.caption())
+                        .foregroundColor(WinnieColors.success(for: colorScheme))
+                }
             }
 
             // Chevron indicator for tap affordance
@@ -99,126 +131,147 @@ struct ActivePlanCard: View {
         }
     }
 
-    // MARK: - Budget Health Section
+    // MARK: - Hero Section (Total Saved)
 
-    private var budgetHealthSection: some View {
-        VStack(alignment: .leading, spacing: WinnieSpacing.s) {
-            // Label
-            Text("Monthly Savings Pool")
-                .font(WinnieTypography.caption())
+    private var heroSection: some View {
+        VStack(spacing: WinnieSpacing.xxs) {
+            // Animated count-up amount with accent color
+            Text(formatCurrency(Decimal(animatedSavedAmount)))
+                .font(WinnieTypography.financialXL())
+                .foregroundColor(heroAmountColor)
+                .contentTransition(.numericText(countsDown: false))
+
+            Text("saved toward your goals!")
+                .font(WinnieTypography.bodyS())
                 .contextSecondaryText()
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, WinnieSpacing.s)
+        .onAppear {
+            // Trigger count-up animation
+            animatedSavedAmount = 0
+            withAnimation(.easeOut(duration: 1.2)) {
+                animatedSavedAmount = Double(truncating: totalSaved as NSNumber)
+            }
+        }
+        .onChange(of: totalSaved) { _, newValue in
+            // Animate when value changes
+            withAnimation(.easeOut(duration: 0.8)) {
+                animatedSavedAmount = Double(truncating: newValue as NSNumber)
+            }
+        }
+    }
 
-            // Progress bar
-            WinnieProgressBar(
-                progress: allocationProgress,
-                color: WinnieColors.lavenderVeil,
-                showLabel: false,
-                onCard: true
+    // MARK: - Stats Row
+
+    private var statsRow: some View {
+        HStack(spacing: WinnieSpacing.m) {
+            // Overall Progress stat box
+            statBox(
+                value: "\(Int(overallProgress * 100))%",
+                label: "complete"
             )
 
-            // Amounts row
-            HStack {
-                // Allocated amount
-                HStack(spacing: WinnieSpacing.xs) {
-                    Text(formatCurrency(totalAllocated))
-                        .font(WinnieTypography.financialM())
-                        .contextPrimaryText()
-
-                    Text("of \(formatCurrency(savingsPool))")
-                        .font(WinnieTypography.bodyS())
-                        .contextTertiaryText()
-                }
-
-                Spacer()
-
-                // Unallocated indicator (if any)
-                if unallocatedAmount > 0 {
-                    Text("\(formatCurrency(unallocatedAmount)) unallocated")
-                        .font(WinnieTypography.bodyS())
-                        .foregroundColor(WinnieColors.goldenOrange)
-                }
+            // Contribution Streak stat box
+            VStack(spacing: WinnieSpacing.xxs) {
+                StreakDisplay(months: contributionStreak)
             }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, WinnieSpacing.s)
+            .background(
+                RoundedRectangle(cornerRadius: WinnieSpacing.s)
+                    .fill(WinnieColors.primaryText(for: colorScheme).opacity(0.05))
+            )
         }
     }
 
-    // MARK: - Next Milestone Section
+    private func statBox(value: String, label: String) -> some View {
+        VStack(spacing: WinnieSpacing.xxs) {
+            Text(value)
+                .font(WinnieTypography.financialM())
+                .contextPrimaryText()
+
+            Text(label)
+                .font(WinnieTypography.caption())
+                .contextSecondaryText()
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, WinnieSpacing.s)
+        .background(
+            RoundedRectangle(cornerRadius: WinnieSpacing.s)
+                .fill(WinnieColors.primaryText(for: colorScheme).opacity(0.05))
+        )
+    }
+
+    // MARK: - Compact Milestone Section
 
     @ViewBuilder
-    private func nextMilestoneSection(goal: Goal, projection: GoalProjection) -> some View {
-        VStack(alignment: .leading, spacing: WinnieSpacing.s) {
-            // Section label
-            Text("NEXT MILESTONE")
-                .font(WinnieTypography.labelS())
-                .contextTertiaryText()
-                .tracking(0.5)
-
-            // Goal row - tappable if callback provided
-            if let onMilestoneTap {
-                Button {
-                    HapticFeedback.light()
-                    onMilestoneTap(goal)
-                } label: {
-                    milestoneRowContent(goal: goal, projection: projection, showChevron: true)
-                }
-                .buttonStyle(InteractiveCardStyle())
-                .accessibilityLabel("Next milestone: \(goal.name)")
-                .accessibilityHint("Double tap to view goal details")
-            } else {
-                milestoneRowContent(goal: goal, projection: projection, showChevron: false)
+    private func compactMilestoneSection(goal: Goal, projection: GoalProjection) -> some View {
+        if let onMilestoneTap {
+            Button {
+                HapticFeedback.light()
+                onMilestoneTap(goal)
+            } label: {
+                milestoneContent(goal: goal, projection: projection, showChevron: true)
             }
-
-            // Progress text
-            Text("\(goal.progressPercentageInt)% complete")
-                .font(WinnieTypography.caption())
-                .contextTertiaryText()
+            .buttonStyle(InteractiveCardStyle())
+            .accessibilityLabel("Next milestone: \(goal.name)")
+            .accessibilityHint("Double tap to view goal details")
+        } else {
+            milestoneContent(goal: goal, projection: projection, showChevron: false)
         }
     }
 
-    private func milestoneRowContent(goal: Goal, projection: GoalProjection, showChevron: Bool) -> some View {
-        HStack {
+    private func milestoneContent(goal: Goal, projection: GoalProjection, showChevron: Bool) -> some View {
+        HStack(spacing: WinnieSpacing.s) {
+            // "Next:" label
+            Text("Next:")
+                .font(WinnieTypography.caption())
+                .contextTertiaryText()
+
             // Goal icon
             Image(systemName: goal.displayIcon)
-                .font(.system(size: WinnieSpacing.iconSizeM))
+                .font(.system(size: 14))
                 .foregroundColor(goal.displayColor)
 
             // Goal name
             Text(goal.name)
-                .font(WinnieTypography.bodyM())
+                .font(WinnieTypography.bodyS())
                 .contextPrimaryText()
                 .lineLimit(1)
 
-            Spacer()
+            // Bullet separator
+            Text("·")
+                .contextTertiaryText()
 
             // Timeline
             Text(projection.timeToCompletionText)
-                .font(WinnieTypography.bodyM())
-                .fontWeight(.semibold)
+                .font(WinnieTypography.bodyS())
+                .fontWeight(.medium)
                 .contextSecondaryText()
+
+            // Bullet separator
+            Text("·")
+                .contextTertiaryText()
+
+            // Progress
+            Text("\(goal.progressPercentageInt)%")
+                .font(WinnieTypography.bodyS())
+                .fontWeight(.medium)
+                .contextSecondaryText()
+
+            Spacer()
 
             // Chevron when tappable
             if showChevron {
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(.system(size: 10, weight: .semibold))
                     .contextTertiaryText()
             }
         }
     }
 
     // MARK: - Computed Properties
-
-    private var totalAllocated: Decimal {
-        scenario.allocations.totalAllocated
-    }
-
-    private var unallocatedAmount: Decimal {
-        max(savingsPool - totalAllocated, 0)
-    }
-
-    private var allocationProgress: Double {
-        guard savingsPool > 0 else { return 0 }
-        let progress = totalAllocated / savingsPool
-        return Double(truncating: progress as NSNumber)
-    }
 
     /// Find the next milestone - the allocated goal closest to completion that isn't 100% done
     private var nextMilestone: (goal: Goal, projection: GoalProjection)? {
@@ -248,6 +301,35 @@ struct ActivePlanCard: View {
         formatter.numberStyle = .currency
         formatter.maximumFractionDigits = 0
         return formatter.string(from: NSDecimalNumber(decimal: amount)) ?? "$0"
+    }
+}
+
+// MARK: - Legacy Support
+
+/// Extension to support the old API during transition
+extension ActivePlanCard {
+    /// Legacy initializer for backwards compatibility
+    init(
+        scenario: Scenario,
+        savingsPool: Decimal,
+        allocatedGoals: [Goal],
+        projections: [String: GoalProjection],
+        onTap: @escaping () -> Void,
+        onMilestoneTap: ((Goal) -> Void)? = nil
+    ) {
+        self.scenario = scenario
+        // Calculate total saved from allocated goals
+        self.totalSaved = allocatedGoals.reduce(Decimal.zero) { $0 + $1.currentAmount }
+        // Calculate overall progress from allocated goals
+        let progress = allocatedGoals.isEmpty ? 0.0 : allocatedGoals.reduce(0.0) { $0 + $1.progressPercentage } / Double(allocatedGoals.count)
+        self.overallProgress = progress
+        self.contributionStreak = 0  // Placeholder until tracking is implemented
+        // On track if all goals have valid projections
+        self.isOnTrack = !allocatedGoals.isEmpty && allocatedGoals.allSatisfy { projections[$0.id]?.isReachable == true }
+        self.allocatedGoals = allocatedGoals
+        self.projections = projections
+        self.onTap = onTap
+        self.onMilestoneTap = onMilestoneTap
     }
 }
 
@@ -308,7 +390,7 @@ struct EmptyPlanCard: View {
 
 // MARK: - Previews
 
-#Preview("Active Plan Card") {
+#Preview("Active Plan Card - New Design") {
     let scenario = Scenario.sample
     let goals = [
         Goal(
@@ -364,10 +446,16 @@ struct EmptyPlanCard: View {
         )
     ]
 
+    let totalSaved = goals.reduce(Decimal.zero) { $0 + $1.currentAmount }
+    let overallProgress = goals.reduce(0.0) { $0 + $1.progressPercentage } / Double(goals.count)
+
     VStack {
         ActivePlanCard(
             scenario: scenario,
-            savingsPool: 2500,
+            totalSaved: totalSaved,
+            overallProgress: overallProgress,
+            contributionStreak: 6,
+            isOnTrack: true,
             allocatedGoals: goals,
             projections: projections,
             onTap: { print("Card tapped") },
@@ -378,40 +466,64 @@ struct EmptyPlanCard: View {
     .background(WinnieColors.porcelain)
 }
 
-#Preview("Fully Allocated") {
-    ActivePlanCardPreviewFullyAllocated()
+#Preview("With Long Streak") {
+    let scenario = Scenario.sample
+    let goals = [Goal.sampleHouse]
+    let projections: [String: GoalProjection] = [
+        Goal.sampleHouse.id: GoalProjection(
+            goalID: Goal.sampleHouse.id,
+            monthsToComplete: 24,
+            completionDate: Calendar.current.date(byAdding: .month, value: 24, to: Date()),
+            projectedFinalValue: 50000,
+            monthlyContribution: 2500,
+            isReachable: true
+        )
+    ]
+
+    VStack {
+        ActivePlanCard(
+            scenario: scenario,
+            totalSaved: 52400,
+            overallProgress: 0.68,
+            contributionStreak: 27,  // 2 years, 3 months
+            isOnTrack: true,
+            allocatedGoals: goals,
+            projections: projections,
+            onTap: {}
+        )
+    }
+    .padding(WinnieSpacing.l)
+    .background(WinnieColors.porcelain)
 }
 
-/// Helper view for preview to avoid type inference issues
-private struct ActivePlanCardPreviewFullyAllocated: View {
-    var body: some View {
-        let goals = [Goal.sampleHouse]
-        let projections: [String: GoalProjection] = [
-            Goal.sampleHouse.id: GoalProjection(
-                goalID: Goal.sampleHouse.id,
-                monthsToComplete: 24,
-                completionDate: Calendar.current.date(byAdding: .month, value: 24, to: Date()),
-                projectedFinalValue: 50000,
-                monthlyContribution: 2500,
-                isReachable: true
-            )
-        ]
+#Preview("Zero Streak") {
+    let scenario = Scenario.sample
+    let goals = [Goal.sampleHouse]
+    let projections: [String: GoalProjection] = [
+        Goal.sampleHouse.id: GoalProjection(
+            goalID: Goal.sampleHouse.id,
+            monthsToComplete: 24,
+            completionDate: Calendar.current.date(byAdding: .month, value: 24, to: Date()),
+            projectedFinalValue: 50000,
+            monthlyContribution: 2500,
+            isReachable: true
+        )
+    ]
 
-        var scenario = Scenario.sample
-        scenario.allocations.setAmount(2500, for: Goal.sampleHouse.id)
-
-        return VStack {
-            ActivePlanCard(
-                scenario: scenario,
-                savingsPool: 2500,
-                allocatedGoals: goals,
-                projections: projections,
-                onTap: {}
-            )
-        }
-        .padding(WinnieSpacing.l)
-        .background(WinnieColors.porcelain)
+    VStack {
+        ActivePlanCard(
+            scenario: scenario,
+            totalSaved: 5000,
+            overallProgress: 0.10,
+            contributionStreak: 0,  // New user
+            isOnTrack: false,       // Not on track, badge hidden
+            allocatedGoals: goals,
+            projections: projections,
+            onTap: {}
+        )
     }
+    .padding(WinnieSpacing.l)
+    .background(WinnieColors.porcelain)
 }
 
 #Preview("Empty Plan Card") {
@@ -439,7 +551,10 @@ private struct ActivePlanCardPreviewFullyAllocated: View {
     VStack {
         ActivePlanCard(
             scenario: scenario,
-            savingsPool: 2500,
+            totalSaved: 35000,
+            overallProgress: 0.70,
+            contributionStreak: 12,
+            isOnTrack: true,
             allocatedGoals: goals,
             projections: projections,
             onTap: {}

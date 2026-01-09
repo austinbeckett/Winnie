@@ -1,14 +1,14 @@
 # Winnie App - Development Progress
 
-**Last Updated:** January 8, 2026
+**Last Updated:** January 9, 2026
 
 ---
 
 ## Current Focus
 
-**In Progress:** Goal-Plan UX Redesign (making the relationship between target dates, allocations, and projected dates clearer)
+**Completed:** Dashboard Top Card Redesign + Goals Carousel (confidence-inspiring design, positive reinforcement, horizontal 2x2 carousel)
 
-**Next Up:** Partner System, Local-first architecture (SwiftData), or additional polish
+**Next Up:** Partner System, Local-first architecture (SwiftData), or Streak tracking implementation
 
 ---
 
@@ -277,10 +277,82 @@
 | `Features/Scenarios/Components/BudgetSummaryCard.swift` | Budget overview with allocation progress |
 | `Core/Components/WinnieSlider.swift` | Custom slider with haptics and step increments |
 | `Core/Components/MainTabView.swift` | Custom tab container (updated with coupleID/userID params) |
+| `Core/Components/CircularProgressRing.swift` | Circular progress ring with GoalProgressRing and GoalProgressCell variants |
+| `Core/Components/InteractiveCardStyle.swift` | Press animation ButtonStyle + HapticFeedback helpers |
+| `Core/Components/TabCoordinator.swift` | Cross-tab navigation coordinator (@Observable) |
+| `Features/Dashboard/ActivePlanCard.swift` | Active plan summary with budget health, next milestone |
+| **Dashboard Redesign (Jan 9, 2026)** | |
+| `Core/Components/StreakDisplay.swift` | Streak visualization with calendar icons + dots |
+| `Core/Components/LinePageIndicator.swift` | Modern line-style page indicators for carousel |
 
 ---
 
 ## Recent Sessions
+
+### January 9, 2026 (Session 21) - Dashboard Top Card Redesign + Goals Carousel
+
+**Top Card Redesign:**
+- Complete redesign of `ActivePlanCard` for confidence-inspiring experience
+- New hero element: Total saved amount (big, bold "$52,400 saved toward goals")
+- Stats row with overall progress % and contribution streak display
+- "On Track" badge shows only when positive (no "behind" indicators - positive reinforcement only)
+- Overall progress excludes long-term goals (>10 years) to avoid retirement skewing perception
+- Compact next milestone section at bottom
+
+**Goals Carousel:**
+- Converted 2x2 goal grid to horizontal TabView carousel
+- 4 goals per page with swipe navigation
+- Created `LinePageIndicator` component with modern line/capsule style
+- Page indicators hidden when only one page (≤4 goals)
+- Removed "View All Goals" link (carousel replaces it)
+
+**New Components:**
+- `StreakDisplay.swift`: Visualizes contribution streak with calendar icons for years + dots for months
+  - 0 months: "Start your streak this month!" encouraging text
+  - 1-11 months: Lavender dots
+  - 12+ months: Calendar icons + dots (e.g., 📅📅 ●●● = 2yr 3mo)
+- `LinePageIndicator.swift`: Custom page indicator with animated capsule lines
+- `Array.chunked(into:)` extension for goal pagination
+
+**ViewModel Enhancements:**
+- Added `totalSavedAmount`: Total saved across all goals
+- Added `overallProgress`: Average progress for goals with target ≤10 years
+- Added `contributionStreak`: Placeholder (returns 0) for future Firestore tracking
+- Added `isOnTrack`: True if 80%+ of goals have reachable projections
+
+**Design Philosophy:**
+- Primary emotion: Confidence ("We're on track and in control")
+- Balanced mix of status dashboard + celebration
+- Positive reinforcement only - no demotivating "behind" indicators
+
+**Files created:** StreakDisplay.swift, LinePageIndicator.swift
+**Files modified:** ActivePlanCard.swift (complete rewrite), DashboardView.swift (carousel + ViewModel properties)
+
+### January 8, 2026 (Session 20) - Dashboard Redesign & Seamless Navigation
+
+**Dashboard Redesign (Commit 72f6f36):**
+- Replaced large welcome card with compact greeting text
+- Added `ActivePlanCard` showing budget health, allocation progress bar, and next milestone
+- Added `CircularProgressRing` component family for 2x2 goal progress grid
+- Changed navigation titles to `.inline` style across Dashboard, Goals, and Planning tabs
+- Refactored `ScenarioCard` with status icons and improved goal list layout
+- Added status badges to `BudgetSummaryCard` component
+- Fixed "1 month late" bug in `FinancialCalculations.swift` (binary search precision)
+
+**Seamless Navigation (Commit f6d39e8):**
+- Created `TabCoordinator` (`@Observable`) for cross-tab navigation
+- Created `InteractiveCardStyle` with press animation + `HapticFeedback` helpers
+- Wired goal progress circles to navigate to `GoalDetailView`
+- Made `ActivePlanCard` tappable to view `ScenarioDetailView`
+- Added tappable "Next Milestone" row in active plan card
+- Wired "View All Goals" button to switch to Goals tab
+- Made `EmptyPlanCard` tappable to switch to Planning tab
+- Added goal tap navigation in `ScenarioGoalRow` (opens sheet)
+- Added VoiceOver accessibility labels and hints
+- Added `Hashable` conformance to `Goal` model for navigation
+
+**New Files:** CircularProgressRing.swift, ActivePlanCard.swift, TabCoordinator.swift, InteractiveCardStyle.swift
+**Modified Files:** DashboardView.swift, MainTabView.swift, ScenarioCard.swift, ScenarioGoalRow.swift, BudgetSummaryCard.swift, ScenarioDetailView.swift, FinancialCalculations.swift, Goal.swift, GoalsListView.swift, ScenarioListView.swift
 
 ### January 8, 2026 (Session 19) - Goal-Plan UX Redesign (In Progress)
 - **Goal-Plan Integration**: Building clearer UX for the relationship between target dates, allocations, and projected dates

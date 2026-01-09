@@ -75,6 +75,10 @@ struct WinnieTabBar: View {
         let isSelected = selectedTab == tab
 
         Button {
+            // Only trigger haptic when switching to a different tab
+            if selectedTab != tab {
+                HapticFeedback.light()
+            }
             withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                 selectedTab = tab
             }
