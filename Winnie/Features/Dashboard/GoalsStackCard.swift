@@ -30,20 +30,20 @@ struct GoalsStackCard: View {
 
     var body: some View {
         WinnieCard(style: .ivoryBordered) {
-            VStack(spacing: WinnieSpacing.l) {
-                ForEach(goals) { goal in
-                    GoalProgressCell(goal: goal) {
-                        onGoalTap?(goal)
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(spacing: WinnieSpacing.s) {
+                    ForEach(goals) { goal in
+                        GoalProgressCell(goal: goal) {
+                            onGoalTap?(goal)
+                        }
+                        .frame(maxWidth: .infinity)
                     }
-                    .frame(maxWidth: .infinity)
                 }
-
-                // Push content to top if fewer than 4 goals
-                if goals.count < 4 {
-                    Spacer()
-                }
+                .frame(maxWidth: .infinity)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .scrollClipDisabled()
+            .contentMargins(0, for: .scrollContent)
+            .scrollBounceBehavior(.basedOnSize)
         }
         .frame(height: fixedHeight)
     }
@@ -51,7 +51,7 @@ struct GoalsStackCard: View {
 
 // MARK: - Previews
 
-#Preview("Goals Stack Card") {
+#Preview("Goals Stack Card - Scrollable (5 Goals)") {
     let goals = [
         Goal(
             id: "1",
@@ -76,6 +76,22 @@ struct GoalsStackCard: View {
             targetAmount: 30000,
             currentAmount: 9000,
             colorHex: GoalPresetColor.coral.rawValue
+        ),
+        Goal(
+            id: "4",
+            type: .car,
+            name: "New Car",
+            targetAmount: 25000,
+            currentAmount: 16750,
+            colorHex: GoalPresetColor.slate.rawValue
+        ),
+        Goal(
+            id: "5",
+            type: .retirement,
+            name: "Retirement",
+            targetAmount: 100000,
+            currentAmount: 10000,
+            colorHex: GoalPresetColor.sage.rawValue
         )
     ]
 
