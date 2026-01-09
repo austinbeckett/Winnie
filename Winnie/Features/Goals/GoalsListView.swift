@@ -56,7 +56,7 @@ struct GoalsListView: View {
                 content
             }
             .navigationTitle("Goals")
-            .navigationBarTitleDisplayMode(.large)
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     addButton

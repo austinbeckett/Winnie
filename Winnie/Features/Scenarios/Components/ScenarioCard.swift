@@ -41,68 +41,18 @@ struct ScenarioCard: View {
         Button(action: onTap) {
             WinnieCard(style: .ivoryBordered) {
                 VStack(alignment: .leading, spacing: WinnieSpacing.m) {
-                    // Header: Name and status
-                    HStack {
-                        VStack(alignment: .leading, spacing: WinnieSpacing.xxs) {
-                            HStack(spacing: WinnieSpacing.xs) {
-                                if scenario.isActive {
-                                    Image(systemName: "star.fill")
-                                        .font(.system(size: 12))
-                                        .foregroundColor(WinnieColors.goldenOrange)
-                                }
-
-                                Text(scenario.name)
-                                    .font(WinnieTypography.headlineS())
-                                    .contextPrimaryText()
-                                    .lineLimit(1)
-                            }
-
-                            Text(statusText)
-                                .font(WinnieTypography.caption())
-                                .foregroundColor(statusColor)
-                        }
-
-                        Spacer()
-
-                        // Chevron
-                        Image(systemName: "chevron.right")
-                            .font(.system(size: 14, weight: .semibold))
-                            .contextTertiaryText()
-                    }
+                    // Header: Status badge + Name
+                    headerSection
 
                     Divider()
                         .background(WinnieColors.border(for: colorScheme))
 
                     // Allocation summary
-                    HStack {
-                        VStack(alignment: .leading, spacing: WinnieSpacing.xxs) {
-                            Text("Monthly")
-                                .font(WinnieTypography.caption())
-                                .contextTertiaryText()
+                    allocationSummarySection
 
-                            Text(formatCurrency(totalAllocation))
-                                .font(WinnieTypography.bodyM())
-                                .fontWeight(.semibold)
-                                .contextPrimaryText()
-                        }
-
-                        Spacer()
-
-                        VStack(alignment: .trailing, spacing: WinnieSpacing.xxs) {
-                            Text("Goals")
-                                .font(WinnieTypography.caption())
-                                .contextTertiaryText()
-
-                            Text("\(allocatedGoals.count)")
-                                .font(WinnieTypography.bodyM())
-                                .fontWeight(.semibold)
-                                .contextPrimaryText()
-                        }
-                    }
-
-                    // Goal timeline previews (top 3)
+                    // Goal list with icons (replaces colored dots)
                     if !allocatedGoals.isEmpty {
-                        goalTimelinePreview
+                        goalListSection
                     }
 
                     // Footer: Last modified
@@ -115,30 +65,97 @@ struct ScenarioCard: View {
         .buttonStyle(.plain)
     }
 
-    // MARK: - Goal Timeline Preview
+    // MARK: - Header Section
 
-    private var goalTimelinePreview: some View {
-        HStack(spacing: WinnieSpacing.s) {
+    private var headerSection: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: WinnieSpacing.xxs) {
+                // Status badge with icon
+                HStack(spacing: WinnieSpacing.xs) {
+                    Image(systemName: statusIcon)
+                        .font(.system(size: 14))
+                        .foregroundColor(statusColor)
+
+                    Text(statusText)
+                        .font(WinnieTypography.caption())
+                        .foregroundColor(statusColor)
+                }
+
+                // Scenario name
+                Text(scenario.name)
+                    .font(WinnieTypography.headlineS())
+                    .contextPrimaryText()
+                    .lineLimit(1)
+            }
+
+            Spacer()
+
+            // Chevron
+            Image(systemName: "chevron.right")
+                .font(.system(size: 14, weight: .semibold))
+                .contextTertiaryText()
+        }
+    }
+
+    // MARK: - Allocation Summary Section
+
+    private var allocationSummarySection: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: WinnieSpacing.xxs) {
+                Text("Monthly Savings Pool")
+                    .font(WinnieTypography.caption())
+                    .contextTertiaryText()
+
+                Text(formatCurrency(totalAllocation))
+                    .font(WinnieTypography.bodyM())
+                    .fontWeight(.semibold)
+                    .contextPrimaryText()
+            }
+
+            Spacer()
+
+            Text("\(allocatedGoals.count) goals")
+                .font(WinnieTypography.bodyS())
+                .contextSecondaryText()
+        }
+    }
+
+    // MARK: - Goal List Section (Mini Icons)
+
+    private var goalListSection: some View {
+        VStack(alignment: .leading, spacing: WinnieSpacing.s) {
             ForEach(allocatedGoals.prefix(3)) { goal in
-                HStack(spacing: WinnieSpacing.xxs) {
-                    Circle()
-                        .fill(goal.displayColor)
-                        .frame(width: 8, height: 8)
+                HStack {
+                    // Goal icon
+                    Image(systemName: goal.displayIcon)
+                        .font(.system(size: WinnieSpacing.iconSizeS))
+                        .foregroundColor(goal.displayColor)
 
+                    // Goal name
+                    Text(goal.name)
+                        .font(WinnieTypography.bodyS())
+                        .contextPrimaryText()
+                        .lineLimit(1)
+
+                    Spacer()
+
+                    // Timeline
                     if let projection = projections?[goal.id], projection.isReachable {
                         Text(projection.timeToCompletionText)
-                            .font(WinnieTypography.caption())
+                            .font(WinnieTypography.bodyS())
+                            .fontWeight(.medium)
                             .contextSecondaryText()
                     } else {
                         Text("--")
-                            .font(WinnieTypography.caption())
+                            .font(WinnieTypography.bodyS())
                             .contextTertiaryText()
                     }
                 }
             }
 
+            // Overflow indicator
             if allocatedGoals.count > 3 {
-                Text("+\(allocatedGoals.count - 3)")
+                Text("+\(allocatedGoals.count - 3) more goals")
                     .font(WinnieTypography.caption())
                     .contextTertiaryText()
             }
@@ -146,6 +163,19 @@ struct ScenarioCard: View {
     }
 
     // MARK: - Status Helpers
+
+    private var statusIcon: String {
+        switch scenario.decisionStatus {
+        case .draft:
+            return "pencil.circle.fill"
+        case .underReview:
+            return "bubble.left.and.bubble.right.fill"
+        case .decided:
+            return scenario.isActive ? "checkmark.seal.fill" : "checkmark.circle.fill"
+        case .archived:
+            return "archivebox.fill"
+        }
+    }
 
     private var statusText: String {
         switch scenario.decisionStatus {
@@ -194,11 +224,10 @@ struct ScenarioCardCompact: View {
             HStack {
                 VStack(alignment: .leading, spacing: WinnieSpacing.xxs) {
                     HStack(spacing: WinnieSpacing.xs) {
-                        if scenario.isActive {
-                            Image(systemName: "star.fill")
-                                .font(.system(size: 10))
-                                .foregroundColor(WinnieColors.goldenOrange)
-                        }
+                        // Status icon
+                        Image(systemName: statusIcon)
+                            .font(.system(size: 12))
+                            .foregroundColor(statusColor)
 
                         Text(scenario.name)
                             .font(WinnieTypography.bodyM())
@@ -228,6 +257,32 @@ struct ScenarioCardCompact: View {
             )
         }
         .buttonStyle(.plain)
+    }
+
+    private var statusIcon: String {
+        switch scenario.decisionStatus {
+        case .draft:
+            return "pencil.circle.fill"
+        case .underReview:
+            return "bubble.left.and.bubble.right.fill"
+        case .decided:
+            return scenario.isActive ? "checkmark.seal.fill" : "checkmark.circle.fill"
+        case .archived:
+            return "archivebox.fill"
+        }
+    }
+
+    private var statusColor: Color {
+        switch scenario.decisionStatus {
+        case .draft:
+            return WinnieColors.tertiaryText(for: colorScheme)
+        case .underReview:
+            return WinnieColors.goldenOrange
+        case .decided:
+            return scenario.isActive ? WinnieColors.success(for: colorScheme) : WinnieColors.secondaryText(for: colorScheme)
+        case .archived:
+            return WinnieColors.tertiaryText(for: colorScheme)
+        }
     }
 
     private func formatCurrency(_ amount: Decimal) -> String {

@@ -57,15 +57,14 @@ struct ScenarioDetailView: View {
             } else {
                 ScrollView {
                     VStack(spacing: WinnieSpacing.l) {
-                        // Budget summary card
+                        // Budget summary card (now includes status badges)
                         BudgetSummaryCard(
                             disposableIncome: viewModel.disposableIncome,
                             totalAllocated: viewModel.totalAllocated,
-                            isOverAllocated: false
+                            isOverAllocated: false,
+                            decisionStatus: viewModel.scenario.decisionStatus,
+                            isActive: viewModel.scenario.isActive
                         )
-
-                        // Scenario metadata
-                        scenarioInfoSection
 
                         // Goals section
                         if viewModel.goals.isEmpty {
@@ -73,6 +72,9 @@ struct ScenarioDetailView: View {
                         } else {
                             goalsSection
                         }
+
+                        // Last updated footer
+                        lastUpdatedFooter
                     }
                     .padding(WinnieSpacing.l)
                 }
@@ -125,28 +127,10 @@ struct ScenarioDetailView: View {
         }
     }
 
-    // MARK: - Scenario Info Section
+    // MARK: - Last Updated Footer
 
-    private var scenarioInfoSection: some View {
+    private var lastUpdatedFooter: some View {
         VStack(alignment: .leading, spacing: WinnieSpacing.s) {
-            // Status badge
-            HStack(spacing: WinnieSpacing.s) {
-                statusBadge
-
-                if viewModel.scenario.isActive {
-                    Text("Active Plan")
-                        .font(WinnieTypography.caption())
-                        .fontWeight(.medium)
-                        .foregroundColor(WinnieColors.success(for: colorScheme))
-                        .padding(.horizontal, WinnieSpacing.s)
-                        .padding(.vertical, WinnieSpacing.xxs)
-                        .background(WinnieColors.success(for: colorScheme).opacity(0.12))
-                        .clipShape(Capsule())
-                }
-
-                Spacer()
-            }
-
             // Notes (if any)
             if let notes = viewModel.scenario.notes, !notes.isEmpty {
                 Text(notes)
@@ -160,41 +144,6 @@ struct ScenarioDetailView: View {
                 .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-    }
-
-    private var statusBadge: some View {
-        let statusText: String
-        let statusColor: Color
-
-        switch viewModel.scenario.decisionStatus {
-        case .draft:
-            statusText = "Draft"
-            statusColor = WinnieColors.tertiaryText(for: colorScheme)
-        case .underReview:
-            statusText = "Under Review"
-            statusColor = WinnieColors.warning(for: colorScheme)
-        case .decided:
-            statusText = "Decided"
-            statusColor = WinnieColors.success(for: colorScheme)
-        case .archived:
-            statusText = "Archived"
-            statusColor = WinnieColors.tertiaryText(for: colorScheme)
-        }
-
-        return HStack(spacing: WinnieSpacing.xxs) {
-            Circle()
-                .fill(statusColor)
-                .frame(width: 8, height: 8)
-
-            Text(statusText)
-                .font(WinnieTypography.caption())
-                .fontWeight(.medium)
-                .foregroundColor(statusColor)
-        }
-        .padding(.horizontal, WinnieSpacing.s)
-        .padding(.vertical, WinnieSpacing.xxs)
-        .background(statusColor.opacity(0.12))
-        .clipShape(Capsule())
     }
 
     // MARK: - Goals Section

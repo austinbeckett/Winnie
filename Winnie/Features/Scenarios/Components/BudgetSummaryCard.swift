@@ -27,8 +27,38 @@ struct BudgetSummaryCard: View {
     let disposableIncome: Decimal
     let totalAllocated: Decimal
     let isOverAllocated: Bool
+    let decisionStatus: Scenario.DecisionStatus?
+    let isActive: Bool
 
     @Environment(\.colorScheme) private var colorScheme
+
+    /// Convenience initializer without status (for backward compatibility)
+    init(
+        disposableIncome: Decimal,
+        totalAllocated: Decimal,
+        isOverAllocated: Bool
+    ) {
+        self.disposableIncome = disposableIncome
+        self.totalAllocated = totalAllocated
+        self.isOverAllocated = isOverAllocated
+        self.decisionStatus = nil
+        self.isActive = false
+    }
+
+    /// Full initializer with status badges
+    init(
+        disposableIncome: Decimal,
+        totalAllocated: Decimal,
+        isOverAllocated: Bool,
+        decisionStatus: Scenario.DecisionStatus,
+        isActive: Bool
+    ) {
+        self.disposableIncome = disposableIncome
+        self.totalAllocated = totalAllocated
+        self.isOverAllocated = isOverAllocated
+        self.decisionStatus = decisionStatus
+        self.isActive = isActive
+    }
 
     private var remaining: Decimal {
         max(disposableIncome - totalAllocated, 0)
@@ -117,7 +147,80 @@ struct BudgetSummaryCard: View {
                         }
                     }
                 }
+
+                // Status badges (only shown when decisionStatus is provided)
+                if decisionStatus != nil || isActive {
+                    statusBadgesRow
+                }
             }
+        }
+    }
+
+    // MARK: - Status Badges
+
+    @ViewBuilder
+    private var statusBadgesRow: some View {
+        HStack(spacing: WinnieSpacing.s) {
+            if let status = decisionStatus {
+                statusBadge(for: status)
+            }
+
+            if isActive {
+                activePlanBadge
+            }
+
+            Spacer()
+        }
+    }
+
+    private func statusBadge(for status: Scenario.DecisionStatus) -> some View {
+        let statusColor = statusColor(for: status)
+
+        return HStack(spacing: WinnieSpacing.xxs) {
+            Circle()
+                .fill(statusColor)
+                .frame(width: 8, height: 8)
+
+            Text(status.displayName)
+                .font(WinnieTypography.caption())
+                .fontWeight(.medium)
+                .foregroundColor(statusColor)
+        }
+        .padding(.horizontal, WinnieSpacing.s)
+        .padding(.vertical, WinnieSpacing.xxs)
+        .background(statusColor.opacity(0.12))
+        .clipShape(Capsule())
+    }
+
+    private var activePlanBadge: some View {
+        let badgeColor = WinnieColors.success(for: colorScheme)
+
+        return HStack(spacing: WinnieSpacing.xxs) {
+            Circle()
+                .fill(badgeColor)
+                .frame(width: 8, height: 8)
+
+            Text("Active Plan")
+                .font(WinnieTypography.caption())
+                .fontWeight(.medium)
+                .foregroundColor(badgeColor)
+        }
+        .padding(.horizontal, WinnieSpacing.s)
+        .padding(.vertical, WinnieSpacing.xxs)
+        .background(badgeColor.opacity(0.12))
+        .clipShape(Capsule())
+    }
+
+    private func statusColor(for status: Scenario.DecisionStatus) -> Color {
+        switch status {
+        case .draft:
+            return WinnieColors.tertiaryText(for: colorScheme)
+        case .underReview:
+            return WinnieColors.warning(for: colorScheme)
+        case .decided:
+            return WinnieColors.success(for: colorScheme)
+        case .archived:
+            return WinnieColors.tertiaryText(for: colorScheme)
         }
     }
 

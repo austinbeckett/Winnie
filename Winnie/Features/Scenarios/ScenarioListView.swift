@@ -178,7 +178,7 @@ struct ScenarioListView: View {
             }
         }
         .navigationTitle("Planning")
-        .navigationBarTitleDisplayMode(.large)
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button {

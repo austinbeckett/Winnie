@@ -125,10 +125,9 @@ final class DashboardViewModel: ErrorHandlingViewModel {
 /// Main dashboard view showing financial overview.
 ///
 /// Displays:
-/// - Welcome greeting with savings pool summary
-/// - Active plan overview (if exists)
-/// - Goal progress cards
-/// - Quick actions
+/// - Compact greeting
+/// - Active plan card with budget health + next milestone
+/// - 2x2 goal progress circles
 struct DashboardView: View {
     let coupleID: String
     let currentUser: User
@@ -152,22 +151,30 @@ struct DashboardView: View {
                     .scaleEffect(1.2)
             } else {
                 ScrollView {
-                    VStack(spacing: WinnieSpacing.l) {
-                        // Welcome card
-                        welcomeCard
+                    VStack(alignment: .leading, spacing: WinnieSpacing.l) {
+                        // Compact greeting (no card)
+                        greetingText
 
-                        // Active plan summary
-                        if viewModel.activeScenario != nil {
-                            activePlanCard
+                        // Active plan card with budget health
+                        if let scenario = viewModel.activeScenario {
+                            ActivePlanCard(
+                                scenario: scenario,
+                                savingsPool: viewModel.savingsPool,
+                                allocatedGoals: viewModel.allocatedGoals,
+                                projections: viewModel.projections
+                            )
+                        } else if viewModel.savingsPool > 0 {
+                            // Show empty plan card only if they have a financial profile
+                            EmptyPlanCard()
                         }
 
-                        // Goals overview
+                        // Goals grid (2x2 progress circles)
                         if !viewModel.goals.isEmpty {
-                            goalsSection
+                            goalsGrid
                         }
 
-                        // Empty state for new users
-                        if viewModel.goals.isEmpty && viewModel.activeScenario == nil && !viewModel.isLoading {
+                        // Empty state for brand new users
+                        if viewModel.goals.isEmpty && viewModel.activeScenario == nil && viewModel.savingsPool == 0 && !viewModel.isLoading {
                             emptyState
                         }
                     }
@@ -176,7 +183,7 @@ struct DashboardView: View {
             }
         }
         .navigationTitle("Dashboard")
-        .navigationBarTitleDisplayMode(.large)
+        .navigationBarTitleDisplayMode(.inline)
         .alert("Error", isPresented: $viewModel.showError) {
             Button("OK") { viewModel.showError = false }
         } message: {
@@ -190,188 +197,56 @@ struct DashboardView: View {
         }
     }
 
-    // MARK: - Welcome Card
+    // MARK: - Compact Greeting
 
-    private var welcomeCard: some View {
-        WinnieCard(style: .ivoryBordered) {
-            VStack(alignment: .leading, spacing: WinnieSpacing.m) {
-                // Greeting
-                Text("Hi \(currentUser.greetingName)!")
-                    .font(WinnieTypography.headlineM())
-                    .contextPrimaryText()
-
-                // Savings pool summary
-                if viewModel.savingsPool > 0 {
-                    HStack {
-                        VStack(alignment: .leading, spacing: WinnieSpacing.xxs) {
-                            Text("Monthly savings pool")
-                                .font(WinnieTypography.caption())
-                                .contextSecondaryText()
-
-                            Text(formatCurrency(viewModel.savingsPool))
-                                .font(WinnieTypography.displayS())
-                                .contextPrimaryText()
-                        }
-
-                        Spacer()
-
-                        Image(systemName: "leaf.fill")
-                            .font(.system(size: WinnieSpacing.iconSizeL))
-                            .foregroundColor(WinnieColors.lavenderVeil)
-                    }
-                } else {
-                    Text("Complete your financial profile to see your savings potential.")
-                        .font(WinnieTypography.bodyS())
-                        .contextSecondaryText()
-                }
-            }
-        }
+    private var greetingText: some View {
+        Text("Hi \(currentUser.greetingName)")
+            .font(WinnieTypography.headlineM())
+            .foregroundColor(WinnieColors.primaryText(for: colorScheme))
     }
 
-    // MARK: - Active Plan Card
+    // MARK: - Goals Grid (2x2 Progress Circles)
 
-    private var activePlanCard: some View {
-        WinnieCard(style: .ivoryBordered) {
-            VStack(alignment: .leading, spacing: WinnieSpacing.m) {
-                // Header
-                HStack {
-                    VStack(alignment: .leading, spacing: WinnieSpacing.xxs) {
-                        HStack(spacing: WinnieSpacing.xs) {
-                            Image(systemName: "star.fill")
-                                .font(.system(size: 12))
-                                .foregroundColor(WinnieColors.goldenOrange)
-
-                            Text("Active Plan")
-                                .font(WinnieTypography.caption())
-                                .contextSecondaryText()
-                        }
-
-                        Text(viewModel.activeScenario?.name ?? "")
-                            .font(WinnieTypography.headlineS())
-                            .contextPrimaryText()
-                    }
-
-                    Spacer()
-
-                    VStack(alignment: .trailing, spacing: WinnieSpacing.xxs) {
-                        Text("Monthly")
-                            .font(WinnieTypography.caption())
-                            .contextTertiaryText()
-
-                        Text(formatCurrency(viewModel.activeScenario?.allocations.totalAllocated ?? 0))
-                            .font(WinnieTypography.bodyM())
-                            .fontWeight(.semibold)
-                            .contextPrimaryText()
-                    }
-                }
-
-                // Goal timelines preview (top 3)
-                if !viewModel.allocatedGoals.isEmpty {
-                    Divider()
-                        .background(WinnieColors.border(for: colorScheme))
-
-                    VStack(spacing: WinnieSpacing.s) {
-                        ForEach(viewModel.allocatedGoals.prefix(3)) { goal in
-                            HStack {
-                                Image(systemName: goal.type.iconName)
-                                    .font(.system(size: WinnieSpacing.iconSizeS))
-                                    .foregroundColor(goal.displayColor)
-
-                                Text(goal.name)
-                                    .font(WinnieTypography.bodyS())
-                                    .contextPrimaryText()
-                                    .lineLimit(1)
-
-                                Spacer()
-
-                                if let projection = viewModel.projections[goal.id], projection.isReachable {
-                                    Text(projection.timeToCompletionText)
-                                        .font(WinnieTypography.bodyS())
-                                        .fontWeight(.medium)
-                                        .contextSecondaryText()
-                                }
-                            }
-                        }
-                    }
-
-                    if viewModel.allocatedGoals.count > 3 {
-                        Text("+\(viewModel.allocatedGoals.count - 3) more goals")
-                            .font(WinnieTypography.caption())
-                            .contextTertiaryText()
-                    }
-                }
-            }
-        }
-    }
-
-    // MARK: - Goals Section
-
-    private var goalsSection: some View {
+    private var goalsGrid: some View {
         VStack(alignment: .leading, spacing: WinnieSpacing.m) {
             // Section header
             Text("Your Goals")
                 .font(WinnieTypography.labelM())
                 .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
 
-            // Goal cards
-            ForEach(viewModel.goals.prefix(5)) { goal in
-                goalProgressCard(goal)
-            }
-
-            if viewModel.goals.count > 5 {
-                Text("View all \(viewModel.goals.count) goals in the Goals tab")
-                    .font(WinnieTypography.caption())
-                    .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
-            }
-        }
-    }
-
-    private func goalProgressCard(_ goal: Goal) -> some View {
-        HStack(spacing: WinnieSpacing.m) {
-            // Goal icon
-            Circle()
-                .fill(goal.displayColor.opacity(0.2))
-                .frame(width: 44, height: 44)
-                .overlay(
-                    Image(systemName: goal.type.iconName)
-                        .font(.system(size: WinnieSpacing.iconSizeM))
-                        .foregroundColor(goal.displayColor)
-                )
-
-            // Goal info
-            VStack(alignment: .leading, spacing: WinnieSpacing.xxs) {
-                Text(goal.name)
-                    .font(WinnieTypography.bodyM())
-                    .fontWeight(.medium)
-                    .foregroundColor(WinnieColors.primaryText(for: colorScheme))
-                    .lineLimit(1)
-
-                HStack(spacing: WinnieSpacing.xs) {
-                    Text(formatCurrency(goal.currentAmount))
-                        .font(WinnieTypography.caption())
-                        .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
-
-                    Text("of \(formatCurrency(goal.targetAmount))")
-                        .font(WinnieTypography.caption())
-                        .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
+            // 2x2 grid of progress circles
+            LazyVGrid(columns: [
+                GridItem(.flexible(), spacing: WinnieSpacing.m),
+                GridItem(.flexible(), spacing: WinnieSpacing.m)
+            ], spacing: WinnieSpacing.m) {
+                ForEach(viewModel.goals.prefix(4)) { goal in
+                    GoalProgressCell(goal: goal) {
+                        // TODO: Navigate to goal detail
+                    }
                 }
             }
 
-            Spacer()
+            // View all link (if more than 4 goals)
+            if viewModel.goals.count > 4 {
+                HStack {
+                    Spacer()
+                    Button(action: {
+                        // TODO: Switch to Goals tab
+                    }) {
+                        HStack(spacing: WinnieSpacing.xs) {
+                            Text("View All Goals")
+                                .font(WinnieTypography.bodyS())
 
-            // Progress percentage
-            Text("\(Int(goal.progressPercentage * 100))%")
-                .font(WinnieTypography.bodyS())
-                .fontWeight(.semibold)
-                .foregroundColor(goal.displayColor)
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 12, weight: .semibold))
+                        }
+                        .foregroundColor(WinnieColors.lavenderVeil)
+                    }
+                    Spacer()
+                }
+                .padding(.top, WinnieSpacing.xs)
+            }
         }
-        .padding(WinnieSpacing.m)
-        .background(cardBackgroundColor)
-        .clipShape(RoundedRectangle(cornerRadius: WinnieSpacing.inputCornerRadius))
-        .overlay(
-            RoundedRectangle(cornerRadius: WinnieSpacing.inputCornerRadius)
-                .stroke(WinnieColors.border(for: colorScheme), lineWidth: 1)
-        )
     }
 
     // MARK: - Empty State
@@ -393,22 +268,8 @@ struct DashboardView: View {
                     .multilineTextAlignment(.center)
             }
         }
+        .frame(maxWidth: .infinity)
         .padding(WinnieSpacing.xl)
-    }
-
-    // MARK: - Helpers
-
-    private var cardBackgroundColor: Color {
-        colorScheme == .dark
-            ? WinnieColors.carbonBlack.opacity(0.5)
-            : WinnieColors.ivory.opacity(0.5)
-    }
-
-    private func formatCurrency(_ amount: Decimal) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.maximumFractionDigits = 0
-        return formatter.string(from: NSDecimalNumber(decimal: amount)) ?? "$0"
     }
 }
 

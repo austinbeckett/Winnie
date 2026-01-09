@@ -22,7 +22,7 @@ struct ScenarioGoalRow: View {
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
-        WinnieCard {
+        WinnieCard(style: .ivoryBordered) {
             VStack(alignment: .leading, spacing: WinnieSpacing.m) {
                 // Header: Icon + Name + Allocation
                 goalHeader
@@ -43,8 +43,8 @@ struct ScenarioGoalRow: View {
 
     private var goalHeader: some View {
         HStack(spacing: WinnieSpacing.m) {
-            // Goal icon
-            Image(systemName: goal.type.iconName)
+            // Goal icon - uses user's custom icon if set, otherwise type default
+            Image(systemName: goal.displayIcon)
                 .font(.system(size: 24))
                 .foregroundColor(goal.displayColor)
                 .frame(width: 40, height: 40)
@@ -56,11 +56,11 @@ struct ScenarioGoalRow: View {
                 Text(goal.name)
                     .font(WinnieTypography.bodyM())
                     .fontWeight(.medium)
-                    .foregroundColor(WinnieColors.cardText)
+                    .contextPrimaryText()
 
                 Text(Formatting.currency(goal.targetAmount) + " goal")
                     .font(WinnieTypography.caption())
-                    .foregroundColor(WinnieColors.cardText.opacity(WinnieColors.Opacity.secondary))
+                    .contextSecondaryText()
             }
 
             Spacer()
@@ -69,11 +69,11 @@ struct ScenarioGoalRow: View {
             VStack(alignment: .trailing, spacing: 2) {
                 Text(Formatting.currency(allocation))
                     .font(WinnieTypography.financialM())
-                    .foregroundColor(WinnieColors.cardText)
+                    .contextPrimaryText()
 
                 Text("/month")
                     .font(WinnieTypography.caption())
-                    .foregroundColor(WinnieColors.cardText.opacity(WinnieColors.Opacity.secondary))
+                    .contextSecondaryText()
             }
         }
     }
@@ -86,22 +86,22 @@ struct ScenarioGoalRow: View {
             HStack {
                 Text(Formatting.currency(goal.currentAmount) + " saved")
                     .font(WinnieTypography.caption())
-                    .foregroundColor(WinnieColors.cardText.opacity(WinnieColors.Opacity.secondary))
+                    .contextSecondaryText()
 
                 Spacer()
 
                 Text(Formatting.percentage(Decimal(goal.progressPercentage), decimalPlaces: 0))
                     .font(WinnieTypography.caption())
                     .fontWeight(.medium)
-                    .foregroundColor(WinnieColors.cardText.opacity(WinnieColors.Opacity.secondary))
+                    .contextSecondaryText()
             }
 
             // Progress bar
             GeometryReader { geometry in
                 ZStack(alignment: .leading) {
-                    // Background
+                    // Background - adapts to card context
                     RoundedRectangle(cornerRadius: 4)
-                        .fill(WinnieColors.cardText.opacity(0.1))
+                        .fill(WinnieColors.progressBackground(for: colorScheme))
 
                     // Fill
                     RoundedRectangle(cornerRadius: 4)
@@ -139,7 +139,7 @@ struct ScenarioGoalRow: View {
             if let projectedDate = projection?.completionDate {
                 Text(Formatting.monthYear(projectedDate))
                     .font(WinnieTypography.caption())
-                    .foregroundColor(WinnieColors.cardText.opacity(WinnieColors.Opacity.secondary))
+                    .contextSecondaryText()
             }
         }
     }
@@ -168,7 +168,7 @@ struct ScenarioGoalRow: View {
                 if requiredContribution > details.currentContribution {
                     Text("Save \(Formatting.currency(requiredContribution))/month to hit your target")
                         .font(WinnieTypography.caption())
-                        .foregroundColor(WinnieColors.cardText.opacity(WinnieColors.Opacity.secondary))
+                        .contextSecondaryText()
                 }
 
                 // Action buttons
@@ -180,7 +180,7 @@ struct ScenarioGoalRow: View {
                             .font(WinnieTypography.bodyS())
                     }
                     .buttonStyle(.bordered)
-                    .tint(WinnieColors.cardText.opacity(0.7))
+                    .tint(WinnieColors.primaryText(for: colorScheme).opacity(0.7))
 
                     Button {
                         onEditAllocation()
@@ -189,7 +189,7 @@ struct ScenarioGoalRow: View {
                             .font(WinnieTypography.bodyS())
                     }
                     .buttonStyle(.borderedProminent)
-                    .tint(WinnieColors.amethystSmoke)
+                    .tint(WinnieColors.sweetSalmon)
                 }
             }
 
@@ -202,7 +202,7 @@ struct ScenarioGoalRow: View {
                     .font(WinnieTypography.bodyS())
             }
             .buttonStyle(.bordered)
-            .tint(WinnieColors.cardText.opacity(0.7))
+            .tint(WinnieColors.primaryText(for: colorScheme).opacity(0.7))
 
         case .noTargetDate, .notInPlan:
             EmptyView()

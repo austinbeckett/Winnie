@@ -80,8 +80,8 @@ struct GoalSelectionRow: View {
                     .font(.system(size: 22))
                     .foregroundColor(isSelected ? goal.displayColor : WinnieColors.tertiaryText(for: colorScheme))
 
-                // Goal icon
-                Image(systemName: goal.type.iconName)
+                // Goal icon - uses user's custom icon if set
+                Image(systemName: goal.displayIcon)
                     .font(.system(size: 24))
                     .foregroundColor(goal.displayColor)
                     .frame(width: 32, height: 32)

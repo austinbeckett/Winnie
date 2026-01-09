@@ -302,7 +302,7 @@ struct ScenarioComparisonView: View {
 
             // Goal info (center)
             VStack(spacing: WinnieSpacing.xxs) {
-                Image(systemName: diff.goal.type.iconName)
+                Image(systemName: diff.goal.displayIcon)
                     .font(.system(size: WinnieSpacing.iconSizeM))
                     .foregroundColor(diff.goal.displayColor)
 

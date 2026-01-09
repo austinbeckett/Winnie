@@ -88,8 +88,8 @@ struct AllocationEditSheet: View {
 
     private var goalHeader: some View {
         HStack(spacing: WinnieSpacing.m) {
-            // Goal icon
-            Image(systemName: goal.type.iconName)
+            // Goal icon - uses user's custom icon if set
+            Image(systemName: goal.displayIcon)
                 .font(.system(size: 24))
                 .foregroundColor(goal.displayColor)
                 .frame(width: 48, height: 48)

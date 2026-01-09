@@ -165,7 +165,7 @@ enum FinancialCalculations {
             )
 
             if abs(projected - targetAmount) < tolerance {
-                return mid
+                break
             } else if projected < targetAmount {
                 low = mid
             } else {
@@ -173,7 +173,30 @@ enum FinancialCalculations {
             }
         }
 
-        return (low + high) / 2
+        var contribution = (low + high) / 2
+
+        // Validate: ensure monthsToReachTarget agrees with our target months.
+        // This prevents the "1 month late" bug where tolerance/precision differences
+        // between the closed-form futureValue() and iterative monthsToReachTarget()
+        // cause the projection to be 1 month later than expected.
+        if let projectedMonths = monthsToReachTarget(
+            targetAmount: targetAmount,
+            presentValue: presentValue,
+            monthlyContribution: contribution,
+            annualRate: annualRate
+        ), projectedMonths > months {
+            // Bump up contribution by $1 increments until projection matches target
+            while let pm = monthsToReachTarget(
+                targetAmount: targetAmount,
+                presentValue: presentValue,
+                monthlyContribution: contribution,
+                annualRate: annualRate
+            ), pm > months {
+                contribution += 1
+            }
+        }
+
+        return contribution
     }
 
     // MARK: - Helper Functions
