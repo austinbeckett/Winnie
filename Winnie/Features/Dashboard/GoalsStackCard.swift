@@ -30,7 +30,7 @@ struct GoalsStackCard: View {
 
     var body: some View {
         WinnieCard(style: .ivoryBordered) {
-            ScrollView(.vertical, showsIndicators: false) {
+            ScrollView(.vertical) {
                 VStack(spacing: WinnieSpacing.s) {
                     ForEach(goals) { goal in
                         GoalProgressCell(goal: goal) {

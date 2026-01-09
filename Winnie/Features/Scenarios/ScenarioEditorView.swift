@@ -69,6 +69,9 @@ struct ScenarioEditorView: View {
                     // Main content
                     ScrollView {
                         VStack(spacing: WinnieSpacing.l) {
+                            // Name field at the very top
+                            nameFieldSection
+
                             // Budget summary card
                             BudgetSummaryCard(
                                 disposableIncome: viewModel.disposableIncome,
@@ -76,22 +79,15 @@ struct ScenarioEditorView: View {
                                 isOverAllocated: viewModel.isOverAllocated
                             )
 
-                            // Goal selection section (choose which goals to include)
-                            if !viewModel.goals.isEmpty {
-                                GoalSelectionSection(viewModel: viewModel)
-                            }
-
-                            // Goal allocation rows (only for selected goals)
+                            // Unified goals section (selection + allocation combined)
                             if viewModel.goals.isEmpty {
                                 emptyGoalsState
-                            } else if viewModel.hasSelectedGoals {
-                                goalAllocationList
                             } else {
-                                noGoalsSelectedState
+                                goalsSection
                             }
 
-                            // Scenario name and notes
-                            scenarioDetailsSection
+                            // Notes (optional)
+                            notesSection
 
                             // Action buttons
                             actionButtonsSection
@@ -172,37 +168,21 @@ struct ScenarioEditorView: View {
         .padding(WinnieSpacing.xl)
     }
 
-    // MARK: - No Goals Selected State
+    // MARK: - Goals Section (Unified Selection + Allocation)
 
-    private var noGoalsSelectedState: some View {
-        VStack(spacing: WinnieSpacing.m) {
-            Image(systemName: "checklist.unchecked")
-                .font(.system(size: 36))
-                .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
-
-            Text("No Goals Selected")
-                .font(WinnieTypography.headlineS())
-                .foregroundColor(WinnieColors.primaryText(for: colorScheme))
-
-            Text("Select at least one goal above to set allocations.")
-                .font(WinnieTypography.bodyM())
-                .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
-                .multilineTextAlignment(.center)
-        }
-        .padding(WinnieSpacing.xl)
-    }
-
-    // MARK: - Goal List
-
-    private var goalAllocationList: some View {
-        VStack(spacing: WinnieSpacing.m) {
+    private var goalsSection: some View {
+        VStack(alignment: .leading, spacing: WinnieSpacing.m) {
             // Section header
             HStack {
-                Text("Allocations")
+                Text("Goals")
                     .font(WinnieTypography.labelM())
                     .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
 
                 Spacer()
+
+                Text("\(viewModel.selectedGoalIDs.count) of \(viewModel.goals.count) selected")
+                    .font(WinnieTypography.caption())
+                    .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
 
                 if viewModel.isCalculating {
                     ProgressView()
@@ -210,84 +190,72 @@ struct ScenarioEditorView: View {
                 }
             }
 
-            // Goal rows (only selected goals)
-            ForEach(viewModel.selectedGoals) { goal in
-                let context = viewModel.allocationContext(for: goal)
-                GoalAllocationRow(
+            Text("Tap a goal to include it and set your allocation")
+                .font(WinnieTypography.bodyS())
+                .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
+
+            // All goals with expandable rows
+            ForEach(viewModel.goals) { goal in
+                let isSelected = viewModel.selectedGoalIDs.contains(goal.id)
+                let context = isSelected ? viewModel.allocationContext(for: goal) : nil
+
+                GoalExpandableRow(
+                    goal: goal,
+                    isSelected: isSelected,
                     context: context,
                     allocationAmount: allocationBinding(for: goal.id),
                     maxAllocation: maxAllocationForGoal(goal),
-                    onSliderChanged: { isEditing in
-                        if !isEditing {
-                            // Debounced recalculation happens in ViewModel
-                        }
-                    },
+                    onToggle: { viewModel.toggleGoalSelection(goal.id) },
+                    onSliderChanged: { _ in },
                     onMatchRequired: {
-                        // Set allocation to required amount when user taps "Match Required"
-                        if let required = context.requiredContribution {
+                        if let ctx = context, let required = ctx.requiredContribution {
                             viewModel.updateAllocation(goalID: goal.id, amount: required)
                         }
                     }
                 )
             }
-
-            // Quick actions
-            if viewModel.remainingBudget > 0 {
-                Button {
-                    viewModel.allocateRemainingEvenly()
-                } label: {
-                    Label("Distribute Remaining Evenly", systemImage: "equal.circle")
-                        .font(WinnieTypography.bodyS())
-                }
-                .foregroundColor(WinnieColors.lavenderVeil)
-            }
         }
     }
 
-    // MARK: - Scenario Details
+    // MARK: - Name Field (Top of Screen)
 
-    private var scenarioDetailsSection: some View {
-        VStack(alignment: .leading, spacing: WinnieSpacing.m) {
-            // Section header
-            Text("Scenario Details")
+    private var nameFieldSection: some View {
+        VStack(alignment: .leading, spacing: WinnieSpacing.xs) {
+            Text("Scenario Name")
                 .font(WinnieTypography.labelM())
                 .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
 
-            // Name field
-            VStack(alignment: .leading, spacing: WinnieSpacing.xs) {
-                Text("Name")
-                    .font(WinnieTypography.labelS())
-                    .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
+            TextField("e.g., Aggressive House Plan", text: $viewModel.scenarioName)
+                .font(WinnieTypography.bodyM())
+                .padding(WinnieSpacing.m)
+                .background(inputBackgroundColor)
+                .clipShape(RoundedRectangle(cornerRadius: WinnieSpacing.inputCornerRadius))
+                .overlay(
+                    RoundedRectangle(cornerRadius: WinnieSpacing.inputCornerRadius)
+                        .stroke(WinnieColors.inputBorder(for: colorScheme), lineWidth: 1)
+                )
+                .focused($isNameFieldFocused)
+        }
+    }
 
-                TextField("e.g., Aggressive House Plan", text: $viewModel.scenarioName)
-                    .font(WinnieTypography.bodyM())
-                    .padding(WinnieSpacing.m)
-                    .background(inputBackgroundColor)
-                    .clipShape(RoundedRectangle(cornerRadius: WinnieSpacing.inputCornerRadius))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: WinnieSpacing.inputCornerRadius)
-                            .stroke(WinnieColors.inputBorder(for: colorScheme), lineWidth: 1)
-                    )
-                    .focused($isNameFieldFocused)
-            }
+    // MARK: - Notes Section
 
-            // Notes field (optional)
-            VStack(alignment: .leading, spacing: WinnieSpacing.xs) {
-                Text("Notes (optional)")
-                    .font(WinnieTypography.labelS())
-                    .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
+    private var notesSection: some View {
+        VStack(alignment: .leading, spacing: WinnieSpacing.xs) {
+            Text("Notes (optional)")
+                .font(WinnieTypography.labelS())
+                .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
 
-                TextField("Add any notes about this plan...", text: $viewModel.scenarioNotes, axis: .vertical)
-                    .font(WinnieTypography.bodyM())
-                    .lineLimit(3...6)
-                    .padding(WinnieSpacing.m)
-                    .background(inputBackgroundColor)
-                    .clipShape(RoundedRectangle(cornerRadius: WinnieSpacing.inputCornerRadius))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: WinnieSpacing.inputCornerRadius)
-                            .stroke(WinnieColors.inputBorder(for: colorScheme), lineWidth: 1)
-                    )
-            }
+            TextField("Add any notes about this plan...", text: $viewModel.scenarioNotes, axis: .vertical)
+                .font(WinnieTypography.bodyM())
+                .lineLimit(3...6)
+                .padding(WinnieSpacing.m)
+                .background(inputBackgroundColor)
+                .clipShape(RoundedRectangle(cornerRadius: WinnieSpacing.inputCornerRadius))
+                .overlay(
+                    RoundedRectangle(cornerRadius: WinnieSpacing.inputCornerRadius)
+                        .stroke(WinnieColors.inputBorder(for: colorScheme), lineWidth: 1)
+                )
         }
     }
 
