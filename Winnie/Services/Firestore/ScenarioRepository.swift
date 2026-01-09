@@ -141,7 +141,7 @@ final class ScenarioRepository: Sendable {
         let dto = ScenarioDTO(from: updatedScenario)
         try await scenariosCollection(coupleID: coupleID)
             .document(scenario.id)
-            .setData(dto.dictionary, merge: true)
+            .setData(dto.dictionary)
     }
 
     /// Update scenario decision status

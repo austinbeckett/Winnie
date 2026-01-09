@@ -32,7 +32,7 @@ final class ScenarioDetailViewModel: ErrorHandlingViewModel {
     /// The scenario being viewed
     var scenario: Scenario
 
-    /// Goals available in this scenario (only goals with allocations > $0)
+    /// Goals included in this scenario (goals with entries in allocations, including $0)
     var goals: [Goal] = []
 
     /// All goals (including those not in this plan)
@@ -135,8 +135,8 @@ final class ScenarioDetailViewModel: ErrorHandlingViewModel {
             allGoals = loadedGoals.filter { $0.isActive }
             financialProfile = loadedProfile
 
-            // Filter to only goals with allocations > $0 in this scenario
-            goals = allGoals.filter { scenario.allocations[$0.id] > 0 }
+            // Filter to goals included in this scenario (any entry in allocations, including $0)
+            goals = allGoals.filter { scenario.allocations.goalIDs.contains($0.id) }
 
             // Calculate projections
             recalculate()
@@ -154,7 +154,7 @@ final class ScenarioDetailViewModel: ErrorHandlingViewModel {
             let updated = try await scenarioRepository.fetchScenario(id: scenario.id, coupleID: coupleID)
             scenario = updated
             // Recalculate goals in plan after reload
-            goals = allGoals.filter { scenario.allocations[$0.id] > 0 }
+            goals = allGoals.filter { scenario.allocations.goalIDs.contains($0.id) }
             recalculate()
         } catch {
             handleError(error, context: "reloading scenario")
@@ -288,8 +288,8 @@ final class ScenarioDetailViewModel: ErrorHandlingViewModel {
             try await scenarioRepository.updateScenario(updatedScenario, coupleID: coupleID)
             scenario = updatedScenario
 
-            // Update goals list (in case allocation went to $0 or from $0)
-            goals = allGoals.filter { scenario.allocations[$0.id] > 0 }
+            // Update goals list based on allocations dictionary entries
+            goals = allGoals.filter { scenario.allocations.goalIDs.contains($0.id) }
 
             recalculate()
         } catch {

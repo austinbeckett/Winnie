@@ -190,21 +190,28 @@ final class ScenarioEditorViewModel: ErrorHandlingViewModel {
     // MARK: - Goal Selection
 
     /// Toggle a goal's selection status.
-    /// When deselected, the allocation is cleared.
+    /// When deselected, the allocation is removed from the dictionary.
+    /// When selected, an allocation entry is created (even if $0) so it's saved with the scenario.
     /// - Parameter goalID: The goal to toggle
     func toggleGoalSelection(_ goalID: String) {
         if selectedGoalIDs.contains(goalID) {
             selectedGoalIDs.remove(goalID)
-            workingAllocations[goalID] = 0  // Clear allocation when deselected
+            workingAllocations.removeAllocation(for: goalID)  // Remove from dictionary when deselected
         } else {
             selectedGoalIDs.insert(goalID)
+            // Ensure goal has an allocation entry (even if $0) so it's saved with the scenario
+            workingAllocations[goalID] = workingAllocations[goalID]  // Creates entry if missing
         }
         recalculate()
     }
 
-    /// Select all goals
+    /// Select all goals and ensure each has an allocation entry
     func selectAllGoals() {
         selectedGoalIDs = Set(goals.map { $0.id })
+        // Ensure all selected goals have allocation entries
+        for goal in goals {
+            workingAllocations[goal.id] = workingAllocations[goal.id]
+        }
     }
 
     /// Deselect all goals and clear allocations
@@ -308,16 +315,19 @@ final class ScenarioEditorViewModel: ErrorHandlingViewModel {
                 }
             }
 
-            // Pre-select goals that have allocations > $0
+            // Pre-select goals that have entries in the allocations dictionary (including $0)
             selectedGoalIDs = Set(
                 goals
-                    .filter { workingAllocations[$0.id] > 0 }
+                    .filter { workingAllocations.goalIDs.contains($0.id) }
                     .map { $0.id }
             )
 
-            // If no goals have allocations, select all by default
+            // If no goals have allocations, select all by default and create entries
             if selectedGoalIDs.isEmpty {
                 selectedGoalIDs = Set(goals.map { $0.id })
+                for goal in goals {
+                    workingAllocations[goal.id] = 0
+                }
             }
 
             // Calculate projections

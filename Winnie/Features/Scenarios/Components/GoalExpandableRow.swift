@@ -116,7 +116,11 @@ struct GoalExpandableRow: View {
 
     @ViewBuilder
     private var allocationContent: some View {
-        if let ctx = context {
+        // Check if goal is fully funded first
+        if goal.isCompleted {
+            fullyFundedContent
+                .padding(WinnieSpacing.m)
+        } else if let ctx = context {
             VStack(alignment: .leading, spacing: WinnieSpacing.s) {
                 if ctx.hasTargetDate {
                     targetDateAllocationContent(ctx)
@@ -126,6 +130,40 @@ struct GoalExpandableRow: View {
             }
             .padding(WinnieSpacing.m)
         }
+    }
+
+    // MARK: - Fully Funded Content
+
+    private var fullyFundedContent: some View {
+        VStack(spacing: WinnieSpacing.m) {
+            // Success icon
+            Image(systemName: "checkmark.seal.fill")
+                .font(.system(size: 40))
+                .foregroundColor(WinnieColors.success(for: colorScheme))
+
+            // Message
+            VStack(spacing: WinnieSpacing.xs) {
+                Text("Goal Fully Funded!")
+                    .font(WinnieTypography.headlineS())
+                    .foregroundColor(WinnieColors.primaryText(for: colorScheme))
+
+                Text("You've reached \(Formatting.currency(goal.targetAmount)). No additional allocation needed.")
+                    .font(WinnieTypography.bodyS())
+                    .foregroundColor(WinnieColors.secondaryText(for: colorScheme))
+                    .multilineTextAlignment(.center)
+            }
+
+            // Progress indicator
+            HStack(spacing: WinnieSpacing.xs) {
+                Image(systemName: "chart.line.uptrend.xyaxis")
+                    .font(.system(size: 12))
+                Text("\(Formatting.currency(goal.currentAmount)) of \(Formatting.currency(goal.targetAmount))")
+                    .font(WinnieTypography.caption())
+            }
+            .foregroundColor(WinnieColors.tertiaryText(for: colorScheme))
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, WinnieSpacing.s)
     }
 
     // MARK: - Content for Goals WITH Target Date
@@ -523,4 +561,31 @@ struct GoalExpandableRow: View {
         }
     }
     return PreviewWrapper()
+}
+
+#Preview("Fully Funded Goal") {
+    // Create a fully funded goal (currentAmount >= targetAmount)
+    let fundedGoal = Goal(
+        type: .emergencyFund,
+        name: "Rainy Day Fund",
+        targetAmount: Decimal(20000),
+        currentAmount: Decimal(20000),  // Fully funded!
+        desiredDate: nil,
+        priority: 2,
+        colorHex: GoalPresetColor.teal.rawValue,
+        iconName: "cloud.rain.fill"
+    )
+
+    GoalExpandableRow(
+        goal: fundedGoal,
+        isSelected: true,
+        context: nil,  // No context needed for fully funded
+        allocationAmount: .constant(0),
+        maxAllocation: 3000,
+        onToggle: {},
+        onSliderChanged: { _ in },
+        onMatchRequired: nil
+    )
+    .padding()
+    .background(WinnieColors.porcelain)
 }
