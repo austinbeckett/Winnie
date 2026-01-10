@@ -136,6 +136,7 @@ struct GoalEditView: View {
             .background(WinnieColors.background(for: colorScheme).ignoresSafeArea())
             .navigationBarTitleDisplayMode(.inline)
             .toolbar(.hidden, for: .navigationBar)
+            .winnieKeyboardDoneToolbar()
         }
         .presentationDragIndicator(.visible)
         .sheet(isPresented: $showAppearanceSheet) {

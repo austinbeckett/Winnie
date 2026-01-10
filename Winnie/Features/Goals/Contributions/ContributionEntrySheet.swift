@@ -87,6 +87,7 @@ struct ContributionEntrySheet: View {
                     }
                 }
             }
+            .winnieKeyboardDoneToolbar()
         }
         .presentationDetents([.medium, .large])
         .presentationDragIndicator(.visible)

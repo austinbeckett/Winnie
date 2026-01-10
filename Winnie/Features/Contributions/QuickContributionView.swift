@@ -47,6 +47,7 @@ struct QuickContributionView: View {
         }
         .navigationTitle("Log Contributions")
         .navigationBarTitleDisplayMode(.inline)
+        .winnieKeyboardDoneToolbar()
         .alert("Save Error", isPresented: $viewModel.showError) {
             Button("OK") { viewModel.showError = false }
         } message: {

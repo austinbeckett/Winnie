@@ -116,6 +116,7 @@ struct ScenarioEditorView: View {
                     }
                 }
             }
+            .winnieKeyboardDoneToolbar()
             .alert("Error", isPresented: $viewModel.showError) {
                 Button("OK") { viewModel.showError = false }
             } message: {

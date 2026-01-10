@@ -81,6 +81,7 @@ struct EditNameSheet: View {
                     .foregroundColor(WinnieColors.amethystSmoke)
                 }
             }
+            .winnieKeyboardDoneToolbar()
             .onAppear {
                 // Pre-fill with current name
                 name = appState.currentUser?.displayName ?? ""
