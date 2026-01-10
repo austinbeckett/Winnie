@@ -33,8 +33,8 @@ struct ScenarioCard: View {
         scenario.allocations.totalAllocated
     }
 
-    private var allocatedGoals: [Goal] {
-        goals.filter { scenario.allocations[$0.id] > 0 }
+    private var goalsInPlan: [Goal] {
+        goals.filter { scenario.allocations.goalIDs.contains($0.id) }
     }
 
     var body: some View {
@@ -51,7 +51,7 @@ struct ScenarioCard: View {
                     allocationSummarySection
 
                     // Goal list with icons (replaces colored dots)
-                    if !allocatedGoals.isEmpty {
+                    if !goalsInPlan.isEmpty {
                         goalListSection
                     }
 
@@ -114,7 +114,7 @@ struct ScenarioCard: View {
 
             Spacer()
 
-            Text("\(allocatedGoals.count) goals")
+            Text("\(goalsInPlan.count) goals")
                 .font(WinnieTypography.bodyS())
                 .contextSecondaryText()
         }
@@ -124,7 +124,7 @@ struct ScenarioCard: View {
 
     private var goalListSection: some View {
         VStack(alignment: .leading, spacing: WinnieSpacing.s) {
-            ForEach(allocatedGoals.prefix(3)) { goal in
+            ForEach(goalsInPlan.prefix(3)) { goal in
                 HStack {
                     // Goal icon
                     Image(systemName: goal.displayIcon)
@@ -139,8 +139,13 @@ struct ScenarioCard: View {
 
                     Spacer()
 
-                    // Timeline
-                    if let projection = projections?[goal.id], projection.isReachable {
+                    // Timeline or Funded status
+                    if goal.isCompleted {
+                        Text("Funded!")
+                            .font(WinnieTypography.bodyS())
+                            .fontWeight(.medium)
+                            .foregroundColor(WinnieColors.success(for: colorScheme))
+                    } else if let projection = projections?[goal.id], projection.isReachable {
                         Text(projection.timeToCompletionText)
                             .font(WinnieTypography.bodyS())
                             .fontWeight(.medium)
@@ -154,8 +159,8 @@ struct ScenarioCard: View {
             }
 
             // Overflow indicator
-            if allocatedGoals.count > 3 {
-                Text("+\(allocatedGoals.count - 3) more goals")
+            if goalsInPlan.count > 3 {
+                Text("+\(goalsInPlan.count - 3) more goals")
                     .font(WinnieTypography.caption())
                     .contextTertiaryText()
             }
