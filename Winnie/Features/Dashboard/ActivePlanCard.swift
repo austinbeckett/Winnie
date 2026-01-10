@@ -11,28 +11,26 @@ import SwiftUI
 /// A confidence-inspiring card showing the active plan with hero savings amount.
 ///
 /// Displays:
-/// - Plan name with optional "On Track" badge (positive reinforcement only)
+/// - Plan name with "Active Plan" badge
 /// - Hero total saved amount - the centerpiece
 /// - "saved toward your goals!" subtitle
 ///
 /// Design philosophy:
-/// - Primary emotion: Confidence ("We're on track and in control")
+/// - Primary emotion: Confidence ("We're making progress")
 /// - Clean, focused display of total progress
-/// - Positive reinforcement only - no "behind" indicators
+/// - Chevron in top corner for navigation affordance
 ///
 /// Usage:
 /// ```swift
 /// ActivePlanCard(
 ///     scenario: viewModel.activeScenario,
 ///     totalSaved: viewModel.totalSavedAmount,
-///     isOnTrack: viewModel.isOnTrack,
 ///     onTap: { ... }
 /// )
 /// ```
 struct ActivePlanCard: View {
     let scenario: Scenario
     let totalSaved: Decimal
-    let isOnTrack: Bool
     let onTap: () -> Void
 
     @Environment(\.colorScheme) private var colorScheme
@@ -68,45 +66,22 @@ struct ActivePlanCard: View {
     // MARK: - Header Section
 
     private var headerSection: some View {
-        HStack {
-            // Active Plan badge + Plan name
-            VStack(alignment: .leading, spacing: WinnieSpacing.xxs) {
-                // Active Plan badge with seal checkmark
-                HStack(spacing: WinnieSpacing.xxs) {
-                    Image(systemName: "checkmark.seal.fill")
-                        .font(.system(size: 12))
-                        .foregroundColor(WinnieColors.success(for: colorScheme))
+        VStack(alignment: .leading, spacing: WinnieSpacing.xxs) {
+            // Active Plan badge with seal checkmark
+            HStack(spacing: WinnieSpacing.xxs) {
+                Image(systemName: "checkmark.seal.fill")
+                    .font(.system(size: 12))
+                    .foregroundColor(WinnieColors.success(for: colorScheme))
 
-                    Text("Active Plan")
-                        .font(WinnieTypography.caption())
-                        .foregroundColor(WinnieColors.success(for: colorScheme))
-                }
-
-                Text(scenario.name)
-                    .font(WinnieTypography.headlineS())
-                    .contextPrimaryText()
-                    .lineLimit(1)
+                Text("Active Plan")
+                    .font(WinnieTypography.caption())
+                    .foregroundColor(WinnieColors.success(for: colorScheme))
             }
 
-            Spacer()
-
-            // On Track badge (only shown when on track - positive reinforcement)
-            if isOnTrack {
-                HStack(spacing: WinnieSpacing.xxs) {
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 12))
-                        .foregroundColor(WinnieColors.success(for: colorScheme))
-
-                    Text("On Track")
-                        .font(WinnieTypography.caption())
-                        .foregroundColor(WinnieColors.success(for: colorScheme))
-                }
-            }
-
-            // Chevron indicator for tap affordance
-            Image(systemName: "chevron.right")
-                .font(.system(size: 14, weight: .semibold))
-                .contextTertiaryText()
+            Text(scenario.name)
+                .font(WinnieTypography.headlineS())
+                .contextPrimaryText()
+                .lineLimit(1)
         }
     }
 
@@ -209,21 +184,7 @@ struct EmptyPlanCard: View {
         ActivePlanCard(
             scenario: Scenario.sample,
             totalSaved: 131683,
-            isOnTrack: true,
             onTap: { print("Card tapped") }
-        )
-    }
-    .padding(WinnieSpacing.l)
-    .background(WinnieColors.porcelain)
-}
-
-#Preview("Not On Track") {
-    VStack {
-        ActivePlanCard(
-            scenario: Scenario.sample,
-            totalSaved: 5000,
-            isOnTrack: false,
-            onTap: {}
         )
     }
     .padding(WinnieSpacing.l)
@@ -243,7 +204,6 @@ struct EmptyPlanCard: View {
         ActivePlanCard(
             scenario: Scenario.sample,
             totalSaved: 35000,
-            isOnTrack: true,
             onTap: {}
         )
     }

@@ -219,7 +219,6 @@ struct DashboardView: View {
                             ActivePlanCard(
                                 scenario: scenario,
                                 totalSaved: viewModel.totalSavedAmount,
-                                isOnTrack: viewModel.isOnTrack,
                                 onTap: { selectedScenario = scenario }
                             )
 

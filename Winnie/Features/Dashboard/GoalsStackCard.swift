@@ -31,7 +31,7 @@ struct GoalsStackCard: View {
     var body: some View {
         WinnieCard(style: .ivoryBordered) {
             ScrollView(.vertical) {
-                VStack(spacing: WinnieSpacing.s) {
+                VStack(spacing: WinnieSpacing.xs) {
                     ForEach(goals) { goal in
                         GoalProgressCell(goal: goal) {
                             onGoalTap?(goal)
