@@ -30,6 +30,11 @@ struct MainTabView: View {
             // Custom tab bar (handles its own safe area)
             WinnieTabBar(selectedTab: $tabCoordinator.selectedTab)
         }
+        // Prevent SwiftUI's keyboard avoidance from shrinking the root container.
+        // This keeps the tab bar from being pushed upward when the keyboard appears.
+        // (Keyboard will cover the tab bar, matching the desired behavior.)
+        .ignoresSafeArea(.keyboard)
+        .winnieKeyboardDoneToolbar()
         .environment(tabCoordinator)
     }
 

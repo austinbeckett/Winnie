@@ -19,6 +19,7 @@ import SwiftUI
 struct QuickContributionView: View {
 
     @State private var viewModel: QuickContributionViewModel
+    @StateObject private var keyboard: KeyboardObserver
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
 
@@ -29,6 +30,7 @@ struct QuickContributionView: View {
             currentUserID: currentUserID,
             coupleID: coupleID
         ))
+        _keyboard = StateObject(wrappedValue: KeyboardObserver())
     }
 
     var body: some View {
@@ -45,11 +47,6 @@ struct QuickContributionView: View {
         }
         .navigationTitle("Log Contributions")
         .navigationBarTitleDisplayMode(.inline)
-        .safeAreaInset(edge: .bottom) {
-            if !viewModel.goals.isEmpty {
-                saveButtonBar
-            }
-        }
         .alert("Save Error", isPresented: $viewModel.showError) {
             Button("OK") { viewModel.showError = false }
         } message: {
@@ -85,11 +82,17 @@ struct QuickContributionView: View {
                         Divider()
                     }
                 }
+
+                // Save button (inline with content)
+                saveButtonSection
+                    .padding(.top, WinnieSpacing.xl)
             }
             .padding(.horizontal, WinnieSpacing.screenMarginMobile)
             .padding(.top, WinnieSpacing.m)
-            .padding(.bottom, WinnieSpacing.xxl + 80) // Space for save button
+            // Ensure the bottom content (including Save All) can scroll above the keyboard.
+            .padding(.bottom, WinnieSpacing.xl + keyboard.height)
         }
+        .scrollDismissesKeyboard(.interactively)
     }
 
     // MARK: - Date Picker Section
@@ -114,10 +117,10 @@ struct QuickContributionView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    // MARK: - Save Button Bar
+    // MARK: - Save Button Section
 
-    private var saveButtonBar: some View {
-        VStack(spacing: WinnieSpacing.xs) {
+    private var saveButtonSection: some View {
+        VStack(spacing: WinnieSpacing.s) {
             // Count indicator
             if viewModel.enteredCount > 0 {
                 Text("\(viewModel.enteredCount) goal\(viewModel.enteredCount == 1 ? "" : "s") to update")
@@ -136,12 +139,6 @@ struct QuickContributionView: View {
             }
             .disabled(!viewModel.canSave)
         }
-        .padding(.horizontal, WinnieSpacing.screenMarginMobile)
-        .padding(.vertical, WinnieSpacing.m)
-        .background(
-            WinnieColors.background(for: colorScheme)
-                .shadow(color: .black.opacity(0.1), radius: 8, y: -4)
-        )
     }
 
     // MARK: - Empty State
