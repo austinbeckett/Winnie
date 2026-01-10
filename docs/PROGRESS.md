@@ -6,7 +6,7 @@
 
 ## Current Focus
 
-**Completed:** Dashboard Top Card Redesign + Goals Carousel (confidence-inspiring design, positive reinforcement, horizontal 2x2 carousel)
+**Completed:** Quick Contribution Feature (Log Contributions button on dashboard, batch contribution entry screen)
 
 **Next Up:** Partner System, Local-first architecture (SwiftData), or Streak tracking implementation
 
@@ -284,10 +284,39 @@
 | **Dashboard Redesign (Jan 9, 2026)** | |
 | `Core/Components/StreakDisplay.swift` | Streak visualization with calendar icons + dots |
 | `Core/Components/LinePageIndicator.swift` | Modern line-style page indicators for carousel |
+| **Quick Contribution Feature (Jan 9, 2026)** | |
+| `Features/Contributions/QuickContributionViewModel.swift` | ViewModel for batch contribution entry with sequential save logic |
+| `Features/Contributions/QuickContributionView.swift` | Full-screen view with date picker, goal rows, and amount fields |
+| `Features/Dashboard/LogContributionsCard.swift` | Quick action card for dashboard grid |
 
 ---
 
 ## Recent Sessions
+
+### January 9, 2026 (Session 22) - Quick Contribution Feature
+
+**Problem Solved:**
+Users had to navigate Dashboard → Goals Tab → Select Goal → Goal Detail → "Log Contribution" for every single goal. With multiple goals, this became tedious and repetitive.
+
+**Solution:**
+- Added "Log Contributions" quick action card to dashboard (replaces bottom-left placeholder)
+- New `QuickContributionView` screen showing all goals with inline amount fields
+- Single shared date picker at top (defaults to today)
+- "Save All" button saves all entered contributions in one batch operation
+- Automatic return to dashboard after successful save
+
+**New Components:**
+- `QuickContributionViewModel`: Manages form state, parses amounts to Decimal, batch saves with error aggregation
+- `QuickContributionView`: Scrollable goal list with `GoalContributionRow` subview for each goal
+- `LogContributionsCard`: Tappable quick action card using `InteractiveCardStyle` for press feedback
+
+**Architecture Decisions:**
+- New ViewModel rather than extending `GoalsViewModel` (single responsibility)
+- Sequential saves (Firestore doesn't support batch writes across subcollections)
+- Push navigation via `navigationDestination(isPresented:)` for consistency
+
+**Files created:** QuickContributionViewModel.swift, QuickContributionView.swift, LogContributionsCard.swift
+**Files modified:** DashboardView.swift (added navigation state, replaced placeholder card, added navigation destination)
 
 ### January 9, 2026 (Session 21) - Dashboard Top Card Redesign + Goals Carousel
 
