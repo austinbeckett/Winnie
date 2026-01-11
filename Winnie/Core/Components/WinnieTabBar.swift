@@ -46,21 +46,32 @@ enum WinnieTab: Int, CaseIterable {
 ///
 /// Features:
 /// - Solid Pine Teal background spanning full width
-/// - Sweet Salmon filled icons when selected
+/// - Center action button for quick contribution (larger, Lavender Veil)
+/// - Lavender Veil filled icons when selected
 /// - Ivory outlined icons when unselected
 /// - Respects safe area for home indicator
 struct WinnieTabBar: View {
     @Binding var selectedTab: WinnieTab
 
+    /// Action triggered when the center "+" button is pressed
+    var onAddPressed: () -> Void
+
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 0) {
-                ForEach(WinnieTab.allCases, id: \.rawValue) { tab in
-                    tabButton(for: tab)
-                }
+                // Left tabs: Dashboard, Goals
+                tabButton(for: .dashboard)
+                tabButton(for: .goals)
+
+                // Center action button
+                centerActionButton
+
+                // Right tabs: Planning, Me
+                tabButton(for: .planning)
+                tabButton(for: .me)
             }
             .padding(.top, WinnieSpacing.s)
-            
+
         }
         .background(WinnieColors.pineTeal)
         .background(
@@ -68,6 +79,24 @@ struct WinnieTabBar: View {
             WinnieColors.pineTeal
                 .ignoresSafeArea(edges: .bottom)
         )
+    }
+
+    // MARK: - Center Action Button
+
+    private var centerActionButton: some View {
+        Button {
+            HapticFeedback.medium()
+            onAddPressed()
+        } label: {
+            Image(systemName: "plus.circle.fill")
+                .font(.system(size: 32, weight: .medium))
+                .foregroundColor(WinnieColors.lavenderVeil)
+                .frame(height: 24) // Match other icons' frame height for alignment
+        }
+        .frame(maxWidth: .infinity)
+        .buttonStyle(.plain)
+        .accessibilityLabel("Log contribution")
+        .accessibilityHint("Double tap to log a contribution to your goals")
     }
 
     @ViewBuilder
@@ -105,7 +134,10 @@ struct WinnieTabBar: View {
         var body: some View {
             VStack {
                 Spacer()
-                WinnieTabBar(selectedTab: $selectedTab)
+                WinnieTabBar(
+                    selectedTab: $selectedTab,
+                    onAddPressed: { print("Add pressed") }
+                )
             }
             .background(WinnieColors.ivory)
         }

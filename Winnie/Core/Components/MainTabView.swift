@@ -12,6 +12,7 @@ import SwiftUI
 /// Replaces UITabBarController to provide full control over tab bar styling.
 /// Features:
 /// - Custom Pine Teal tab bar at bottom
+/// - Center "+" action button for quick contribution logging
 /// - Proper safe area handling
 /// - Smooth tab switching animations
 struct MainTabView: View {
@@ -20,6 +21,7 @@ struct MainTabView: View {
     var currentUser: User
 
     @State private var tabCoordinator = TabCoordinator()
+    @State private var showContributeSheet = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -28,7 +30,10 @@ struct MainTabView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
 
             // Custom tab bar (handles its own safe area)
-            WinnieTabBar(selectedTab: $tabCoordinator.selectedTab)
+            WinnieTabBar(
+                selectedTab: $tabCoordinator.selectedTab,
+                onAddPressed: { showContributeSheet = true }
+            )
         }
         // Prevent SwiftUI's keyboard avoidance from shrinking the root container.
         // This keeps the tab bar from being pushed upward when the keyboard appears.
@@ -36,6 +41,12 @@ struct MainTabView: View {
         .ignoresSafeArea(.keyboard)
         .winnieKeyboardDoneToolbar()
         .environment(tabCoordinator)
+        .sheet(isPresented: $showContributeSheet) {
+            ContributeSheet(
+                coupleID: currentUser.coupleID ?? currentUser.id,
+                currentUserID: currentUser.id
+            )
+        }
     }
 
     @ViewBuilder

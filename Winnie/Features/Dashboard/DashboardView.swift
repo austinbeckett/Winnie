@@ -192,7 +192,6 @@ struct DashboardView: View {
     @State private var viewModel: DashboardViewModel
     @State private var selectedGoal: Goal?
     @State private var selectedScenario: Scenario?
-    @State private var showQuickContribution = false
     @Environment(\.colorScheme) private var colorScheme
     @Environment(TabCoordinator.self) private var tabCoordinator: TabCoordinator?
 
@@ -225,7 +224,7 @@ struct DashboardView: View {
                             // Grid layout: 3-card stack on left, goals card on right
                             // Math: gridHeight (392) = 3 × cardHeight (120) + 2 × spacing (16)
                             HStack(alignment: .top, spacing: WinnieSpacing.m) {
-                                // Left column: 2 placeholder cards + Log Contributions button
+                                // Left column: 3 placeholder cards
                                 VStack(spacing: WinnieSpacing.m) {
                                     DashboardPlaceholderCard(title: "Coming Soon")
                                         .frame(height: 120)
@@ -233,11 +232,8 @@ struct DashboardView: View {
                                     DashboardPlaceholderCard(title: "Coming Soon")
                                         .frame(height: 120)
 
-                                    Spacer()
-
-                                    WinnieButton("Log Contributions", style: .primary) {
-                                        showQuickContribution = true
-                                    }
+                                    DashboardPlaceholderCard(title: "Coming Soon")
+                                        .frame(height: 120)
                                 }
                                 .frame(maxWidth: .infinity)
 
@@ -293,14 +289,6 @@ struct DashboardView: View {
                 scenario: scenario,
                 coupleID: coupleID,
                 userID: currentUser.id
-            )
-        }
-        .navigationDestination(isPresented: $showQuickContribution) {
-            QuickContributionView(
-                goals: viewModel.goals,
-                allocations: viewModel.activeScenario?.allocations ?? Allocation(),
-                currentUserID: currentUser.id,
-                coupleID: coupleID
             )
         }
     }

@@ -18,7 +18,7 @@ import SwiftUI
 /// Design philosophy:
 /// - Primary emotion: Confidence ("We're making progress")
 /// - Clean, focused display of total progress
-/// - Chevron in top corner for navigation affordance
+/// - Pine Teal background with Lavender Veil hero amount
 ///
 /// Usage:
 /// ```swift
@@ -38,9 +38,9 @@ struct ActivePlanCard: View {
     /// Triggers the fade + pop animation on appear
     @State private var showAmount: Bool = false
 
-    /// Color for the hero amount - Pine Teal in light mode, Lavender Veil in dark mode
+    /// Color for the hero amount - always Lavender Veil on Pine Teal background
     private var heroAmountColor: Color {
-        colorScheme == .dark ? WinnieColors.lavenderVeil : WinnieColors.pineTeal
+        WinnieColors.lavenderVeil
     }
 
     var body: some View {
@@ -48,7 +48,7 @@ struct ActivePlanCard: View {
             HapticFeedback.light()
             onTap()
         }) {
-            WinnieCard(style: .ivoryBordered) {
+            WinnieCard(style: .pineTeal) {
                 VStack(alignment: .leading, spacing: WinnieSpacing.s) {
                     // Header: Plan name + On Track badge
                     headerSection
@@ -80,7 +80,7 @@ struct ActivePlanCard: View {
 
             Text(scenario.name)
                 .font(WinnieTypography.headlineS())
-                .contextPrimaryText()
+                .foregroundColor(WinnieColors.ivory)
                 .lineLimit(1)
         }
     }
@@ -100,7 +100,7 @@ struct ActivePlanCard: View {
             // Subtitle
             Text("saved toward your goals!")
                 .font(WinnieTypography.bodyS())
-                .contextSecondaryText()
+                .foregroundColor(WinnieColors.ivory.opacity(0.8))
         }
         .frame(maxWidth: .infinity)
         .onAppear {
